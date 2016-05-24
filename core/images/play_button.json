@@ -1,12 +1,12 @@
 {"frames": [
 
 {
-	"filename": "play_button.png",
-	"frame": {"x":1,"y":1,"w":201,"h":215},
+	"filename": "buttonOver",
+	"frame": {"x":0,"y":0,"w":72,"h":215},
 	"rotated": false,
 	"trimmed": false,
-	"spriteSourceSize": {"x":0,"y":0,"w":201,"h":215},
-	"sourceSize": {"w":201,"h":215}
+	"spriteSourceSize": {"x":0,"y":0,"w":72,"h":215},
+	"sourceSize": {"w":72,"h":215}
 }],
 "meta": {
 	"app": "http://www.codeandweb.com/texturepacker",
