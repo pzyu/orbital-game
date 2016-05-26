@@ -7,11 +7,17 @@ var jumpCount, jumpLimit;
 BasicGame.Hero = function (game, x, y, frame) {
 	Phaser.Sprite.call(this, game, x, y, 'player_sprite', frame);
 
+	// Set anchor to middle
 	this.anchor.setTo(0.5, 0.5);
 
+	// Set scale of player
 	this.scale.x = 0.2;
 	this.scale.y = 0.2;
 
+	// Add animations of player, can refer to json
+	// generateFrameNames takes in a suffix, followed by range of index, so for example ('Idle ', 1, 10) will produce an 
+	// array ['Idle 1', 'Idle 2', ..... 'Idle 10'] to automate it for you
+	// 16 is frame rate, boolean is whether animation should loop
 	this.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true);
 	this.animations.add('anim_run', Phaser.Animation.generateFrameNames('Run ', 1, 8), 16, true);
 	this.animations.add('anim_walk', Phaser.Animation.generateFrameNames('Walk ', 1, 10), 16, true);
@@ -19,9 +25,10 @@ BasicGame.Hero = function (game, x, y, frame) {
 	this.animations.add('anim_jump', Phaser.Animation.generateFrameNames('Jump ', 1, 10), 16, false);
 	this.animations.add('anim_dead', Phaser.Animation.generateFrameNames('Dead ', 1, 10), 16, false);
 
-	this.animations.play('anim_idle');
-
+	// Enable physics
 	this.game.physics.arcade.enableBody(this);
+
+	// Controls
 	this.cursors = this.game.input.keyboard.createCursorKeys();
 	this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 
@@ -30,11 +37,13 @@ BasicGame.Hero = function (game, x, y, frame) {
 	this.jumpTimer = 0;
 	this.slideTimer = 0;
 
-	this.body.setSize(300, 640, -10, -1);
-
 	// max jumps
 	this.jumpCount = 0;
 	this.jumpLimit = 2;
+
+	// Change collider size
+	this.body.setSize(300, 640, -10, -1);
+
 }
 
 BasicGame.Hero.prototype = Object.create(Phaser.Sprite.prototype);
@@ -48,7 +57,9 @@ BasicGame.Hero.prototype.update = function() {
 BasicGame.Hero.prototype.handleControls = function() {
 	this.body.velocity.x = 0;
 
+	// If moving left
 	if (this.cursors.left.isDown) {
+		// Change scale to -ve so it'll face left
 		this.scale.x = -0.2;
 		this.body.velocity.x = -500;
 

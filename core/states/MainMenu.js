@@ -1,7 +1,8 @@
-
 BasicGame.MainMenu = function (game) {
+	// Game title, just edit from here
 	this.gameTitle = "Very Original";
 
+	// Other variables
 	this.music = null;
 	this.playButton = null;
 
@@ -11,21 +12,22 @@ BasicGame.MainMenu = function (game) {
 
 BasicGame.MainMenu.prototype = {
 	preload: function() {
-		this.music = this.add.audio('titleMusic');
-		this.music.volume = 0.0;
-		this.music.loop = true;
-		console.log(this.music.volume);
-		this.music.play();
+		this.music = this.add.audio('titleMusic');		// Add music, titleMusic is defined in Boot.js
+		this.music.volume = 0.0;						// Volume
+		this.music.loop = true;							// Loop
+		this.music.play();								// Play the music
 
+		// Add background in
 		background = this.add.sprite(0, 0, 'menu_background');
 		background.height = this.game.height;
 		background.width = this.game.width;
 
+		// Add title
 		title = this.add.text(50, this.world.height/6, this.gameTitle, {font: "60pt myfont", fill: 'white'});
-		//title = this.add.text(this.world.width * 2, this.world.height/6, "Game Title", {font: "50pt myfont", fill: 'white'});
 		title.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5);
 		title.anchor.set(0, 0.5);
 
+		// Set default option count for factory function
 		this.optionCount = 1;
 	},
 

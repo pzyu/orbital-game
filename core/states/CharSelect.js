@@ -7,6 +7,7 @@ BasicGame.CharSelect = function (game) {
 
 BasicGame.CharSelect.prototype = {
 	preload: function() {
+		// Add sprites
 		this.ninja = this.add.sprite(0, 0, 'char_select_0');
 		this.robot = this.add.sprite(260, 0, 'char_select_1');
 		this.jack = this.add.sprite(520, 0, 'char_select_2');
@@ -17,6 +18,7 @@ BasicGame.CharSelect.prototype = {
 		this.jack.scale.setTo(4.2);
 		this.knight.scale.setTo(4.2);
 
+		// Initial filters
 		var gray = game.add.filter('Gray');
 
 		this.ninja.filters = [gray];
@@ -38,6 +40,7 @@ BasicGame.CharSelect.prototype = {
 			console.log(target.name + " clicked");
 		};
 
+		// Add event checkers for each sprite
 		this.ninja.inputEnabled = true;
 		this.ninja.events.onInputUp.add(onClick);
 		this.ninja.events.onInputOver.add(onOver);

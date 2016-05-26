@@ -22,9 +22,9 @@ BasicGame.Main.prototype = {
   },
 
   create: function () {
+    // Add only boot at this state, and start
     game.state.add('Boot', BasicGame.Boot);
     game.state.start('Boot');
-    //console.log("here");
   }
 
 };

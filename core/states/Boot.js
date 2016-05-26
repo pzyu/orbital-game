@@ -15,7 +15,6 @@ BasicGame.Boot.prototype = {
         this.load.script('charselect_scr', 'states/CharSelect.js');
         this.load.script('game_scr', 'states/MainGame.js');
         this.load.script('hero_scr', 'states/Hero.js');
-        this.load.script('prefab_scr', 'states/Prefab.js');
 
         // For webfonts
         this.load.script('WebFont', 'scripts/webfontloader.js');
@@ -24,29 +23,27 @@ BasicGame.Boot.prototype = {
     },
 
     loadImages: function() {  
-        this.load.image('titlepage', 'images/title.png');
-        this.load.image('menu_background', 'images/menu_background.gif');
-
         // For char select
         this.load.image('char_select_0', 'images/char_select_0.png');
         this.load.image('char_select_1', 'images/char_select_1.png');
         this.load.image('char_select_2', 'images/char_select_2.png');
         this.load.image('char_select_3', 'images/char_select_3.png');
 
-        // Sprite sheet
+        // Tilemap spritesheet json and png
         this.load.tilemap('map', 'images/tiles_spritesheet.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.image('tiles', 'images/sheet.png');
 
-        // Player
-        this.load.image('player', 'images/sprites/jack/Idle (1).png');
+        // Player atlas
         this.load.atlas('player_sprite', 'images/sprites/jack/jack.png', 'images/sprites/jack/jack.json');
     },
 
     loadAudio: function() {
+        // Loading music
         this.load.audio('titleMusic', ['audio/title.mp3']);
     },
 
     loadFonts: function(){
+        // Loading fonts
         WebFontConfig = {
             custom: {
                 families: ['myfont'],
@@ -85,7 +82,6 @@ BasicGame.Boot.prototype = {
 
         // On load complete execute onLoadComplete() function
         this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
-        //this.loadSplash();
     },
 
     // Preload function to preload whatever assets needed only for preload page
@@ -114,7 +110,7 @@ BasicGame.Boot.prototype = {
     update: function () {
         this.splashLogo.rotation += 0.01;
 
-
+        // Uncomment this instead of the next to decode the music first
         //if (this.cache.isSoundDecoded('titleMusic') && this.ready)
         if (this.ready)
         {
@@ -124,6 +120,7 @@ BasicGame.Boot.prototype = {
     },
 
     onLoadComplete: function() {
+        // Callback to this when loading is done
         this.ready = true;
         console.log("load complete");
     }
