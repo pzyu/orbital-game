@@ -13,8 +13,9 @@ BasicGame.Boot.prototype = {
         // Load whatever scripts we need
         this.load.script('mainmenu_scr', 'states/MainMenu.js');
         this.load.script('charselect_scr', 'states/CharSelect.js');
-        this.load.script('game_scr', 'states/Game.js');
-        this.load.script('test', 'states/MainGame.js');
+        this.load.script('game_scr', 'states/MainGame.js');
+        this.load.script('hero_scr', 'states/Hero.js');
+        this.load.script('prefab_scr', 'states/Prefab.js');
 
         // For webfonts
         this.load.script('WebFont', 'scripts/webfontloader.js');
@@ -33,8 +34,12 @@ BasicGame.Boot.prototype = {
         this.load.image('char_select_3', 'images/char_select_3.png');
 
         // Sprite sheet
-        this.load.tilemap('level1', 'images/map.json');
-        this.load.image('gameTiles', 'images/tiles_spritesheet.png');
+        this.load.tilemap('map', 'images/tiles_spritesheet.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.image('tiles', 'images/sheet.png');
+
+        // Player
+        this.load.image('player', 'images/sprites/jack/Idle (1).png');
+        this.load.atlas('player_sprite', 'images/sprites/jack/jack.png', 'images/sprites/jack/jack.json');
     },
 
     loadAudio: function() {
@@ -95,7 +100,6 @@ BasicGame.Boot.prototype = {
         // Add game states
         this.state.add('MainMenu', BasicGame.MainMenu);
         this.state.add('CharSelect', BasicGame.CharSelect);
-        this.state.add('Game', BasicGame.Game);
         this.state.add('MainGame', BasicGame.MainGame);
     },
 
