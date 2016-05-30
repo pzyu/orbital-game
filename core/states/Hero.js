@@ -3,6 +3,7 @@ var cursors, jumpButton;
 var jumpTimer, slideTimer;
 var jumpAnim;
 var jumpCount, jumpLimit;
+var effect;
 
 BasicGame.Hero = function (game, x, y, frame) {
 	Phaser.Sprite.call(this, game, x, y, 'player_sprite', frame);
@@ -31,6 +32,7 @@ BasicGame.Hero = function (game, x, y, frame) {
 	// Controls
 	this.cursors = this.game.input.keyboard.createCursorKeys();
 	this.jumpButton = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+	this.attackButton = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
 
 	this.jumpAnim = this.animations.getAnimation('anim_jump');
 
@@ -44,8 +46,19 @@ BasicGame.Hero = function (game, x, y, frame) {
 	// Change collider size
 	this.body.setSize(300, 640, -10, -1);
 
+	this.effectName = 'anim_';
+	this.effectCount = 1;
+	this.effectTimer = 0;
+
+	// Add this object into existing game
+	this.game.add.existing(this);
+
+	// Each hero will have an effect object which basically plays whatever effect they have
+	this.effect = new BasicGame.Effect(this.game, 100, 1000, 'bolt_effect_sprite');
+	this.game.add.existing(this.effect);
 }
 
+// Kind of like inherts Sprite
 BasicGame.Hero.prototype = Object.create(Phaser.Sprite.prototype);
 BasicGame.Hero.prototype.constructor = BasicGame.Player;
 
@@ -100,7 +113,20 @@ BasicGame.Hero.prototype.handleControls = function() {
     // Idle | if not moving and on the floor
     else if (this.body.velocity.x == 0 && this.body.onFloor()) {
     	this.animations.play('anim_idle');
+    } 
+    if (this.body.onFloor()) {
     	this.jumpCount = 0;
+    }
+
+    if (this.attackButton.isDown && this.game.time.now > this.effectTimer) {
+
+    	this.effect.play(this.x, this.y, this.effectName + this.effectCount, this);
+    	this.effectCount++;
+    	if (this.effectCount > 4) {
+    		this.effectCount = 1;
+    	}
+
+    	this.effectTimer = this.game.time.now + 500;
     }
 
 }

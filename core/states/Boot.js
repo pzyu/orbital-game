@@ -15,16 +15,17 @@ BasicGame.Boot.prototype = {
         this.load.script('charselect_scr', 'states/CharSelect.js');
         this.load.script('game_scr', 'states/MainGame.js');
         this.load.script('hero_scr', 'states/Hero.js');
+        this.load.script('effect_scr', 'states/Effect.js');
 
         // For webfonts
         this.load.script('WebFont', 'scripts/webfontloader.js');
         // For greying
-        this.load.script('gray', '../filters/Gray.js');
+        this.load.script('gray', 'scripts/Gray.js');
     },
 
     loadImages: function() {  
         this.load.image('menu_background', 'images/menu_background.gif');
-        
+
         // For char select
         this.load.image('char_select_0', 'images/char_select_0.png');
         this.load.image('char_select_1', 'images/char_select_1.png');
@@ -34,9 +35,15 @@ BasicGame.Boot.prototype = {
         // Tilemap spritesheet json and png
         this.load.tilemap('map', 'images/tiles_spritesheet.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.image('tiles', 'images/sheet.png');
+        this.load.image('background_tiles', 'images/building_sheet.png');
+        this.load.image('tiles_spritesheet', 'images/tiles_spritesheet.png');
 
         // Player atlas
         this.load.atlas('player_sprite', 'images/sprites/jack/jack.png', 'images/sprites/jack/jack.json');
+
+        // Effect atlas
+        this.load.atlas('blood_effect_sprite', 'images/sprites/effects/blood_spritesheet.png', 'images/sprites/effects/blood_spritemap.json');
+        this.load.atlas('bolt_effect_sprite', 'images/sprites/effects/bolt_spritesheet.png', 'images/sprites/effects/bolt_spritemap.json');
     },
 
     loadAudio: function() {
@@ -113,8 +120,8 @@ BasicGame.Boot.prototype = {
         this.splashLogo.rotation += 0.01;
 
         // Uncomment this instead of the next to decode the music first
-        if (this.cache.isSoundDecoded('titleMusic') && this.ready)
-        //if (this.ready)
+        //if (this.cache.isSoundDecoded('titleMusic') && this.ready)
+        if (this.ready)
         {
             this.state.start('MainMenu');
         }

@@ -13,7 +13,7 @@ BasicGame.MainMenu = function (game) {
 BasicGame.MainMenu.prototype = {
 	preload: function() {
 		this.music = this.add.audio('titleMusic');		// Add music, titleMusic is defined in Boot.js
-		this.music.volume = 0.1;						// Volume
+		this.music.volume = 0.0;						// Volume
 		this.music.loop = true;							// Loop
 		this.music.play();								// Play the music
 

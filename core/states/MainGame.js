@@ -19,6 +19,8 @@ BasicGame.MainGame.prototype = {
 		// Add tilemap
 		map = this.add.tilemap('map');					// 'map' must be same as the one in Boot.js
 		map.addTilesetImage('sheet', 'tiles');			// 'sheet' must be the same also
+		map.addTilesetImage('building_sheet', 'background_tiles');
+		map.addTilesetImage('tiles_spritesheet', 'tiles_spritesheet');
 
 		var background = map.createLayer('Background');	// 'Background' must be the same in the json file
 		background.resizeWorld();
@@ -35,7 +37,7 @@ BasicGame.MainGame.prototype = {
 
 		// Instantiate new player
 		this.player = new BasicGame.Hero(this.game, 100, 1000);
-		this.game.add.existing(this.player);
+		//this.game.add.existing(this.player);
 		this.camera.follow(this.player);
 	},
 
