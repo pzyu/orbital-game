@@ -20,11 +20,16 @@ BasicGame.Effect = function (game, x, y, atlasName, isProjectile, loopCount, fra
 		this.body.collideWorldBounds = true;
 
 		this.body.velocity.x = 500;
-		this.body.allowGravity = false;
+		this.body.velocity.y = -500;
+		//this.body.allowGravity = false;
 		//this.body.bounce.setTo(1, 1);
 
 		// Only assign it if it's a projectile
 		this.loopCount = loopCount;
+
+		BasicGame.projectileCG.add(this);
+
+		console.log(BasicGame.projectileCG.children);
 	}
 
 
@@ -53,6 +58,7 @@ BasicGame.Effect = function (game, x, y, atlasName, isProjectile, loopCount, fra
 
 	//this.animations.play('anim_1');
 	this.target = null;
+
 }
 
 // Effect is declared as a Sprite so it will only have Sprite attributes
@@ -101,6 +107,7 @@ BasicGame.Effect.prototype.animationLoop = function() {
 
 // Takes in an animation string name, and target instantiated on
 BasicGame.Effect.prototype.play = function(anim, target) {
+	//	console.log(loadingText);
 	//console.log(this.animations.currentAnim.name + " playing");
 	this.target = target;
 

@@ -45,6 +45,7 @@ BasicGame.Hero = function (game, x, y, frame) {
 
 	// Change collider size
 	this.body.setSize(300, 640, -10, -1);
+	this.body.maxVelocity.y = 600;
 
 	this.effectName = 'anim_';
 	this.effectCount = 1;
@@ -64,6 +65,8 @@ BasicGame.Hero.prototype.constructor = BasicGame.Player;
 
 BasicGame.Hero.prototype.update = function() {
 	this.handleControls();
+	this.game.debug.spriteInfo(this, 32, 32);
+	this.game.debug.body(this);
 };
 
 

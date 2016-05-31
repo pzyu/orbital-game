@@ -1,11 +1,13 @@
 BasicGame.MainGame = function (game) {
 	this.gravity = 1500;
+	this.playerCG = null;
 };
 
 var map, p, layer, cursors;
 var player;
 BasicGame.MainGame.prototype = {
 	preload: function() {
+		//console.log(BasicGame.score);
 	},
 
 	create: function() {
@@ -31,19 +33,29 @@ BasicGame.MainGame.prototype = {
 		layer.wrap = true;
 
 		map.setCollisionBetween(0, 60, true, layer);	// Set collision layers between json tile representation
-		map.setCollisionBetween(63, 99, true, layer);
+		map.setCollisionBetween(63, 99, true, layer);	
+
+		//console.log(this.tilesCollisionGroup);
 
 		//layer.debug = true;
+		this.playerCG = this.add.group();
+		BasicGame.projectileCG = this.add.group();
+
+		console.log("initial: " + BasicGame.projectileCG.length);
 
 		// Instantiate new player
 		this.player = new BasicGame.Hero(this.game, 100, 1000);
+		this.playerCG.add(this.player);
+		//this.playerCG.sort('y', Phaser.Group.SORT_ASCENDING);
+
 		//this.game.add.existing(this.player);
 		this.camera.follow(this.player);
 	},
 
 	update: function() {
 		// Enable collision between player and layer
-		this.physics.arcade.collide(this.player, layer);
+		this.physics.arcade.collide(this.playerCG, layer);
+		this.physics.arcade.collide(BasicGame.projectileCG, layer);
 	},
 
 	render: function() {
