@@ -54,7 +54,7 @@ BasicGame.Hero = function (game, x, y, frame) {
 	this.game.add.existing(this);
 
 	// Each hero will have an effect object which basically plays whatever effect they have
-	this.effect = new BasicGame.Effect(this.game, 100, 1000, 'bolt_effect_sprite');
+	this.effect = new BasicGame.Effect(this.game, 100, 1000, 'bolt_effect_sprite', false, 0);
 	this.game.add.existing(this.effect);
 }
 
@@ -120,11 +120,15 @@ BasicGame.Hero.prototype.handleControls = function() {
 
     if (this.attackButton.isDown && this.game.time.now > this.effectTimer) {
 
-    	this.effect.play(this.x, this.y, this.effectName + this.effectCount, this);
+    	/*this.effect.play(this.effectName + this.effectCount, this);
     	this.effectCount++;
     	if (this.effectCount > 4) {
     		this.effectCount = 1;
-    	}
+    	}*/
+
+    	var projectile = new BasicGame.Effect(this.game, this.x, this.y, 'bolt_effect_sprite', true, 1);
+    	this.game.add.existing(projectile);
+    	projectile.play('anim_1', this);
 
     	this.effectTimer = this.game.time.now + 500;
     }

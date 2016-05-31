@@ -15,7 +15,6 @@ BasicGame.Main = function() {
 };
 
 BasicGame.Main.prototype = {
-
   preload: function () {
     this.load.image('splashLogo', 'images/splash_logo.png');
     this.load.script('boot_scr',  'states/Boot.js');
