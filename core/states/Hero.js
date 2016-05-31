@@ -123,10 +123,18 @@ BasicGame.Hero.prototype.handleControls = function() {
     	this.scale.x = -this.scaleX;
 		this.body.velocity.x = -500;
 
+		if (this.body.onFloor()) {
+			this.animations.play('anim_run');	
+		}
+
 	} else if (this.cursors.right.isDown && !this.attackAnim.isPlaying) {
 		this.facingRight = 1;
     	this.scale.x = this.scaleX;
 		this.body.velocity.x = 500;
+		
+		if (this.body.onFloor()) {
+			this.animations.play('anim_run');	
+		}
 	} 
 	//console.log(jumpCount);
 
