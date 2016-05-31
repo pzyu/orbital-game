@@ -6,7 +6,8 @@ var jumpCount, jumpLimit;
 var effect;
 
 BasicGame.Hero = function (game, x, y, frame) {
-	Phaser.Sprite.call(this, game, x, y, 'player_sprite', frame);
+	//console.log(BasicGame.CharSelect.prototype);
+	Phaser.Sprite.call(this, game, x, y, BasicGame.selectedChar, frame);
 
 	// Set anchor to middle
 	this.anchor.setTo(0.5, 0.5);
@@ -108,7 +109,6 @@ BasicGame.Hero.prototype.handleControls = function() {
  	if (this.jumpButton.isDown  && this.game.time.now > this.jumpTimer && this.jumpCount < this.jumpLimit)
     {
     	console.log("jump");
-    	console.log(this.jumpCount);
         this.body.velocity.y = -600;
         this.jumpTimer = this.game.time.now + 350;
 		this.animations.play('anim_jump');
@@ -117,6 +117,7 @@ BasicGame.Hero.prototype.handleControls = function() {
     // Idle | if not moving and on the floor
     else if (this.body.velocity.x == 0 && this.body.onFloor()) {
     	this.animations.play('anim_idle');
+    	this.jumpCount = 0;
     } 
     else if (this.body.onFloor()) {
     	this.jumpCount = 0;
