@@ -21,10 +21,10 @@ BasicGame.Hero = function (game, x, y, frame) {
 		this.scaleX = 0.3;
 		this.scaleY = 0.3;
 		this.body.setSize(230, 470, 0, 0);
-	} else if (BasicGame.selectedChar === "player_jack") {
-		this.scaleX = 0.23;
-		this.scaleY = 0.23;
-		this.body.setSize(300, 620, 0, 5);
+	} else if (BasicGame.selectedChar === "player_cowgirl") {
+		this.scaleX = 0.3;
+		this.scaleY = 0.3;
+		this.body.setSize(250, 470, 0, 0);
 	} else {
 		this.scaleX = 0.25;
 		this.scaleY = 0.25;
@@ -43,8 +43,7 @@ BasicGame.Hero = function (game, x, y, frame) {
 	// 16 is frame rate, boolean is whether animation should loop
 	this.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true);
 	this.animations.add('anim_run', Phaser.Animation.generateFrameNames('Run ', 1, 8), 16, true);
-	this.animations.add('anim_walk', Phaser.Animation.generateFrameNames('Walk ', 1, 10), 16, true);
-	this.animations.add('anim_slide', Phaser.Animation.generateFrameNames('Slide ', 1, 10), 16, true);
+	this.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, false);
 	this.animations.add('anim_jump', Phaser.Animation.generateFrameNames('Jump ', 1, 10), 16, false);
 	this.animations.add('anim_dead', Phaser.Animation.generateFrameNames('Dead ', 1, 10), 16, false);
 
@@ -55,6 +54,7 @@ BasicGame.Hero = function (game, x, y, frame) {
 	this.attackButton = this.game.input.keyboard.addKey(Phaser.Keyboard.A);
 
 	this.jumpAnim = this.animations.getAnimation('anim_jump');
+	this.attackAnim = this.animations.getAnimation('anim_attack');
 
 	this.jumpTimer = 0;
 	this.slideTimer = 0;
@@ -64,7 +64,7 @@ BasicGame.Hero = function (game, x, y, frame) {
 	this.jumpLimit = 2;
 
 	this.body.maxVelocity.y = 1000;
-	//this.body.bounce.set(1, 1);
+	this.body.bounce.set(0.1, 0);
 
 	this.effectName = 'anim_';
 	this.effectCount = 1;
@@ -76,6 +76,8 @@ BasicGame.Hero = function (game, x, y, frame) {
 	// Each hero will have an effect object which basically plays whatever effect they have
 	this.effect = new BasicGame.Effect(this.game, 100, 1000, 'bolt_effect_sprite', false, 0);
 	this.game.add.existing(this.effect);
+
+	this.facingRight = 1;
 }
 
 // Kind of like inherts Sprite
@@ -85,41 +87,46 @@ BasicGame.Hero.prototype.constructor = BasicGame.Player;
 BasicGame.Hero.prototype.update = function() {
 	this.handleControls();
 	//this.game.debug.spriteInfo(this, 32, 32);
-	//this.game.debug.body(this);
+	this.game.debug.body(this);
 };
 
 
 BasicGame.Hero.prototype.handleControls = function() {
 	this.body.velocity.x = 0;
 
+
+    if (this.attackButton.isDown && this.game.time.now > this.effectTimer) {
+
+    	/*this.effect.play(this.effectName + this.effectCount, this);
+    	this.effectCount++;
+    	if (this.effectCount > 4) {
+    		this.effectCount = 1;
+    	}*/
+		var test = this.game.add.tween(this.body.velocity);
+		test.to({x: 1000 * this.facingRight}, 250, Phaser.Easing.Cubic.In);
+		test.start();
+
+    	this.animations.play('anim_attack');
+    	var projectile = new BasicGame.Effect(this.game, this.x, this.y, 'bolt_effect_sprite', true, 1);
+    	this.game.add.existing(projectile);
+    	projectile.play('anim_1', this);
+
+    	BasicGame.projectileCG.add(projectile);
+
+    	this.effectTimer = this.game.time.now + 500;
+    	this.jumpCount = 0;
+    }
+
 	// If moving left
-	if (this.cursors.left.isDown) {
-		// Change scale to -ve so it'll face left
-		this.scale.x = -this.scaleX;
+	if (this.cursors.left.isDown && !this.attackAnim.isPlaying) {
+		this.facingRight = -1;
+    	this.scale.x = -this.scaleX;
 		this.body.velocity.x = -500;
 
-	    // Slide
-	    if (this.cursors.down.isDown && this.game.time.now > this.slideTimer) {
-	    	this.body.velocity.x *= 1.5;
-	    	this.slideTimer = this.game.time.now + 750;
-			this.animations.play('anim_slide');	
-	    } else if (this.body.onFloor() && !this.cursors.down.isDown) {
-			this.animations.play('anim_run');	
-		}
-
-
-	} else if (this.cursors.right.isDown) {
-		this.scale.x = this.scaleX;
+	} else if (this.cursors.right.isDown && !this.attackAnim.isPlaying) {
+		this.facingRight = 1;
+    	this.scale.x = this.scaleX;
 		this.body.velocity.x = 500;
-
-	    // Slide
-	 	if (this.cursors.down.isDown && this.game.time.now > this.slideTimer) {
-	    	this.body.velocity.x *= 1.5;
-	    	this.slideTimer = this.game.time.now + 750;
-			this.animations.play('anim_slide');	
-	    } else if (this.body.onFloor() && !this.cursors.down.isDown) {
-			this.animations.play('anim_run');	
-		}
 	} 
 	//console.log(jumpCount);
 
@@ -133,31 +140,13 @@ BasicGame.Hero.prototype.handleControls = function() {
 		this.jumpCount++;
     }
     // Idle | if not moving and on the floor
-    else if (this.body.velocity.x == 0 && this.body.onFloor()) {
+    else if (this.body.velocity.x == 0 && this.body.onFloor()  && !this.attackAnim.isPlaying) {
     	this.animations.play('anim_idle');
     	this.jumpCount = 0;
     } 
     else if (this.body.onFloor()) {
     	this.jumpCount = 0;
     }
-
-    if (this.attackButton.isDown && this.game.time.now > this.effectTimer) {
-
-    	/*this.effect.play(this.effectName + this.effectCount, this);
-    	this.effectCount++;
-    	if (this.effectCount > 4) {
-    		this.effectCount = 1;
-    	}*/
-
-    	var projectile = new BasicGame.Effect(this.game, this.x, this.y, 'bolt_effect_sprite', true, 1);
-    	this.game.add.existing(projectile);
-    	projectile.play('anim_1', this);
-
-    	BasicGame.projectileCG.add(projectile);
-
-    	this.effectTimer = this.game.time.now + 500;
-    }
-
 }
 
 BasicGame.Hero.prototype.render = function() {

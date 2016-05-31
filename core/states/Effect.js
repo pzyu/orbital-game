@@ -47,7 +47,7 @@ BasicGame.Effect = function (game, x, y, atlasName, isProjectile, loopCount, fra
 		this.game.physics.arcade.enableBody(this);
 		//this.body.collideWorldBounds = true;
 
-		this.body.velocity.x = 500;
+		this.body.velocity.x = 1000;
 		//this.body.velocity.y = -500;
 		this.body.allowGravity = false;
 		//this.body.bounce.setTo(1, 1);
@@ -106,11 +106,12 @@ BasicGame.Effect.prototype.animationLoop = function() {
 
 // Takes in an animation string name, and target instantiated on
 BasicGame.Effect.prototype.play = function(anim, target) {
+	var offset = 100;
 	//	console.log(loadingText);
 	//console.log(this.animations.currentAnim.name + " playing");
 	this.target = target;
 
-	this.x = this.target.x;
+	this.x = this.target.x + offset;
 	this.y = this.target.y;
 
 	// Correct collider velocity and offset
@@ -118,6 +119,7 @@ BasicGame.Effect.prototype.play = function(anim, target) {
 		if (this.isProjectile) {
 			this.body.velocity.x *= -1;
 			this.body.offset.x *= -1;
+			this.x -= offset * 2;
 		}
 	}
 	
@@ -143,7 +145,7 @@ BasicGame.Effect.prototype.correctDirection = function(target) {
 
 BasicGame.Effect.prototype.onCollide = function () {
 	var test = new BasicGame.Effect(this.game, this.x, this.y, 'bolt_effect_sprite');
-	this.game.add.existing(test);
+	//this.game.add.existing(test);
 	test.play('anim_2', this);
 	console.log(test);
 	// Move the effect off screen first, then destroy safely

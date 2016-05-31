@@ -2,8 +2,6 @@ BasicGame.MainGame = function (game) {
 	this.gravity = 2000;
 };
 
-var map, p, layer, cursors;
-var player;
 BasicGame.MainGame.prototype = {
 	preload: function() {
 		//console.log(BasicGame.score);
@@ -36,18 +34,15 @@ BasicGame.MainGame.prototype = {
 
 		//console.log(this.tilesCollisionGroup);
 
-		//layer.debug = true;
+		// Assign global groups
 		BasicGame.playerCG = this.add.group();
 		BasicGame.projectileCG = this.add.group();
-
-		console.log("initial: " + BasicGame.projectileCG.length);
 
 		// Instantiate new player
 		this.player = new BasicGame.Hero(this.game, 100, 1000);
 		BasicGame.playerCG.add(this.player);
-		//this.playerCG.sort('y', Phaser.Group.SORT_ASCENDING);
 
-		//this.game.add.existing(this.player);
+		// Follow player
 		this.camera.follow(this.player);
 	},
 
@@ -62,6 +57,7 @@ BasicGame.MainGame.prototype = {
 		//game.debug.body(this.player);
 	},
 
+	// Callback function for projectile collision
 	projectileCallback: function(obj1, obj2) {
 		obj1.onCollide();
 	}

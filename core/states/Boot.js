@@ -25,6 +25,7 @@ BasicGame.Boot.prototype = {
     },
 
     loadImages: function() {  
+        // Load background image
         this.load.image('menu_background', 'images/menu_background.gif');
 
         // For char select
@@ -44,6 +45,7 @@ BasicGame.Boot.prototype = {
         this.load.atlas('player_robot', 'images/sprites/robot/robot.png', 'images/sprites/robot/robot.json');
         this.load.atlas('player_jack', 'images/sprites/jack/jack.png', 'images/sprites/jack/jack.json');
         this.load.atlas('player_knight', 'images/sprites/knight/knight.png', 'images/sprites/knight/knight.json');
+        this.load.atlas('player_cowgirl', 'images/sprites/cowgirl/cowgirl.png', 'images/sprites/cowgirl/cowgirl.json');
 
 
         // Effect atlas
@@ -86,7 +88,7 @@ BasicGame.Boot.prototype = {
             this.scale.pageAlignHorizontally = true;
         }
 
-        // Set splash logo
+        // Set splash logo to middle of screen
         this.splashLogo = this.add.sprite(this.world.width/2, this.world.height/2, 'splashLogo');
         this.splashLogo.anchor.setTo(0.5, 0.5);
 
@@ -123,6 +125,7 @@ BasicGame.Boot.prototype = {
     },
 
     update: function () {
+        // Rotate splash logo
         this.splashLogo.rotation += 0.01;
 
         // Uncomment this instead of the next to decode the music first

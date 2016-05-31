@@ -1,13 +1,6 @@
 BasicGame.MainMenu = function (game) {
 	// Game title, just edit from here
 	this.gameTitle = "Very Original";
-
-	// Other variables
-	this.music = null;
-	this.playButton = null;
-
-	this.background = null;
-	this.title = null;
 };
 
 BasicGame.MainMenu.prototype = {
@@ -18,14 +11,14 @@ BasicGame.MainMenu.prototype = {
 		this.music.play();								// Play the music
 
 		// Add background in
-		background = this.add.sprite(0, 0, 'menu_background');
-		background.height = this.game.height;
-		background.width = this.game.width;
+		this.background = this.add.sprite(0, 0, 'menu_background');
+		this.background.height = this.game.height;
+		this.background.width = this.game.width;
 
-		// Add title
-		title = this.add.text(50, this.world.height/6, this.gameTitle, {font: "60pt myfont", fill: 'white'});
-		title.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5);
-		title.anchor.set(0, 0.5);
+		// Add title, takes in font size, x, y, string, text styles
+		this.title = this.add.text(50, this.world.height/6, this.gameTitle, {font: "60pt myfont", fill: 'white', align: 'right'});
+		this.title.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5);
+		this.title.anchor.set(0, 0.5);
 
 		// Set default option count for factory function
 		this.optionCount = 1;
@@ -33,8 +26,7 @@ BasicGame.MainMenu.prototype = {
 
 	create: function () {
 		this.addMenuOption('Start', function (target) {
-			// Suppose to have a hero select or whatever
-			// But just start with the game first
+			// Move to character select screen
 			this.game.state.start('CharSelect');
 		});
 		this.addMenuOption('Multiplayer', function (target) {
@@ -60,6 +52,7 @@ BasicGame.MainMenu.prototype = {
 
 	},
 
+	// Factory function that lets you add options easily
 	addMenuOption: function(text, callback) {
 		// Set default text
 		var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};

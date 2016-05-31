@@ -1,90 +1,100 @@
 BasicGame.CharSelect = function (game) {
-	this.ninja = null;
-	this.robot = null;
-	this.jack = null;
-	this.knight = null;
+	this.offset = 200;
+	this.charCount = 0;
+	this.startGame = null;
+	this.gray = null;
+	this.isClicked = null;
 };
 
 BasicGame.CharSelect.prototype = {
-	preload: function() {
-		// Add sprites
-		this.ninja = this.add.sprite(0, 0, 'char_select_0');
-		this.robot = this.add.sprite(260, 0, 'char_select_1');
-		this.jack = this.add.sprite(520, 0, 'char_select_2');
-		this.knight = this.add.sprite(760, 0, 'char_select_3');
+	resetFilter: function(target) {
+		target.filters = [this.gray];
+	},
 
-		this.ninja.scale.setTo(4.2);
-		this.robot.scale.setTo(4.2);
-		this.jack.scale.setTo(4.2);
-		this.knight.scale.setTo(4.2);
+	// On over style
+	onOver: function(target) {
+		target.filters = null;
+	},
+ 
+	// On out style
+	onOut: function (target) {
+		if(this.isClicked != target) {
+			this.resetFilter(target);
+		}
+	},
 
-		// Initial filters
-		var gray = game.add.filter('Gray');
+	// On click
+	onClick: function (target) {
+		this.resetFilter(target);
+		this.isClicked = target; // chosen character information is stored into this.isClicked
+		target.filters = null; // highlight chosen character
+		target.animations.play('anim_attack');
+		target.animations.currentAnim.onLoop.add(function() { 
+			target.animations.play('anim_idle');
+		});
+		BasicGame.selectedChar = target.key;
+	},
 
-		function resetFilter (myfilter) {  // Function to reset all filters (Make them all grey)
-			myfilter.ninja.filters = [gray];
-			myfilter.robot.filters = [gray];
-			myfilter.jack.filters = [gray];
-			myfilter.knight.filters = [gray];
+	addCharacter: function(spriteName) {
+		var char = this.add.sprite(this.offset * this.charCount, 0, spriteName);
+		//console.log(spriteName + " " + char.height + " " + char.width);
+
+		if (spriteName === "player_ninja") {
+			char.scale.x = 0.9;
+			char.scale.y = 0.9;
+
+			char.x += 20;
+			char.y += 20;
+		}  else if (spriteName === "player_knight") {
+			char.scale.x = 0.65;
+			char.scale.y = 0.65;
+
+			char.x += 60;
+			char.y -= 10;
+		} else if (spriteName === "player_cowgirl") {
+			char.scale.x = 0.8;
+			char.scale.y = 0.8;
+
+			char.x -= 50;
+			char.y += 5;
+		} else {
+			char.scale.x = 0.8;
+			char.scale.y = 0.8;
+
+			char.x += 80;
 		}
 
-		var allFilter = this;
-		resetFilter(this);
+		// Add animation and play
+		char.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true);
+		char.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);
+		char.animations.play('anim_idle');
+
+		this.resetFilter(char);
 		this.isClicked = null;
 
-		// On over style
-		var onOver = function (target) {
-			target.filters = null;
-		};
+		// Set input functions
+		char.inputEnabled = true;
+		char.events.onInputUp.add(this.onClick, this);
+		char.events.onInputOver.add(this.onOver, this);
+		char.events.onInputOut.add(this.onOut, this);
 
-		// On out style
-		var onOut = function (target) {
-			if(this.isClicked != target) {
-				target.filters = [gray];
-			}
-		};
+		this.charCount++;
+	},
 
-		var onClick = function (target) {
-			resetFilter(allFilter);
-			this.isClicked = target; // chosen character information is stored into this.isClicked
-			target.filters = null; // highlight chosen character
-			txt.inputEnabled = true; // Character must be selected before game can start
+	preload: function() {
+		this.gray = this.game.add.filter('Gray');
 
-			if(target.key == "char_select_0") {
-				BasicGame.selectedChar = "player_ninja";
-			} else if (target.key == "char_select_1") {
-				BasicGame.selectedChar = "player_robot";
-			} else if (target.key == "char_select_2") {
-				BasicGame.selectedChar = "player_jack";
-			} else if (target.key == "char_select_3") {
-				BasicGame.selectedChar = "player_knight";
-			}
-		};
+		// Just use factory function
+		this.addCharacter('player_ninja');
+		this.addCharacter('player_cowgirl');
+		this.addCharacter('player_knight');
+		this.addCharacter('player_robot');
 
-		// Add event checkers for each sprite
-		this.ninja.inputEnabled = true;
-		this.ninja.events.onInputUp.add(onClick);
-		this.ninja.events.onInputOver.add(onOver);
-		this.ninja.events.onInputOut.add(onOut);
-
-		this.robot.inputEnabled = true;
-		this.robot.events.onInputUp.add(onClick);
-		this.robot.events.onInputOver.add(onOver);
-		this.robot.events.onInputOut.add(onOut);
-				
-		this.jack.inputEnabled = true;
-		this.jack.events.onInputUp.add(onClick);
-		this.jack.events.onInputOver.add(onOver);
-		this.jack.events.onInputOut.add(onOut);
-
-		this.knight.inputEnabled = true;
-		this.knight.events.onInputUp.add(onClick);
-		this.knight.events.onInputOver.add(onOver);
-		this.knight.events.onInputOut.add(onOut);
-
+		// Add start game button
 		var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
-		var txt = this.add.text(this.world.width - this.world.width/4, this.world.height - 100,  "Start Game", optionStyle);
-		txt.events.onInputUp.add(function() {
+		this.startGame = this.add.text(this.world.width - this.world.width/4, this.world.height - 100,  "Start Game", optionStyle);
+		this.startGame.inputEnabled = true; 
+		this.startGame.events.onInputUp.add(function() {
 			this.game.state.start("MainGame");
 		});
 
