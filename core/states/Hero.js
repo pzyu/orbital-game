@@ -105,6 +105,7 @@ BasicGame.Hero.prototype.handleControls = function() {
  	if (this.jumpButton.isDown  && this.game.time.now > this.jumpTimer && this.jumpCount < this.jumpLimit)
     {
     	console.log("jump");
+    	console.log(this.jumpCount);
         this.body.velocity.y = -600;
         this.jumpTimer = this.game.time.now + 350;
 		this.animations.play('anim_jump');
@@ -114,7 +115,7 @@ BasicGame.Hero.prototype.handleControls = function() {
     else if (this.body.velocity.x == 0 && this.body.onFloor()) {
     	this.animations.play('anim_idle');
     } 
-    if (this.body.onFloor()) {
+    else if (this.body.onFloor()) {
     	this.jumpCount = 0;
     }
 

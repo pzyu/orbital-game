@@ -39,7 +39,8 @@ BasicGame.Boot.prototype = {
         this.load.image('tiles_spritesheet', 'images/tiles_spritesheet.png');
 
         // Player atlas
-        this.load.atlas('player_sprite', 'images/sprites/jack/jack.png', 'images/sprites/jack/jack.json');
+        this.load.atlas('player_sprite', 'images/sprites/knight/knight.png', 'images/sprites/knight/knight.json');
+
 
         // Effect atlas
         this.load.atlas('blood_effect_sprite', 'images/sprites/effects/blood_spritesheet.png', 'images/sprites/effects/blood_spritemap.json');
