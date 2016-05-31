@@ -21,10 +21,16 @@ BasicGame.CharSelect.prototype = {
 		// Initial filters
 		var gray = game.add.filter('Gray');
 
-		this.ninja.filters = [gray];
-		this.robot.filters = [gray];
-		this.jack.filters = [gray];
-		this.knight.filters = [gray];
+		function resetFilter (myfilter) {  // Function to reset all filters (Make them all grey)
+			myfilter.ninja.filters = [gray];
+			myfilter.robot.filters = [gray];
+			myfilter.jack.filters = [gray];
+			myfilter.knight.filters = [gray];
+		}
+
+		var allFilter = this;
+		resetFilter(this);
+		this.isClicked = null;
 
 		// On over style
 		var onOver = function (target) {
@@ -33,11 +39,26 @@ BasicGame.CharSelect.prototype = {
 
 		// On out style
 		var onOut = function (target) {
-			target.filters = [gray];
+			if(this.isClicked != target) {
+				target.filters = [gray];
+			}
 		};
 
 		var onClick = function (target) {
-			console.log(target.name + " clicked");
+			resetFilter(allFilter);
+			this.isClicked = target; // chosen character information is stored into this.isClicked
+			target.filters = null; // highlight chosen character
+			txt.inputEnabled = true; // Character must be selected before game can start
+
+			if(target.key == "char_select_0") {
+				BasicGame.selectedChar = "player_ninja";
+			} else if (target.key == "char_select_1") {
+				BasicGame.selectedChar = "player_robot";
+			} else if (target.key == "char_select_2") {
+				BasicGame.selectedChar = "player_jack";
+			} else if (target.key == "char_select_3") {
+				BasicGame.selectedChar = "player_knight";
+			}
 		};
 
 		// Add event checkers for each sprite
@@ -63,7 +84,6 @@ BasicGame.CharSelect.prototype = {
 
 		var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
 		var txt = this.add.text(this.world.width - this.world.width/4, this.world.height - 100,  "Start Game", optionStyle);
-		txt.inputEnabled = true;
 		txt.events.onInputUp.add(function() {
 			this.game.state.start("MainGame");
 		});

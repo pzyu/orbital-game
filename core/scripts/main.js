@@ -8,7 +8,9 @@ var
   musicPlayer;
 
 
-var BasicGame = {};     // So called "parent" of all the states
+var BasicGame = {
+  selectedChar: null
+};     // So called "parent" of all the states
 
 BasicGame.Main = function() {
 
