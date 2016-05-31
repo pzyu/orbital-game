@@ -11,6 +11,7 @@ var
 var BasicGame = {
   score: 0,
   projectileCG: null,
+  playerCG: null,
   selectedChar: null
 };     // So called "parent" of all the states
 

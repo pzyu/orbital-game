@@ -4,6 +4,7 @@
 BasicGame.Effect = function (game, x, y, atlasName, isProjectile, loopCount, frame) {
 	Phaser.Sprite.call(this, game, x, y, atlasName, frame);
 
+
 	this.scale.x = 0.4;
 	this.scale.y = 0.4;
 
@@ -12,26 +13,6 @@ BasicGame.Effect = function (game, x, y, atlasName, isProjectile, loopCount, fra
 
 	// Default loop count is 0
 	this.loopCount = 0;
-
-	this.isProjectile = isProjectile;
-	// If it is a projectile, then enable arcade physics
-	if (this.isProjectile) {
-		this.game.physics.arcade.enableBody(this);
-		this.body.collideWorldBounds = true;
-
-		this.body.velocity.x = 500;
-		this.body.velocity.y = -500;
-		//this.body.allowGravity = false;
-		//this.body.bounce.setTo(1, 1);
-
-		// Only assign it if it's a projectile
-		this.loopCount = loopCount;
-
-		BasicGame.projectileCG.add(this);
-
-		console.log(BasicGame.projectileCG.children);
-	}
-
 
 	if (atlasName === 'blood_effect_sprite') {
 		this.anchor.setTo(0.25, 0.5);
@@ -48,7 +29,8 @@ BasicGame.Effect = function (game, x, y, atlasName, isProjectile, loopCount, fra
 	} 
 
 	if (atlasName == 'bolt_effect_sprite') {
-		this.anchor.setTo(0, 0.5);
+		this.anchor.setTo(0.5, 0.5);
+
 
 		this.animations.add('anim_1', Phaser.Animation.generateFrameNames('bolt ', 1, 10), 16, true);		// Projectile
 		this.animations.add('anim_2', Phaser.Animation.generateFrameNames('bolt ', 11, 20), 16, false);		// Field
@@ -59,6 +41,26 @@ BasicGame.Effect = function (game, x, y, atlasName, isProjectile, loopCount, fra
 	//this.animations.play('anim_1');
 	this.target = null;
 
+	this.isProjectile = isProjectile;
+	// If it is a projectile, then enable arcade physics
+	if (this.isProjectile) {
+		this.game.physics.arcade.enableBody(this);
+		//this.body.collideWorldBounds = true;
+
+		this.body.velocity.x = 500;
+		//this.body.velocity.y = -500;
+		this.body.allowGravity = false;
+		//this.body.bounce.setTo(1, 1);
+
+		// Only assign it if it's a projectile
+		this.loopCount = loopCount;
+
+		//BasicGame.projectileCG.add(this);
+
+		this.body.setSize(150, 150, 0, 0);
+		//this.body.width *= -1;
+	}
+
 }
 
 // Effect is declared as a Sprite so it will only have Sprite attributes
@@ -66,6 +68,7 @@ BasicGame.Effect.prototype = Object.create(Phaser.Sprite.prototype);
 BasicGame.Effect.prototype.constructor = BasicGame.Effect;
 
 BasicGame.Effect.prototype.update = function() {
+	//this.game.debug.body(this);
 	//if (this.animations.currentAnim.isPlaying) {
 	//}
 	// Only update if it's not a projectile
@@ -87,8 +90,7 @@ BasicGame.Effect.prototype.update = function() {
 
 BasicGame.Effect.prototype.animationComplete = function() {
 	//console.log(this.animations.currentAnim.name + " complete");
-	this.x = -100;
-	this.y = -100;
+	this.x = this.y = -100;
 
 	// If it is a projectile, then destroy on complete
 	if (this.isProjectile) {
@@ -98,10 +100,7 @@ BasicGame.Effect.prototype.animationComplete = function() {
 
 BasicGame.Effect.prototype.animationLoop = function() {
 	if (this.animations.currentAnim.loopCount > this.loopCount) {
-		console.log('destroy');
-		//console.log(this);
-		this.animations.currentAnim.isFinished = true;
-		this.animations.currentAnim.loop = false;
+		this.endAnimation();
 	}
 };
 
@@ -114,9 +113,12 @@ BasicGame.Effect.prototype.play = function(anim, target) {
 	this.x = this.target.x;
 	this.y = this.target.y;
 
-	// Correct direction and velocity
+	// Correct collider velocity and offset
 	if (this.correctDirection(this.target)) {
-		this.body.velocity.x *= -1;
+		if (this.isProjectile) {
+			this.body.velocity.x *= -1;
+			this.body.offset.x *= -1;
+		}
 	}
 	
 	//console.log(target);
@@ -138,3 +140,19 @@ BasicGame.Effect.prototype.correctDirection = function(target) {
 		return false;
 	}
 }
+
+BasicGame.Effect.prototype.onCollide = function () {
+	var test = new BasicGame.Effect(this.game, this.x, this.y, 'bolt_effect_sprite');
+	this.game.add.existing(test);
+	test.play('anim_2', this);
+	console.log(test);
+	// Move the effect off screen first, then destroy safely
+	this.x = this.y = -100;
+	this.endAnimation();
+};
+
+// Ends animation safely
+BasicGame.Effect.prototype.endAnimation = function () {
+	this.animations.currentAnim.isFinished = true;
+	this.animations.currentAnim.loop = false;
+};

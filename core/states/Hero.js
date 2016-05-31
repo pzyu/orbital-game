@@ -135,6 +135,8 @@ BasicGame.Hero.prototype.handleControls = function() {
     	this.game.add.existing(projectile);
     	projectile.play('anim_1', this);
 
+    	BasicGame.projectileCG.add(projectile);
+
     	this.effectTimer = this.game.time.now + 500;
     }
 
