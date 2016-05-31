@@ -16,6 +16,7 @@ BasicGame.Boot.prototype = {
         this.load.script('game_scr', 'states/MainGame.js');
         this.load.script('hero_scr', 'states/Hero.js');
         this.load.script('effect_scr', 'states/Effect.js');
+        this.load.script('multiplayer_scr', 'states/Multiplayer.js');
 
         // For webfonts
         this.load.script('WebFont', 'scripts/webfontloader.js');
@@ -110,6 +111,7 @@ BasicGame.Boot.prototype = {
         this.state.add('MainMenu', BasicGame.MainMenu);
         this.state.add('CharSelect', BasicGame.CharSelect);
         this.state.add('MainGame', BasicGame.MainGame);
+        this.state.add('Multiplayer', BasicGame.Multiplayer);
     },
 
     // Create function to start the actual preloader

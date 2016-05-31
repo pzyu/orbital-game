@@ -37,6 +37,9 @@ BasicGame.MainMenu.prototype = {
 			// But just start with the game first
 			this.game.state.start('CharSelect');
 		});
+		this.addMenuOption('Multiplayer', function (target) {
+			this.game.state.start('Multiplayer');
+		});
 		this.addMenuOption('Options', function (target) {
 		});
 		this.addMenuOption('Credits', function (target) {

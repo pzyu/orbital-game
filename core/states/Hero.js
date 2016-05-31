@@ -9,12 +9,33 @@ BasicGame.Hero = function (game, x, y, frame) {
 	//console.log(BasicGame.CharSelect.prototype);
 	Phaser.Sprite.call(this, game, x, y, BasicGame.selectedChar, frame);
 
+	// Enable physics
+	this.game.physics.arcade.enableBody(this);
+
+	// Set invidual scale and collider
+	if (BasicGame.selectedChar === "player_ninja") {
+		this.scaleX = 0.32;
+		this.scaleY = 0.32;
+		this.body.setSize(220, 440, 0, 0);
+	} else if (BasicGame.selectedChar === "player_robot") {
+		this.scaleX = 0.3;
+		this.scaleY = 0.3;
+		this.body.setSize(230, 470, 0, 0);
+	} else if (BasicGame.selectedChar === "player_jack") {
+		this.scaleX = 0.23;
+		this.scaleY = 0.23;
+		this.body.setSize(300, 620, 0, 5);
+	} else {
+		this.scaleX = 0.25;
+		this.scaleY = 0.25;
+		this.body.setSize(300, 540, 0, 5);
+	}
+
 	// Set anchor to middle
 	this.anchor.setTo(0.5, 0.5);
 
-	// Set scale of player
-	this.scale.x = 0.2;
-	this.scale.y = 0.2;
+	this.scale.x = this.scaleX;
+	this.scale.y = this.scaleY;
 
 	// Add animations of player, can refer to json
 	// generateFrameNames takes in a suffix, followed by range of index, so for example ('Idle ', 1, 10) will produce an 
@@ -27,8 +48,6 @@ BasicGame.Hero = function (game, x, y, frame) {
 	this.animations.add('anim_jump', Phaser.Animation.generateFrameNames('Jump ', 1, 10), 16, false);
 	this.animations.add('anim_dead', Phaser.Animation.generateFrameNames('Dead ', 1, 10), 16, false);
 
-	// Enable physics
-	this.game.physics.arcade.enableBody(this);
 
 	// Controls
 	this.cursors = this.game.input.keyboard.createCursorKeys();
@@ -44,9 +63,8 @@ BasicGame.Hero = function (game, x, y, frame) {
 	this.jumpCount = 0;
 	this.jumpLimit = 2;
 
-	// Change collider size
-	this.body.setSize(300, 640, -10, -1);
-	this.body.maxVelocity.y = 600;
+	this.body.maxVelocity.y = 1000;
+	//this.body.bounce.set(1, 1);
 
 	this.effectName = 'anim_';
 	this.effectCount = 1;
@@ -66,8 +84,8 @@ BasicGame.Hero.prototype.constructor = BasicGame.Player;
 
 BasicGame.Hero.prototype.update = function() {
 	this.handleControls();
-	this.game.debug.spriteInfo(this, 32, 32);
-	this.game.debug.body(this);
+	//this.game.debug.spriteInfo(this, 32, 32);
+	//this.game.debug.body(this);
 };
 
 
@@ -77,7 +95,7 @@ BasicGame.Hero.prototype.handleControls = function() {
 	// If moving left
 	if (this.cursors.left.isDown) {
 		// Change scale to -ve so it'll face left
-		this.scale.x = -0.2;
+		this.scale.x = -this.scaleX;
 		this.body.velocity.x = -500;
 
 	    // Slide
@@ -91,7 +109,7 @@ BasicGame.Hero.prototype.handleControls = function() {
 
 
 	} else if (this.cursors.right.isDown) {
-		this.scale.x = 0.2;
+		this.scale.x = this.scaleX;
 		this.body.velocity.x = 500;
 
 	    // Slide
@@ -106,7 +124,7 @@ BasicGame.Hero.prototype.handleControls = function() {
 	//console.log(jumpCount);
 
 	// If jump is pressed, body is on floor, and jump timer is over&& this.body.onFloor()
- 	if (this.jumpButton.isDown  && this.game.time.now > this.jumpTimer && this.jumpCount < this.jumpLimit)
+ 	if (this.cursors.up.isDown  && this.game.time.now > this.jumpTimer && this.jumpCount < this.jumpLimit)
     {
     	console.log("jump");
         this.body.velocity.y = -600;

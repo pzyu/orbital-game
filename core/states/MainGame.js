@@ -1,5 +1,5 @@
 BasicGame.MainGame = function (game) {
-	this.gravity = 1500;
+	this.gravity = 2000;
 };
 
 var map, p, layer, cursors;
