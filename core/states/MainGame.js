@@ -1,5 +1,5 @@
 BasicGame.MainGame = function (game) {
-	this.gravity = 2000;
+	this.gravity = 5000;
 };
 
 BasicGame.MainGame.prototype = {
@@ -32,6 +32,7 @@ BasicGame.MainGame.prototype = {
 		map.setCollisionBetween(0, 60, true, layer);	// Set collision layers between json tile representation
 		map.setCollisionBetween(63, 99, true, layer);	
 
+		this.physics.arcade.TILE_BIAS = 40;
 		//console.log(this.tilesCollisionGroup);
 
 		// Assign global groups

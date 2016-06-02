@@ -9,6 +9,10 @@ BasicGame.Hero = function (game, x, y, frame) {
 	//console.log(BasicGame.CharSelect.prototype);
 	Phaser.Sprite.call(this, game, x, y, BasicGame.selectedChar, frame);
 
+	this.jumpStrength = -1500;
+	this.moveSpeed = 1000;
+	this.bounce = 0.2;
+
 	// Enable physics
 	this.game.physics.arcade.enableBody(this);
 
@@ -57,14 +61,13 @@ BasicGame.Hero = function (game, x, y, frame) {
 	this.attackAnim = this.animations.getAnimation('anim_attack');
 
 	this.jumpTimer = 0;
-	this.slideTimer = 0;
 
 	// max jumps
 	this.jumpCount = 0;
 	this.jumpLimit = 2;
 
-	this.body.maxVelocity.y = 1000;
-	this.body.bounce.set(0.1, 0);
+	//this.body.maxVelocity.y = 1000;
+	this.body.bounce.set(0.1, 0.2);
 
 	this.effectName = 'anim_';
 	this.effectCount = 1;
@@ -87,7 +90,7 @@ BasicGame.Hero.prototype.constructor = BasicGame.Player;
 BasicGame.Hero.prototype.update = function() {
 	this.handleControls();
 	//this.game.debug.spriteInfo(this, 32, 32);
-	this.game.debug.body(this);
+	//this.game.debug.body(this);
 };
 
 
@@ -142,7 +145,7 @@ BasicGame.Hero.prototype.handleControls = function() {
  	if (this.cursors.up.isDown  && this.game.time.now > this.jumpTimer && this.jumpCount < this.jumpLimit)
     {
     	console.log("jump");
-        this.body.velocity.y = -600;
+        this.body.velocity.y = -1500;
         this.jumpTimer = this.game.time.now + 350;
 		this.animations.play('anim_jump');
 		this.jumpCount++;

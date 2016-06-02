@@ -74,6 +74,8 @@ BasicGame.Effect.prototype.update = function() {
 	// Only update if it's not a projectile
 	if (!this.isProjectile) {
 		if (this.target != null && this.animations.currentAnim.isPlaying) {
+				this.x = this.target.x;
+				this.y = this.target.y;
 
 			/*//console.log(this.target.x + ", " + this.target.y);
 			if (this.animations.currentAnim.name === "anim_1") {

@@ -68,6 +68,13 @@ BasicGame.Boot.prototype = {
         }
     },
 
+    loadCharSelect: function() {
+        BasicGame.charSelect_1 = new Phaser.Sprite(this, 0, 0, "player_knight", 0);
+        //console.log(BasicGame.charSelect_1.animations.add);
+        //console.log(BasicGame.charSelect_1.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true));
+        //BasicGame.charSelect_1.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);
+    },
+
     // Init function to for game settings
     init: function () {
         //  Phaser will automatically pause if the browser tab the game is in loses focus. You can disable that here:
@@ -119,6 +126,7 @@ BasicGame.Boot.prototype = {
     // Create function to start the actual preloader
     create: function () {
         this.addGameStates();
+        this.loadCharSelect();
 
         // Set text here
         this.status.setText(this.loadingText);

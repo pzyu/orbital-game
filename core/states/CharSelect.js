@@ -36,6 +36,7 @@ BasicGame.CharSelect.prototype = {
 	},
 
 	addCharacter: function(spriteName) {
+		// This way looks nicer but is more expensive and takes longer to load
 		var char = this.add.sprite(this.offset * this.charCount, 0, spriteName);
 		//console.log(spriteName + " " + char.height + " " + char.width);
 
@@ -89,6 +90,8 @@ BasicGame.CharSelect.prototype = {
 		this.addCharacter('player_cowgirl');
 		this.addCharacter('player_knight');
 		this.addCharacter('player_robot');
+		//\console.log(BasicGame.charSelect_1);
+		//this.add.sprite(0, 0, BasicGame.charSelect_1);
 
 		// Add start game button
 		var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};

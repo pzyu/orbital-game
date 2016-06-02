@@ -12,7 +12,8 @@ var BasicGame = {
   score: 0,
   projectileCG: null,
   playerCG: null,
-  selectedChar: null
+  selectedChar: null,
+  charSelect_1: null
 };     // So called "parent" of all the states
 
 BasicGame.Main = function() {
