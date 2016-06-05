@@ -32,43 +32,18 @@ BasicGame.CharSelect.prototype = {
 		//target.animations.currentAnim.onLoop.add(function() { 
 		//	target.animations.play('anim_idle');
 		//});
-		BasicGame.selectedChar = target.key;
+		BasicGame.selectedChar = 'player_knight';
 	},
 
 	addCharacter: function(spriteName) {
 		// This way looks nicer but is more expensive and takes longer to load
-		var char = this.add.image(this.offset * this.charCount, 0, spriteName);
+		var char = this.add.sprite(this.offset * this.charCount, 0, spriteName);
 		//console.log(spriteName + " " + char.height + " " + char.width);
 
-		if (spriteName === "player_ninja") {
-			char.scale.x = 0.9;
-			char.scale.y = 0.9;
-
-			char.x += 20;
-			char.y += 20;
-		}  else if (spriteName === "player_knight") {
-			char.scale.x = 0.65;
-			char.scale.y = 0.65;
-
-			char.x += 60;
-			char.y -= 10;
-		} else if (spriteName === "player_cowgirl") {
-			char.scale.x = 0.8;
-			char.scale.y = 0.8;
-
-			char.x -= 50;
-			char.y += 5;
-		} else {
-			char.scale.x = 0.8;
-			char.scale.y = 0.8;
-
-			char.x += 80;
-		}
-
 		// Add animation and play
-		//char.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true);
+		char.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Anim_Destroyer_Idle_00', 0, 9), 16, true);
 		//char.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);
-		//char.animations.play('anim_idle');
+		char.animations.play('anim_idle');
 
 		this.resetFilter(char);
 		this.isClicked = null;
@@ -86,10 +61,10 @@ BasicGame.CharSelect.prototype = {
 		this.gray = this.game.add.filter('Gray');
 
 		// Just use factory function
-		this.addCharacter('player_ninja');
-		this.addCharacter('player_cowgirl');
-		this.addCharacter('player_knight');
-		this.addCharacter('player_robot');
+		this.addCharacter('player_destroyer');
+		this.addCharacter('player_destroyer');
+		this.addCharacter('player_destroyer');
+		this.addCharacter('player_destroyer');
 		/*BasicGame.charSelect_1.x = 200;
 		BasicGame.charSelect_1.y = 200;
 		BasicGame.charSelect_1.animations.play('anim_idle');

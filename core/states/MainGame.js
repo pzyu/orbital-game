@@ -41,7 +41,7 @@ BasicGame.MainGame.prototype = {
 		BasicGame.colliderCG = this.add.group();
 
 		// Instantiate new player
-		this.player = new BasicGame.HeroDestroyer(this.game, 100, 1000, 0, false, 'player');
+		this.player = new BasicGame.HeroTrooper(this.game, 100, 1000, 0, false, 'player');
 		this.player2 = new BasicGame.Hero(this.game, 500, 1000, 0, true, 'dummy');
 		BasicGame.playerCG.add(this.player2);
 

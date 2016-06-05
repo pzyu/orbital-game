@@ -10,7 +10,7 @@ BasicGame.Projectile = function (game, atlasName, loopCount, frame) {
 		this.anchor.setTo(0.5, 0.5);
 
 		this.animations.add('anim_1', Phaser.Animation.generateFrameNames('bolt ', 1, 10), 16, true);		// Projectile
-		this.animations.add('anim_2', Phaser.Animation.generateFrameNames('bolt ', 11, 20), 16, false);		// Field
+		this.animations.add('anim_2', Phaser.Animation.generateFrameNames('bolt ', 11, 20), 16, true);		// Field
 		this.animations.add('anim_3', Phaser.Animation.generateFrameNames('bolt ', 21, 30), 16, false);		// Strike 1
 		this.animations.add('anim_4', Phaser.Animation.generateFrameNames('bolt ', 31, 40), 16, false);		// Strike 2
 	}
@@ -37,7 +37,7 @@ BasicGame.Projectile.prototype = Object.create(Phaser.Sprite.prototype);
 BasicGame.Projectile.prototype.constructor = BasicGame.Projectile;
 
 BasicGame.Projectile.prototype.update = function() {
-	this.game.debug.body(this);
+	//this.game.debug.body(this);
 };	
 
 BasicGame.Projectile.prototype.animationComplete = function() {
@@ -54,7 +54,6 @@ BasicGame.Projectile.prototype.animationLoop = function() {
 
 // Takes in an animation string name, and target instantiated on
 BasicGame.Projectile.prototype.play = function(anim, target, velX, velY, angle, offsetX, offsetY) {
-	var offset = 100;
 	//	console.log(loadingText);
 	//console.log(this.animations.currentAnim.name + " playing");
 	this.reset(this.x, this.y);
@@ -71,7 +70,7 @@ BasicGame.Projectile.prototype.play = function(anim, target, velX, velY, angle, 
 	if (this.correctDirection(this.target)) {
 		this.body.velocity.x *= -1;
 		this.body.offset.x *= -1;
-		this.x -= offset * 2;
+		this.x -= offsetX * 2;
 	}
 	
 	//console.log(target);
@@ -108,5 +107,6 @@ BasicGame.Projectile.prototype.onCollide = function () {
 BasicGame.Projectile.prototype.endAnimation = function () {
 	this.animations.currentAnim.isFinished = true;
 	this.animations.currentAnim.loop = false;
+	console.log('collided');
 	this.kill();
 };
