@@ -28,16 +28,16 @@ BasicGame.CharSelect.prototype = {
 		this.resetFilter(target);
 		this.isClicked = target; // chosen character information is stored into this.isClicked
 		target.filters = null; // highlight chosen character
-		target.animations.play('anim_attack');
-		target.animations.currentAnim.onLoop.add(function() { 
-			target.animations.play('anim_idle');
-		});
+		//target.animations.play('anim_attack');
+		//target.animations.currentAnim.onLoop.add(function() { 
+		//	target.animations.play('anim_idle');
+		//});
 		BasicGame.selectedChar = target.key;
 	},
 
 	addCharacter: function(spriteName) {
 		// This way looks nicer but is more expensive and takes longer to load
-		var char = this.add.sprite(this.offset * this.charCount, 0, spriteName);
+		var char = this.add.image(this.offset * this.charCount, 0, spriteName);
 		//console.log(spriteName + " " + char.height + " " + char.width);
 
 		if (spriteName === "player_ninja") {
@@ -66,9 +66,9 @@ BasicGame.CharSelect.prototype = {
 		}
 
 		// Add animation and play
-		char.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true);
-		char.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);
-		char.animations.play('anim_idle');
+		//char.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true);
+		//char.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);
+		//char.animations.play('anim_idle');
 
 		this.resetFilter(char);
 		this.isClicked = null;
@@ -90,15 +90,26 @@ BasicGame.CharSelect.prototype = {
 		this.addCharacter('player_cowgirl');
 		this.addCharacter('player_knight');
 		this.addCharacter('player_robot');
-		//\console.log(BasicGame.charSelect_1);
-		//this.add.sprite(0, 0, BasicGame.charSelect_1);
+		/*BasicGame.charSelect_1.x = 200;
+		BasicGame.charSelect_1.y = 200;
+		BasicGame.charSelect_1.animations.play('anim_idle');
+		BasicGame.charSelect_2.animations.play('anim_idle');
+		BasicGame.charSelect_3.animations.play('anim_idle');
+		BasicGame.charSelect_4.animations.play('anim_idle');
+		this.game.add.existing(BasicGame.charSelect_1);
+		this.game.add.existing(BasicGame.charSelect_2);
+		this.game.add.existing(BasicGame.charSelect_3);
+		this.game.add.existing(BasicGame.charSelect_4);
+*/
 
 		// Add start game button
 		var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
 		this.startGame = this.add.text(this.world.width - this.world.width/4, this.world.height - 100,  "Start Game", optionStyle);
 		this.startGame.inputEnabled = true; 
 		this.startGame.events.onInputUp.add(function() {
-			this.game.state.start("MainGame");
+			if (BasicGame.selectedChar != null) {
+				this.game.state.start("MainGame");
+			}
 		});
 
 	},

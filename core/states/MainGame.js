@@ -38,10 +38,12 @@ BasicGame.MainGame.prototype = {
 		// Assign global groups
 		BasicGame.playerCG = this.add.group();
 		BasicGame.projectileCG = this.add.group();
+		BasicGame.colliderCG = this.add.group();
 
 		// Instantiate new player
-		this.player = new BasicGame.Hero(this.game, 100, 1000);
-		BasicGame.playerCG.add(this.player);
+		this.player = new BasicGame.HeroDestroyer(this.game, 100, 1000, 0, false, 'player');
+		this.player2 = new BasicGame.Hero(this.game, 500, 1000, 0, true, 'dummy');
+		BasicGame.playerCG.add(this.player2);
 
 		// Follow player
 		this.camera.follow(this.player);
@@ -51,6 +53,7 @@ BasicGame.MainGame.prototype = {
 		// Enable collision between player and layer
 		this.physics.arcade.collide(BasicGame.playerCG, layer);
 		this.physics.arcade.collide(BasicGame.projectileCG, layer, this.projectileCallback);
+		this.physics.arcade.overlap(BasicGame.colliderCG, BasicGame.playerCG, this.colliderCallback);
 	},
 
 	render: function() {
@@ -60,6 +63,12 @@ BasicGame.MainGame.prototype = {
 
 	// Callback function for projectile collision
 	projectileCallback: function(obj1, obj2) {
+		//console.log('collide');
 		obj1.onCollide();
+	},
+
+	// Callback function for collider collision
+	colliderCallback: function(obj1, obj2) {
+		obj1.onCollide(obj2);
 	}
 };

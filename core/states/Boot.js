@@ -4,7 +4,7 @@
 BasicGame.Boot = function (game) {
     this.splashLogo = null;
     this.ready = false;
-    this.status = "";
+    this.status = "PLS WAIT . . .";
     this.loadingText = "PLS WAIT . . .";
 };
 
@@ -12,11 +12,14 @@ BasicGame.Boot.prototype = {
     loadScripts: function() {
         // Load whatever scripts we need
         this.load.script('mainmenu_scr', 'states/MainMenu.js');
-        this.load.script('charselect_scr', 'states/CharSelect.js');
         this.load.script('game_scr', 'states/MainGame.js');
         this.load.script('hero_scr', 'states/Hero.js');
+        this.load.script('herodes_scr', 'states/HeroDestroyer.js');
+        this.load.script('charselect_scr', 'states/CharSelect.js');
         this.load.script('effect_scr', 'states/Effect.js');
+        this.load.script('proj_scr', 'states/Projectile.js');
         this.load.script('multiplayer_scr', 'states/Multiplayer.js');
+        this.load.script('collider_scr', 'states/Collider.js');
 
         // For webfonts
         this.load.script('WebFont', 'scripts/webfontloader.js');
@@ -47,6 +50,8 @@ BasicGame.Boot.prototype = {
         this.load.atlas('player_knight', 'images/sprites/knight/knight.png', 'images/sprites/knight/knight.json');
         this.load.atlas('player_cowgirl', 'images/sprites/cowgirl/cowgirl.png', 'images/sprites/cowgirl/cowgirl.json');
 
+        this.load.atlas('player_destroyer', 'images/sprites/destroyer.png', 'images/sprites/destroyer.json');
+
 
         // Effect atlas
         this.load.atlas('blood_effect_sprite', 'images/sprites/effects/blood_spritesheet.png', 'images/sprites/effects/blood_spritemap.json');
@@ -69,10 +74,19 @@ BasicGame.Boot.prototype = {
     },
 
     loadCharSelect: function() {
-        BasicGame.charSelect_1 = new Phaser.Sprite(this, 0, 0, "player_knight", 0);
-        //console.log(BasicGame.charSelect_1.animations.add);
-        //console.log(BasicGame.charSelect_1.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true));
-        //BasicGame.charSelect_1.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);
+        BasicGame.charSelect_1 = new Phaser.Sprite(this.game, -100, -100, 'player_ninja', 0);
+        BasicGame.charSelect_2 = new Phaser.Sprite(this.game, -100, -100, 'player_cowgirl', 0);
+        BasicGame.charSelect_3 = new Phaser.Sprite(this.game, -100, -100, 'player_knight', 0);
+        BasicGame.charSelect_4 = new Phaser.Sprite(this.game, -100, -100, 'player_robot', 0);
+
+        BasicGame.charSelect_1.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true);
+        BasicGame.charSelect_1.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);
+        BasicGame.charSelect_2.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true);
+        BasicGame.charSelect_2.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);
+        BasicGame.charSelect_3.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true);
+        BasicGame.charSelect_3.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);
+        BasicGame.charSelect_4.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true);
+        BasicGame.charSelect_4.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);
     },
 
     // Init function to for game settings
@@ -126,7 +140,7 @@ BasicGame.Boot.prototype = {
     // Create function to start the actual preloader
     create: function () {
         this.addGameStates();
-        this.loadCharSelect();
+        //this.loadCharSelect();
 
         // Set text here
         this.status.setText(this.loadingText);
