@@ -46,7 +46,8 @@ BasicGame.HeroTrooper = function (game, x, y, frame, isDummy, name) {
 	this.animations.add('anim_walkshoot', Phaser.Animation.generateFrameNames('Anim_Trooper_WalkShoot_00', 0, 9), 16, true);
 	this.animations.add('anim_jump', Phaser.Animation.generateFrameNames('Anim_Trooper_Jump_00', 0, 9), 16, false);
 	this.animations.add('anim_dead', Phaser.Animation.generateFrameNames('Anim_Trooper_Dead_00', 0, 9), 16, false);
-	this.animations.add('anim_ultimate', Phaser.Animation.generateFrameNames('Anim_Trooper_CrouchShoot_00', 0, 9), 16, false);
+	this.animations.add('anim_ultimate1', Phaser.Animation.generateFrameNames('Anim_Trooper_CrouchAim_00', 0, 9), 16, true);
+	this.animations.add('anim_ultimate2', Phaser.Animation.generateFrameNames('Anim_Trooper_CrouchShoot_00', 0, 9), 16, false);
 
 	// Controls
 	this.cursors = this.game.input.keyboard.createCursorKeys();
@@ -59,7 +60,7 @@ BasicGame.HeroTrooper = function (game, x, y, frame, isDummy, name) {
 	this.jumpAnim = this.animations.getAnimation('anim_jump');
 	this.thrustAnim = this.animations.getAnimation('anim_thrust');
 	this.shootAnim = this.animations.getAnimation('anim_shoot');
-	this.ultiAnim = this.animations.getAnimation('anim_ultimate');
+	this.ultiAnim = this.animations.getAnimation('anim_ultimate2');
 
     this.isAttacking = false;
 	// Add callback
@@ -238,30 +239,28 @@ BasicGame.HeroTrooper.prototype.handleSkillC = function() {
 BasicGame.HeroTrooper.prototype.handleSkillD = function() {
 	if (this.skillD.isDown && this.game.time.now > this.skillDTimer) {
     	// Play the animation
-    	this.animations.play('anim_ultimate');
-    	this.animations.currentAnim.frame = 0;
 		this.isAttacking = true;
 		this.skillDTimer = this.game.time.now + this.skillDCooldown; 
 
     	// Projectile variables
-		var shootAmt = 3;
-		var velX = 500;
-		var velY = -500;
+		var repeat = 0;
+		var velX = 1500;
+		var velY = 0;
 		var angle = 0;
 		var offsetX = 50;
-		var offsetY = -50;
+		var offsetY = 0;
 
     	var ref = this;
-    	var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 200, shootAmt);
+    	var tween = this.game.add.tween(this).to({0: 0}, 1000, Phaser.Easing.Linear.None, true, 200, repeat);
     	tween.onStart.add(function() {
-    		tween.delay(100);
+    		ref.animations.play('anim_ultimate1');
+    		ref.animations.currentAnim.frame = 0;
+    		tween.delay(1000);
     	});
-    	tween.onRepeat.add(function() {
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_2', ref, -velX, 0, 		angle, 	-offsetX, 	0);
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_2', ref, -velX, velY, 	angle, 	-offsetX, 	offsetY);
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_2', ref, 0, 	velY,	angle, 	0, 			offsetY);
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_2', ref, velX, 	velY, 	angle, 	offsetX, 	offsetY);
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_2', ref, velX, 	0, 		angle, 	offsetX, 	0);
+    	tween.onComplete.add(function() {
+    		ref.animations.play('anim_ultimate2');
+    		ref.animations.currentAnim.frame = 0;
+    		BasicGame.projectileCG.getFirstExists(false).play('anim_1', ref, velX, -velY, angle, offsetX, offsetY);
     	});
 	}
 };
