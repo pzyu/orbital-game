@@ -17,6 +17,7 @@ BasicGame.Boot.prototype = {
         
         this.load.script('herodes_scr', 'states/HeroDestroyer.js');
         this.load.script('herotrooper_scr', 'states/HeroTrooper.js');
+        this.load.script('herogunner_scr', 'states/HeroGunner.js');
 
         this.load.script('charselect_scr', 'states/CharSelect.js');
         this.load.script('effect_scr', 'states/Effect.js');
@@ -55,6 +56,7 @@ BasicGame.Boot.prototype = {
 
         this.load.atlas('player_destroyer', 'images/sprites/destroyer.png', 'images/sprites/destroyer.json');
         this.load.atlas('player_trooper', 'images/sprites/trooper.png', 'images/sprites/trooper.json');
+        this.load.atlas('player_gunner', 'images/sprites/gunner.png', 'images/sprites/gunner.json');
 
 
         // Effect atlas

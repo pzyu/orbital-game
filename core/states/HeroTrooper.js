@@ -34,6 +34,7 @@ BasicGame.HeroTrooper = function (game, x, y, frame, isDummy, name) {
 
 	this.body.setSize(70, 130, -35, -10);
 	this.body.maxVelocity.y = 3000;
+	this.body.drag.x = 5000;
 
 	// Add animations of player, can refer to json
 	// generateFrameNames takes in a suffix, followed by range of index, so for example ('Idle ', 1, 10) will produce an 
@@ -108,7 +109,6 @@ BasicGame.HeroTrooper.prototype.update = function() {
 
 
 BasicGame.HeroTrooper.prototype.handleControls = function() {
-	this.body.velocity.x = 0;
 	// If moving left
 	if (this.cursors.left.isDown && !this.isAttacking && !this.skillB.isDown) {
 		this.facingRight = -1;

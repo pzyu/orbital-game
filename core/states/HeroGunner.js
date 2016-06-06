@@ -1,6 +1,6 @@
 'use strict';
-BasicGame.HeroDestroyer = function (game, x, y, frame, isDummy, name) {
-	Phaser.Sprite.call(this, game, x, y, 'player_destroyer', frame);
+BasicGame.HeroGunner = function (game, x, y, frame, isDummy, name) {
+	Phaser.Sprite.call(this, game, x, y, 'player_gunner', frame);
 	this.isDummy = isDummy;
 	this.name = name;
 	this.anchor.setTo(0.5, 0.5);
@@ -27,12 +27,13 @@ BasicGame.HeroDestroyer = function (game, x, y, frame, isDummy, name) {
 	this.game.physics.arcade.enableBody(this);
 
 	// Set invidual scale and collider
-	this.scaleX = 0.9;
-	this.scaleY = 0.9;
+	this.scaleX = 1;
+	this.scaleY = 1;
 	this.scale.x = this.scaleX;
 	this.scale.y = this.scaleY;
+	this.bodyOffset = 20;
 
-	this.body.setSize(90, 220, -35, -15);
+	this.body.setSize(150, 100, this.bodyOffset, 20);
 	this.body.maxVelocity.y = 3000;
 	this.body.drag.x = 5000;
 
@@ -40,13 +41,13 @@ BasicGame.HeroDestroyer = function (game, x, y, frame, isDummy, name) {
 	// generateFrameNames takes in a suffix, followed by range of index, so for example ('Idle ', 1, 10) will produce an 
 	// array ['Idle 1', 'Idle 2', ..... 'Idle 10'] to automate it for you
 	// 16 is frame rate, boolean is whether animation should loop
-	this.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Anim_Destroyer_Idle_00', 0, 9), 16, true);
-	this.animations.add('anim_run', Phaser.Animation.generateFrameNames('Anim_Destroyer_Walk_00', 0, 9), 16, true);
-	this.animations.add('anim_thrust', Phaser.Animation.generateFrameNames('Anim_Destroyer_Thrust_00', 0, 9), 16, false);
-	this.animations.add('anim_shoot', Phaser.Animation.generateFrameNames('Anim_Destroyer_Shoot_00', 0, 9), 16, false);
-	this.animations.add('anim_jump', Phaser.Animation.generateFrameNames('Anim_Destroyer_Jump_00', 0, 9), 16, false);
-	this.animations.add('anim_dead', Phaser.Animation.generateFrameNames('Anim_Destroyer_Dead_00', 0, 9), 16, false);
-	this.animations.add('anim_ultimate', Phaser.Animation.generateFrameNames('Anim_Destroyer_Ultimate_00', 0, 9), 16, false);
+	this.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Anim_Gunner_Idle_00', 0, 9), 16, true);
+	this.animations.add('anim_run', Phaser.Animation.generateFrameNames('Anim_Gunner_Walk_00', 0, 9), 16, true);
+	this.animations.add('anim_leap', Phaser.Animation.generateFrameNames('Anim_Gunner_Leap_00', 0, 9), 16, false);
+	this.animations.add('anim_shoot', Phaser.Animation.generateFrameNames('Anim_Gunner_Shoot_00', 0, 9), 16, false);
+	this.animations.add('anim_jump', Phaser.Animation.generateFrameNames('Anim_Gunner_Jump_00', 0, 9), 16, false);
+	this.animations.add('anim_dead', Phaser.Animation.generateFrameNames('Anim_Gunner_Dead_00', 0, 9), 16, false);
+	this.animations.add('anim_ultimate', Phaser.Animation.generateFrameNames('Anim_Gunner_Ultimate_00', 0, 9), 16, false);
 
 	// Controls
 	this.cursors = this.game.input.keyboard.createCursorKeys();
@@ -57,7 +58,7 @@ BasicGame.HeroDestroyer = function (game, x, y, frame, isDummy, name) {
 
 	// Keep track of animation
 	this.jumpAnim = this.animations.getAnimation('anim_jump');
-	this.thrustAnim = this.animations.getAnimation('anim_thrust');
+	this.thrustAnim = this.animations.getAnimation('anim_leap');
 	this.shootAnim = this.animations.getAnimation('anim_shoot');
 	this.ultiAnim = this.animations.getAnimation('anim_ultimate');
 
@@ -91,13 +92,13 @@ BasicGame.HeroDestroyer = function (game, x, y, frame, isDummy, name) {
 }
 
 // Kind of like inherts Sprite
-BasicGame.HeroDestroyer.prototype = Object.create(Phaser.Sprite.prototype);
-BasicGame.HeroDestroyer.prototype.constructor = BasicGame.Player;
+BasicGame.HeroGunner.prototype = Object.create(Phaser.Sprite.prototype);
+BasicGame.HeroGunner.prototype.constructor = BasicGame.Player;
 
-BasicGame.HeroDestroyer.prototype.update = function() {
+BasicGame.HeroGunner.prototype.update = function() {
 	if (!this.isDummy) {
 		this.handleControls();
-		//this.game.debug.body(this);
+			this.game.debug.body(this);
 	} else {
 		this.animations.play('anim_idle');
 		//this.game.debug.spriteInfo(this, 32, 32);
@@ -106,12 +107,13 @@ BasicGame.HeroDestroyer.prototype.update = function() {
 };
 
 
-BasicGame.HeroDestroyer.prototype.handleControls = function() {
+BasicGame.HeroGunner.prototype.handleControls = function() {
+	
 	// If moving left
 	if (this.cursors.left.isDown && !this.isAttacking) {
 		this.facingRight = -1;
     	this.scale.x = -this.scaleX;
-    	this.body.offset.x = 35;
+    	this.body.offset.x = this.bodyOffset;
 		this.body.velocity.x = -this.moveSpeed;
 
 		if (this.body.onFloor()) {
@@ -121,7 +123,7 @@ BasicGame.HeroDestroyer.prototype.handleControls = function() {
 	} else if (this.cursors.right.isDown && !this.isAttacking) {
 		this.facingRight = 1;
     	this.scale.x = this.scaleX;
-    	this.body.offset.x = -35;
+    	this.body.offset.x = -this.bodyOffset;
 		this.body.velocity.x = this.moveSpeed;
 		
 		if (this.body.onFloor()) {
@@ -158,22 +160,24 @@ BasicGame.HeroDestroyer.prototype.handleControls = function() {
     this.handleSkillD();
 };
 
-BasicGame.HeroDestroyer.prototype.handleSkillA = function() {
+BasicGame.HeroGunner.prototype.handleSkillA = function() {
 	if (this.skillA.isDown && this.game.time.now > this.skillATimer) {
+		this.isAttacking = true;
+
 		var skillTween = this.game.add.tween(this.body.velocity);
-		skillTween.to({x: 1500 * this.facingRight}, 250, Phaser.Easing.Cubic.Out);
+		skillTween.to({x: 1500 * this.facingRight, y: -500}, 250, Phaser.Easing.Cubic.Out, false, 250);
+
 		skillTween.start();
 
     	// Play the animation
-    	this.animations.play('anim_thrust');
-    	this.animations.currentAnim.frame = 0;
-		this.isAttacking = true;
+    	this.animations.play('anim_leap');
+    	//this.animations.currentAnim.frame = 0;
 		this.skillATimer = this.game.time.now + this.skillACooldown; 
 		this.attackCollider.activate();   
 	}
 };
 
-BasicGame.HeroDestroyer.prototype.handleSkillB = function() {
+BasicGame.HeroGunner.prototype.handleSkillB = function() {
 	if (this.skillB.isDown && this.game.time.now > this.skillBTimer) {
     	// Play the animation
     	this.animations.play('anim_shoot');
@@ -186,7 +190,7 @@ BasicGame.HeroDestroyer.prototype.handleSkillB = function() {
 	}
 };
 
-BasicGame.HeroDestroyer.prototype.handleSkillC = function() {
+BasicGame.HeroGunner.prototype.handleSkillC = function() {
 	if (this.skillC.isDown && this.game.time.now > this.skillCTimer) {
     	// Play the animation
     	this.animations.play('anim_shoot');
@@ -214,11 +218,12 @@ BasicGame.HeroDestroyer.prototype.handleSkillC = function() {
 	}
 };
 
-BasicGame.HeroDestroyer.prototype.handleSkillD = function() {
+BasicGame.HeroGunner.prototype.handleSkillD = function() {
 	if (this.skillD.isDown && this.game.time.now > this.skillDTimer) {
     	// Play the animation
     	this.animations.play('anim_ultimate');
     	this.animations.currentAnim.frame = 0;
+    	this.animations.currentAnim.speed = 10;
 		this.isAttacking = true;
 		this.skillDTimer = this.game.time.now + this.skillDCooldown; 
 
@@ -245,20 +250,22 @@ BasicGame.HeroDestroyer.prototype.handleSkillD = function() {
 	}
 };
 
-BasicGame.HeroDestroyer.prototype.attackCallback = function() {
+BasicGame.HeroGunner.prototype.attackCallback = function() {
+	console.log('attack callback');
 	this.isAttacking = false;
 	this.attackCollider.deactivate();
 };
 
-BasicGame.HeroDestroyer.prototype.shootCallback = function() {
+BasicGame.HeroGunner.prototype.shootCallback = function() {
+	console.log('shoot callback');
 	this.isAttacking = false;
 };
 
-BasicGame.HeroDestroyer.prototype.getHit = function() {
+BasicGame.HeroGunner.prototype.getHit = function() {
 	this.effect.play('anim_4', this);
 };
 
-BasicGame.HeroDestroyer.prototype.render = function() {
+BasicGame.HeroGunner.prototype.render = function() {
 	game.debug.bodyInfo(this, 32, 32);
 	game.debug.body(this);
 }
