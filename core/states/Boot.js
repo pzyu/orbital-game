@@ -18,6 +18,7 @@ BasicGame.Boot.prototype = {
         this.load.script('herodes_scr', 'states/HeroDestroyer.js');
         this.load.script('herotrooper_scr', 'states/HeroTrooper.js');
         this.load.script('herogunner_scr', 'states/HeroGunner.js');
+        this.load.script('herowalker_scr', 'states/HeroWalker.js');
 
         this.load.script('charselect_scr', 'states/CharSelect.js');
         this.load.script('effect_scr', 'states/Effect.js');
@@ -48,15 +49,10 @@ BasicGame.Boot.prototype = {
         this.load.image('tiles_spritesheet', 'images/tiles_spritesheet.png');
 
         // Player atlas
-        this.load.atlas('player_ninja', 'images/sprites/ninja/ninja.png', 'images/sprites/ninja/ninja.json');
-        this.load.atlas('player_robot', 'images/sprites/robot/robot.png', 'images/sprites/robot/robot.json');
-        this.load.atlas('player_jack', 'images/sprites/jack/jack.png', 'images/sprites/jack/jack.json');
-        this.load.atlas('player_knight', 'images/sprites/knight/knight.png', 'images/sprites/knight/knight.json');
-        this.load.atlas('player_cowgirl', 'images/sprites/cowgirl/cowgirl.png', 'images/sprites/cowgirl/cowgirl.json');
-
-        this.load.atlas('player_destroyer', 'images/sprites/destroyer.png', 'images/sprites/destroyer.json');
-        this.load.atlas('player_trooper', 'images/sprites/trooper.png', 'images/sprites/trooper.json');
-        this.load.atlas('player_gunner', 'images/sprites/gunner.png', 'images/sprites/gunner.json');
+        this.load.atlas('player_destroyer', 'images/sprites/heroes/destroyer.png', 'images/sprites/heroes/destroyer.json');
+        this.load.atlas('player_trooper', 'images/sprites/heroes/trooper.png', 'images/sprites/heroes/trooper.json');
+        this.load.atlas('player_gunner', 'images/sprites/heroes/gunner.png', 'images/sprites/heroes/gunner.json');
+        this.load.atlas('player_walker', 'images/sprites/heroes/walker.png', 'images/sprites/heroes/walker.json');
 
 
         // Effect atlas
@@ -80,7 +76,7 @@ BasicGame.Boot.prototype = {
     },
 
     loadCharSelect: function() {
-        BasicGame.charSelect_1 = new Phaser.Sprite(this.game, -100, -100, 'player_ninja', 0);
+        /*BasicGame.charSelect_1 = new Phaser.Sprite(this.game, -100, -100, 'player_ninja', 0);
         BasicGame.charSelect_2 = new Phaser.Sprite(this.game, -100, -100, 'player_cowgirl', 0);
         BasicGame.charSelect_3 = new Phaser.Sprite(this.game, -100, -100, 'player_knight', 0);
         BasicGame.charSelect_4 = new Phaser.Sprite(this.game, -100, -100, 'player_robot', 0);
@@ -92,7 +88,7 @@ BasicGame.Boot.prototype = {
         BasicGame.charSelect_3.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true);
         BasicGame.charSelect_3.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);
         BasicGame.charSelect_4.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true);
-        BasicGame.charSelect_4.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);
+        BasicGame.charSelect_4.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);*/
     },
 
     // Init function to for game settings

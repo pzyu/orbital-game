@@ -1,16 +1,16 @@
 'use strict';
-BasicGame.HeroGunner = function (game, x, y, frame, isDummy, name) {
-	Phaser.Sprite.call(this, game, x, y, 'player_gunner', frame);
+BasicGame.HeroWalker = function (game, x, y, frame, isDummy, name) {
+	Phaser.Sprite.call(this, game, x, y, 'player_walker', frame);
 	this.isDummy = isDummy;
 	this.name = name;
 	this.anchor.setTo(0.5, 0.5);
 
 	// Movement
 	this.jumpCount = 0;
-	this.jumpLimit = 2;
+	this.jumpLimit = 1;
 	this.jumpTimer = 0;
-	this.jumpStrength = -1500;
-	this.moveSpeed = 800;
+	this.jumpStrength = -2000;
+	this.moveSpeed = 500;
 	this.facingRight = 1;
 
 	// Skills
@@ -31,9 +31,9 @@ BasicGame.HeroGunner = function (game, x, y, frame, isDummy, name) {
 	this.scaleY = 1;
 	this.scale.x = this.scaleX;
 	this.scale.y = this.scaleY;
-	this.bodyOffset = 20;
+	this.bodyOffset = 10;
 
-	this.body.setSize(150, 100, this.bodyOffset, 20);
+	this.body.setSize(160, 200, this.bodyOffset, -2);
 	this.body.maxVelocity.y = 3000;
 	this.body.drag.x = 5000;
 
@@ -41,13 +41,13 @@ BasicGame.HeroGunner = function (game, x, y, frame, isDummy, name) {
 	// generateFrameNames takes in a suffix, followed by range of index, so for example ('Idle ', 1, 10) will produce an 
 	// array ['Idle 1', 'Idle 2', ..... 'Idle 10'] to automate it for you
 	// 16 is frame rate, boolean is whether animation should loop
-	this.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Anim_Gunner_Idle_00', 0, 9), 16, true);
-	this.animations.add('anim_run', Phaser.Animation.generateFrameNames('Anim_Gunner_Walk_00', 0, 9), 16, true);
-	this.animations.add('anim_leap', Phaser.Animation.generateFrameNames('Anim_Gunner_Leap_00', 0, 9), 16, false);
-	this.animations.add('anim_shoot', Phaser.Animation.generateFrameNames('Anim_Gunner_Shoot_00', 0, 9), 16, false);
-	this.animations.add('anim_jump', Phaser.Animation.generateFrameNames('Anim_Gunner_Jump_00', 0, 9), 16, false);
-	this.animations.add('anim_dead', Phaser.Animation.generateFrameNames('Anim_Gunner_Dead_00', 0, 9), 16, false);
-	this.animations.add('anim_ultimate', Phaser.Animation.generateFrameNames('Anim_Gunner_Ultimate_00', 0, 9), 16, false);
+	this.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Anim_Walker_Idle_00', 0, 9), 16, true);
+	this.animations.add('anim_run', Phaser.Animation.generateFrameNames('Anim_Walker_Walk_00', 0, 9), 16, true);
+	this.animations.add('anim_backdash', Phaser.Animation.generateFrameNames('Anim_Walker_Backdash_00', 0, 9), 16, false);
+	this.animations.add('anim_shoot', Phaser.Animation.generateFrameNames('Anim_Walker_Shoot_00', 0, 9), 16, false);
+	this.animations.add('anim_jump', Phaser.Animation.generateFrameNames('Anim_Walker_Jump_00', 0, 9), 16, false);
+	this.animations.add('anim_dead', Phaser.Animation.generateFrameNames('Anim_Walker_Dead_00', 0, 9), 16, false);
+	this.animations.add('anim_ultimate', Phaser.Animation.generateFrameNames('Anim_Walker_Ultimate_00', 0, 9), 16, false);
 
 	// Controls
 	this.cursors = this.game.input.keyboard.createCursorKeys();
@@ -58,7 +58,7 @@ BasicGame.HeroGunner = function (game, x, y, frame, isDummy, name) {
 
 	// Keep track of animation
 	this.jumpAnim = this.animations.getAnimation('anim_jump');
-	this.thrustAnim = this.animations.getAnimation('anim_leap');
+	this.thrustAnim = this.animations.getAnimation('anim_backdash');
 	this.shootAnim = this.animations.getAnimation('anim_shoot');
 	this.ultiAnim = this.animations.getAnimation('anim_ultimate');
 
@@ -92,10 +92,10 @@ BasicGame.HeroGunner = function (game, x, y, frame, isDummy, name) {
 }
 
 // Kind of like inherts Sprite
-BasicGame.HeroGunner.prototype = Object.create(Phaser.Sprite.prototype);
-BasicGame.HeroGunner.prototype.constructor = BasicGame.Player;
+BasicGame.HeroWalker.prototype = Object.create(Phaser.Sprite.prototype);
+BasicGame.HeroWalker.prototype.constructor = BasicGame.Player;
 
-BasicGame.HeroGunner.prototype.update = function() {
+BasicGame.HeroWalker.prototype.update = function() {
 	if (!this.isDummy) {
 		this.handleControls();
 			this.game.debug.body(this);
@@ -107,7 +107,7 @@ BasicGame.HeroGunner.prototype.update = function() {
 };
 
 
-BasicGame.HeroGunner.prototype.handleControls = function() {
+BasicGame.HeroWalker.prototype.handleControls = function() {
 	
 	// If moving left
 	if (this.cursors.left.isDown && !this.isAttacking) {
@@ -140,10 +140,24 @@ BasicGame.HeroGunner.prototype.handleControls = function() {
     		this.jumpAnim.frame = 0;
     	}
     	//console.log("jump");
-        this.body.velocity.y = this.jumpStrength;
-        this.jumpTimer = this.game.time.now + 350;
-		this.animations.play('anim_jump');
-		this.jumpCount++;
+
+        //this.body.velocity.y = this.jumpStrength;
+		var jumpTween = this.game.add.tween(this.body.velocity);
+		jumpTween.to({0: 0}, 250, Phaser.Easing.Linear.None, false, 300);
+		jumpTween.start();
+		var ref = this;
+		ref.animations.play('anim_jump');
+		ref.isAttacking = true;
+		jumpTween.onStart.add(function() {
+			ref.body.velocity.y = ref.jumpStrength;
+        	ref.jumpTimer = ref.game.time.now + 350;
+			ref.jumpCount++;
+		});
+		jumpTween.onComplete.add(function() {
+			ref.isAttacking = false;
+		});
+
+        
     }
     // Idle | if not moving and on the floor
     else if (this.body.velocity.x == 0 && this.body.onFloor()  && !this.isAttacking) {
@@ -160,24 +174,24 @@ BasicGame.HeroGunner.prototype.handleControls = function() {
     this.handleSkillD();
 };
 
-BasicGame.HeroGunner.prototype.handleSkillA = function() {
+BasicGame.HeroWalker.prototype.handleSkillA = function() {
 	if (this.skillA.isDown && this.game.time.now > this.skillATimer) {
 		this.isAttacking = true;
 
 		var skillTween = this.game.add.tween(this.body.velocity);
-		skillTween.to({x: 1500 * this.facingRight, y: -500}, 250, Phaser.Easing.Cubic.Out, false, 250);
+		skillTween.to({x: -1500 * this.facingRight, y: -500}, 250, Phaser.Easing.Cubic.Out, false, 250);
 
 		skillTween.start();
 
     	// Play the animation
-    	this.animations.play('anim_leap');
+    	this.animations.play('anim_backdash');
     	//this.animations.currentAnim.frame = 0;
 		this.skillATimer = this.game.time.now + this.skillACooldown; 
 		this.attackCollider.activate();   
 	}
 };
 
-BasicGame.HeroGunner.prototype.handleSkillB = function() {
+BasicGame.HeroWalker.prototype.handleSkillB = function() {
 	if (this.skillB.isDown && this.game.time.now > this.skillBTimer) {
     	// Play the animation
     	this.animations.play('anim_shoot');
@@ -190,7 +204,7 @@ BasicGame.HeroGunner.prototype.handleSkillB = function() {
 	}
 };
 
-BasicGame.HeroGunner.prototype.handleSkillC = function() {
+BasicGame.HeroWalker.prototype.handleSkillC = function() {
 	if (this.skillC.isDown && this.game.time.now > this.skillCTimer) {
     	// Play the animation
     	this.animations.play('anim_shoot');
@@ -218,7 +232,7 @@ BasicGame.HeroGunner.prototype.handleSkillC = function() {
 	}
 };
 
-BasicGame.HeroGunner.prototype.handleSkillD = function() {
+BasicGame.HeroWalker.prototype.handleSkillD = function() {
 	if (this.skillD.isDown && this.game.time.now > this.skillDTimer) {
     	// Play the animation
     	this.animations.play('anim_ultimate');
@@ -250,22 +264,22 @@ BasicGame.HeroGunner.prototype.handleSkillD = function() {
 	}
 };
 
-BasicGame.HeroGunner.prototype.attackCallback = function() {
+BasicGame.HeroWalker.prototype.attackCallback = function() {
 	console.log('attack callback');
 	this.isAttacking = false;
 	this.attackCollider.deactivate();
 };
 
-BasicGame.HeroGunner.prototype.shootCallback = function() {
+BasicGame.HeroWalker.prototype.shootCallback = function() {
 	console.log('shoot callback');
 	this.isAttacking = false;
 };
 
-BasicGame.HeroGunner.prototype.getHit = function() {
+BasicGame.HeroWalker.prototype.getHit = function() {
 	this.effect.play('anim_4', this);
 };
 
-BasicGame.HeroGunner.prototype.render = function() {
+BasicGame.HeroWalker.prototype.render = function() {
 	game.debug.bodyInfo(this, 32, 32);
 	game.debug.body(this);
 }

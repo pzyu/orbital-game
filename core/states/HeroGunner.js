@@ -259,6 +259,7 @@ BasicGame.HeroGunner.prototype.attackCallback = function() {
 BasicGame.HeroGunner.prototype.shootCallback = function() {
 	console.log('shoot callback');
 	this.isAttacking = false;
+	this.attackCollider.deactivate();
 };
 
 BasicGame.HeroGunner.prototype.getHit = function() {
