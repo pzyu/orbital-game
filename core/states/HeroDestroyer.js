@@ -33,7 +33,7 @@ BasicGame.HeroDestroyer = function (game, x, y, frame, isDummy, name) {
 	this.scale.y = this.scaleY;
 
 	this.body.setSize(90, 220, -35, -15);
-	this.body.maxVelocity.y = 3000;
+	this.body.maxVelocity.y = 2500;
 	this.body.drag.x = 5000;
 
 	// Add animations of player, can refer to json
@@ -261,4 +261,20 @@ BasicGame.HeroDestroyer.prototype.getHit = function() {
 BasicGame.HeroDestroyer.prototype.render = function() {
 	game.debug.bodyInfo(this, 32, 32);
 	game.debug.body(this);
-}
+};
+
+BasicGame.HeroDestroyer.prototype.getSkillA = function() {
+	return this.game.math.clamp((this.game.time.now - this.skillATimer) / this.skillACooldown, 0, 1);
+};
+
+BasicGame.HeroDestroyer.prototype.getSkillB = function() {
+	return this.game.math.clamp((this.game.time.now - this.skillBTimer) / this.skillBCooldown, 0, 1);
+};
+
+BasicGame.HeroDestroyer.prototype.getSkillC = function() {
+	return this.game.math.clamp((this.game.time.now - this.skillCTimer) / this.skillCCooldown, 0, 1);
+};
+
+BasicGame.HeroDestroyer.prototype.getSkillD = function() {
+	return this.game.math.clamp((this.game.time.now - this.skillDTimer) / this.skillDCooldown, 0, 1);
+};

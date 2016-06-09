@@ -20,6 +20,8 @@ BasicGame.Boot.prototype = {
         this.load.script('herogunner_scr', 'states/HeroGunner.js');
         this.load.script('herowalker_scr', 'states/HeroWalker.js');
 
+        this.load.script('herotroopermp_scr', 'states/HeroTrooperMP.js');
+
         this.load.script('charselect_scr', 'states/CharSelect.js');
         this.load.script('effect_scr', 'states/Effect.js');
         this.load.script('proj_scr', 'states/Projectile.js');
@@ -36,12 +38,6 @@ BasicGame.Boot.prototype = {
         // Load background image
         this.load.image('menu_background', 'images/menu_background.gif');
 
-        // For char select
-        this.load.image('char_select_0', 'images/char_select_0.png');
-        this.load.image('char_select_1', 'images/char_select_1.png');
-        this.load.image('char_select_2', 'images/char_select_2.png');
-        this.load.image('char_select_3', 'images/char_select_3.png');
-
         // Tilemap spritesheet json and png
         this.load.tilemap('map', 'images/tiles_spritesheet.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.image('tiles', 'images/sheet.png');
@@ -54,6 +50,8 @@ BasicGame.Boot.prototype = {
         this.load.atlas('player_gunner', 'images/sprites/heroes/gunner.png', 'images/sprites/heroes/gunner.json');
         this.load.atlas('player_walker', 'images/sprites/heroes/walker.png', 'images/sprites/heroes/walker.json');
 
+
+        this.load.image('skill', 'images/sprites/heroes/skill.png');
 
         // Effect atlas
         this.load.atlas('blood_effect_sprite', 'images/sprites/effects/blood_spritesheet.png', 'images/sprites/effects/blood_spritemap.json');

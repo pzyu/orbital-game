@@ -269,4 +269,20 @@ BasicGame.HeroGunner.prototype.getHit = function() {
 BasicGame.HeroGunner.prototype.render = function() {
 	game.debug.bodyInfo(this, 32, 32);
 	game.debug.body(this);
-}
+};
+
+BasicGame.HeroGunner.prototype.getSkillA = function() {
+	return this.game.math.clamp((this.game.time.now - this.skillATimer) / this.skillACooldown, 0, 1);
+};
+
+BasicGame.HeroGunner.prototype.getSkillB = function() {
+	return this.game.math.clamp((this.game.time.now - this.skillBTimer) / this.skillBCooldown, 0, 1);
+};
+
+BasicGame.HeroGunner.prototype.getSkillC = function() {
+	return this.game.math.clamp((this.game.time.now - this.skillCTimer) / this.skillCCooldown, 0, 1);
+};
+
+BasicGame.HeroGunner.prototype.getSkillD = function() {
+	return this.game.math.clamp((this.game.time.now - this.skillDTimer) / this.skillDCooldown, 0, 1);
+};

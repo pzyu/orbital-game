@@ -1,12 +1,3 @@
-// Global Variables
-var
-  game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game'),
-  gameOptions = {
-    playSound: true,
-    playMusic: true
-  },
-  musicPlayer;
-
 
 var BasicGame = {
   score: 0,
@@ -21,8 +12,17 @@ var BasicGame = {
   charSelect_4: null,
 };     // So called "parent" of all the states
 
-BasicGame.Main = function() {
 
+
+// Global Variables
+var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
+
+function preload() {
+    this.load.image('splashLogo', 'images/splash_logo.png');
+    this.load.script('boot_scr',  'states/Boot.js');
+}
+
+BasicGame.Main = function() {
 };
 
 BasicGame.Main.prototype = {
@@ -36,7 +36,6 @@ BasicGame.Main.prototype = {
     game.state.add('Boot', BasicGame.Boot);
     game.state.start('Boot');
   }
-
 };
 
 game.state.add('Main', BasicGame.Main);

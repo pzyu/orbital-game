@@ -281,4 +281,20 @@ BasicGame.HeroTrooper.prototype.getHit = function() {
 BasicGame.HeroTrooper.prototype.render = function() {
 	game.debug.bodyInfo(this, 32, 32);
 	game.debug.body(this);
-}
+};
+
+BasicGame.HeroTrooper.prototype.getSkillA = function() {
+	return this.game.math.clamp((this.game.time.now - this.skillATimer) / this.skillACooldown, 0, 1);
+};
+
+BasicGame.HeroTrooper.prototype.getSkillB = function() {
+	return this.game.math.clamp((this.game.time.now - this.skillBTimer) / this.skillBCooldown, 0, 1);
+};
+
+BasicGame.HeroTrooper.prototype.getSkillC = function() {
+	return this.game.math.clamp((this.game.time.now - this.skillCTimer) / this.skillCCooldown, 0, 1);
+};
+
+BasicGame.HeroTrooper.prototype.getSkillD = function() {
+	return this.game.math.clamp((this.game.time.now - this.skillDTimer) / this.skillDCooldown, 0, 1);
+};
