@@ -27,10 +27,10 @@ BasicGame.MainMenu.prototype = {
 	create: function () {
 		this.addMenuOption('Start', function (target) {
 			// Move to character select screen
-			this.game.state.start('CharSelect');
+			this.game.state.start('CharSelect', true, false, false);
 		});
 		this.addMenuOption('Multiplayer', function (target) {
-			this.game.state.start('Multiplayer');
+			this.game.state.start('CharSelect', true, false, true);
 		});
 		this.addMenuOption('Options', function (target) {
 		});

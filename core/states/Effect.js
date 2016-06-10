@@ -61,7 +61,7 @@ BasicGame.Effect.prototype.animationLoop = function() {
 
 // Takes in an animation string name, and target instantiated on
 BasicGame.Effect.prototype.play = function(anim, target, velX, velY) {
-	var offset = 100;
+	var offset = 0;
 	//	console.log(loadingText);
 	//console.log(this.animations.currentAnim.name + " playing");
 	this.reset(this.x, this.y);

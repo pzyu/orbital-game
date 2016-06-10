@@ -4,9 +4,15 @@ BasicGame.CharSelect = function (game) {
 	this.startGame = null;
 	this.gray = null;
 	this.isClicked = null;
+	this.multiplayer = false;
 };
 
 BasicGame.CharSelect.prototype = {
+	init: function(multiplayer) {
+		this.multiplayer = multiplayer;
+		console.log(this.multiplayer);
+	},
+
 	resetFilter: function(target) {
 		target.filters = [this.gray];
 	},
@@ -93,9 +99,12 @@ BasicGame.CharSelect.prototype = {
 		var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
 		this.startGame = this.add.text(this.world.width - this.world.width/4, this.world.height - 100,  "Start Game", optionStyle);
 		this.startGame.inputEnabled = true; 
+		var ref = this;
 		this.startGame.events.onInputUp.add(function() {
-			if (BasicGame.selectedChar != null) {
+			if (BasicGame.selectedChar != null && !ref.multiplayer) {
 				this.game.state.start("MainGame");
+			} else if (BasicGame.selectedChar != null && ref.multiplayer) {
+				this.game.state.start("Multiplayer");
 			}
 		});
 

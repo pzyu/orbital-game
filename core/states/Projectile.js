@@ -1,8 +1,8 @@
 
 // Constructor takes in game, x and y position, atlas name, duration of animation, whether effect is a projectile
-BasicGame.Projectile = function (game, atlasName, loopCount, frame) {
+BasicGame.Projectile = function (game, atlasName, loopCount, frame, target) {
 	Phaser.Sprite.call(this, game, -100, -100, atlasName, frame);
-
+	this.target = target;
 	this.scale.x = 0.4;
 	this.scale.y = 0.4;
 
@@ -93,7 +93,7 @@ BasicGame.Projectile.prototype.correctDirection = function(target) {
 	}
 };
 
-BasicGame.Projectile.prototype.onCollide = function () {
+BasicGame.Projectile.prototype.onCollide = function (collider) {
 	var test = new BasicGame.Effect(this.game, this.x, this.y, 'bolt_effect_sprite');
 	this.game.add.existing(test);
 	test.play('anim_2', this);
@@ -101,6 +101,12 @@ BasicGame.Projectile.prototype.onCollide = function () {
 	// Move the effect off screen first, then destroy safely
 	this.x = this.y = -100;
 	this.endAnimation();
+
+	// If not yourself and exists in playerCG
+	if (collider != this.target && BasicGame.playerCG.getIndex(collider) > -1) {
+		this.isActive = false;
+		collider.getHit();
+	}
 };
 
 // Ends animation safely

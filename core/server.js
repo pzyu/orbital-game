@@ -8,8 +8,9 @@ app.use(express.static(__dirname));
 var Eureca = require('eureca.io');
 
 // Create an instance of EurecaServer
-var eurecaServer = new Eureca.Server({allow:['setID', 'spawnEnemy', 'kill', 'updateState']});
+var eurecaServer = new Eureca.Server({allow:['setID', 'spawnEnemy', 'kill', 'updateState', 'getChar']});
 var clients = {};
+var selectedChar = "test";
 
 // Attach eureca.io to our http server
 eurecaServer.attach(server);
@@ -21,8 +22,16 @@ eurecaServer.onConnect(function(conn) {
 	var remote = eurecaServer.getClient(conn.id);
 	clients[conn.id] = {id:conn.id, remote:remote};
 
+	remote.getChar().onReady(function(result) {
+	 	//console.log("before "+ selectedChar);
+	 	//selectedChar = result;
+	 	//console.log("after "+ selectedChar);
+	 	//console.log(clients[cc].id);
+
+	});
 	// setID method in client side
-	remote.setID(conn.id);
+	remote.setID(conn.id);			
+
 });
 
 // Detect client disconnection
@@ -45,17 +54,34 @@ eurecaServer.exports.handshake = function() {
 	console.log('handshaking');
 	for (var c in clients) {
 		var remote = clients[c].remote;
+		var test = clients[c];
 		for (var cc in clients) {
-			var x = clients[cc].laststate ? clients[cc].laststate.x: 0;
-			var y = clients[cc].laststate ? clients[cc].laststate.y: 0;
-			
-			remote.spawnEnemy(clients[cc].id, 0, 0);
+			var x = 0;
+			var y = 0;
+			if (clients[cc].lastState != null) {
+				x = clients[cc].lastState.x;
+				y = clients[cc].lastState.y;
+			}
+			clients[cc].remote.getChar().onReady(function(result) {
+				//console.log(test);
+				//console.log(clients[cc]);
+				//console.log(clients[cc].id + " selected " + result);
+				//console.log('remote ' + test.id + " other " + clients[cc].id);
+				//clients[c].remote.spawnEnemy(clients[cc].id, x, y, result);
+				//console.log(remote);
+			});
+			//console.log(clients[cc].remote.getChar().then());
+
+			//console.log('remote ' + test.id + " other " + clients[cc].id);
+			//console.log("selected "  + selectedChar);
+			//console.log('remote ' + clients[c].id + " other " + clients[cc].id);
+			remote.spawnEnemy(clients[cc].id, x, y, "player_trooper");
 		}
 	}
 }
 
 eurecaServer.exports.handleKeys = function(keys) {
-		console.log('handling');
+	//console.log('handling');
 	var conn = this.connection;
 	var updatedClient = clients[conn.id];
 

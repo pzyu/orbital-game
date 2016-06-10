@@ -21,6 +21,7 @@ BasicGame.Boot.prototype = {
         this.load.script('herowalker_scr', 'states/HeroWalker.js');
 
         this.load.script('herotroopermp_scr', 'states/HeroTrooperMP.js');
+        this.load.script('herowalkermp_scr', 'states/HeroWalkerMP.js');
 
         this.load.script('charselect_scr', 'states/CharSelect.js');
         this.load.script('effect_scr', 'states/Effect.js');
