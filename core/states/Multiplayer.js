@@ -3,6 +3,8 @@ BasicGame.Multiplayer = function (game) {
 	this.myID = '';
 	this.selectedChar = '';
 	this.gravity = 5000;
+	this.spawnX = 100;
+	this.spawnY = 1000;
 };
 
 BasicGame.Multiplayer.prototype.init = function() {
@@ -15,6 +17,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 	var ref = this;
 
 	this.eurecaClientSetup = function() {
+		// Setup client
 		this.eurecaClient = new Eureca.Client();
 
 		this.eurecaClient.ready(function(proxy) {
@@ -28,8 +31,9 @@ BasicGame.Multiplayer.prototype.preload = function() {
 	this.eurecaClient.exports.setID = function(id) {
 		//create() is moved here to make sure nothing is created before uniq id assignation
 		ref.myID = id;
-		console.log('create id ' + ref.myID);
+		// Create game here
 		ref.createGame();
+		// Handshake with server to replicate other players
 		ref.eurecaServer.handshake();
 		ref.ready = true;
 	}
@@ -48,36 +52,43 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		var curY = y;
 		console.log('Spawning', i, x, y, char);
 		if (x == 0 && y == 0) {
-			curX = 100;
-			curY = 1000;
+			curX = this.spawnX;
+			curY = this.spawnY;
 		}
+
 		// If doesn't already exist
 		if (ref.playerList[i] == null) {
 			if (char == "player_trooper") {
 				var player = new BasicGame.HeroTrooperMP(i, ref.game, curX, curY);
-				ref.playerList[i] = player;
 			} 
 			if (char == "player_walker") {
 				var player = new BasicGame.HeroWalkerMP(i, ref.game, curX, curY);
-				ref.playerList[i] = player;
 			}
+			if (char == "player_destroyer") {
+				var player = new BasicGame.HeroDestroyerMP(i, ref.game, curX, curY);
+			}
+			if (char == "player_gunner") {
+				var player = new BasicGame.HeroGunnerMP(i, ref.game, curX, curY);
+			}
+			ref.playerList[i] = player;
 		}
 	}
 
 	this.eurecaClient.exports.updateState = function(id, state) {
-		if (ref.playerList[id]) {
+		var curPlayer = ref.playerList[id];
+		if (curPlayer) {
 			//console.log(state);
-			// So called compensation
-			ref.playerList[id].x = state.x;
-			ref.playerList[id].y = state.y;
+			// So called compensation, can use tween for smoother compensation but more expensive
+			curPlayer.x = state.x;
+			curPlayer.y = state.y;
 			// Update player's cursor with state
-			ref.playerList[id].cursor = state;
-			ref.playerList[id].update();
+			curPlayer.cursor = state;
+			curPlayer.update();
 		}
 	}
 
 	this.eurecaClient.exports.getChar = function() {
-		console.log('getting char');
+		// Return player's selected character
 		return BasicGame.selectedChar;
 	}
 
@@ -133,13 +144,18 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 
 	if (BasicGame.selectedChar == "player_trooper") {
 		var player = new BasicGame.HeroTrooperMP(this.myID, this.game, 100, 1000);
-		this.playerList[this.myID] = player;
 	}
 	if (BasicGame.selectedChar == "player_walker") {
 		var player = new BasicGame.HeroWalkerMP(this.myID, this.game, 100, 1000);
-		this.playerList[this.myID] = player;
+	}
+	if (BasicGame.selectedChar == "player_destroyer") {
+		var player = new BasicGame.HeroDestroyerMP(this.myID, this.game, 100, 1000);
+	}
+	if (BasicGame.selectedChar == "player_gunner") {
+		var player = new BasicGame.HeroGunnerMP(this.myID, this.game, 100, 1000);
 	}
 
+	this.playerList[this.myID] = player;
 	this.camera.follow(player);
 };
 

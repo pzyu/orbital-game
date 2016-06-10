@@ -20,15 +20,13 @@ eurecaServer.onConnect(function(conn) {
 	console.log('New client id=%s ', conn.id, conn.remoteAddress);
 
 	var remote = eurecaServer.getClient(conn.id);
-	clients[conn.id] = {id:conn.id, remote:remote};
+	clients[conn.id] = {id:conn.id, remote:remote, char:selectedChar};
 
+	// Set client's selected character
 	remote.getChar().onReady(function(result) {
-	 	//console.log("before "+ selectedChar);
-	 	//selectedChar = result;
-	 	//console.log("after "+ selectedChar);
-	 	//console.log(clients[cc].id);
-
+		clients[conn.id].char = result;
 	});
+
 	// setID method in client side
 	remote.setID(conn.id);			
 
@@ -56,26 +54,15 @@ eurecaServer.exports.handshake = function() {
 		var remote = clients[c].remote;
 		var test = clients[c];
 		for (var cc in clients) {
+			// Get starting position for every client
 			var x = 0;
 			var y = 0;
 			if (clients[cc].lastState != null) {
 				x = clients[cc].lastState.x;
 				y = clients[cc].lastState.y;
 			}
-			clients[cc].remote.getChar().onReady(function(result) {
-				//console.log(test);
-				//console.log(clients[cc]);
-				//console.log(clients[cc].id + " selected " + result);
-				//console.log('remote ' + test.id + " other " + clients[cc].id);
-				//clients[c].remote.spawnEnemy(clients[cc].id, x, y, result);
-				//console.log(remote);
-			});
-			//console.log(clients[cc].remote.getChar().then());
-
-			//console.log('remote ' + test.id + " other " + clients[cc].id);
-			//console.log("selected "  + selectedChar);
-			//console.log('remote ' + clients[c].id + " other " + clients[cc].id);
-			remote.spawnEnemy(clients[cc].id, x, y, "player_trooper");
+			// Replicate enemy at position, along with selected character
+			remote.spawnEnemy(clients[cc].id, x, y, clients[cc].char);
 		}
 	}
 }
@@ -85,10 +72,13 @@ eurecaServer.exports.handleKeys = function(keys) {
 	var conn = this.connection;
 	var updatedClient = clients[conn.id];
 
+	// For each client, update last input
 	for (var c in clients) {
+		// Update server side
 		var remote = clients[c].remote;
 		remote.updateState(updatedClient.id, keys);
 
+		// Key track of last state for spawning new players
 		clients[c].lastState = keys;
 	}
 }
