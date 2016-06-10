@@ -50,11 +50,11 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		if (i == ref.myID) return;
 		var curX = x;
 		var curY = y;
-		console.log('Spawning', i, x, y, char);
-		if (x == 0 && y == 0) {
-			curX = this.spawnX;
-			curY = this.spawnY;
+		if (x == 0 || y == 0) {
+			curX = ref.spawnX;
+			curY = ref.spawnY;
 		}
+		console.log('Spawning', i, curX, curY, char);
 
 		// If doesn't already exist
 		if (ref.playerList[i] == null) {
@@ -76,11 +76,18 @@ BasicGame.Multiplayer.prototype.preload = function() {
 
 	this.eurecaClient.exports.updateState = function(id, state) {
 		var curPlayer = ref.playerList[id];
-		if (curPlayer) {
+		if (curPlayer && this.myID != id) {
+			//console.log("state: " + state.y + " current: " + curPlayer.y);
 			//console.log(state);
 			// So called compensation, can use tween for smoother compensation but more expensive
 			curPlayer.x = state.x;
-			curPlayer.y = state.y;
+		
+			// If diff within threshold then update otherwise keeps jittering
+			if (ref.game.math.difference(curPlayer.y, state.y) < 5) {
+				curPlayer.y = state.y;
+			}
+			//state.x = curPlayer.x;
+			//state.y = curPlayer.y;
 			// Update player's cursor with state
 			curPlayer.cursor = state;
 			curPlayer.update();
@@ -157,6 +164,38 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 
 	this.playerList[this.myID] = player;
 	this.camera.follow(player);
+
+	this.player = player;
+
+	this.skillA = this.game.add.image(50, this.game.height - 20, 'skill');
+	this.skillB = this.game.add.image(100, this.game.height - 20, 'skill');
+	this.skillC = this.game.add.image(150, this.game.height - 20, 'skill');
+	this.skillD = this.game.add.image(200, this.game.height - 20, 'skill');
+
+	this.skillA.fixedToCamera = true;
+	this.skillB.fixedToCamera = true;
+	this.skillC.fixedToCamera = true;
+	this.skillD.fixedToCamera = true;
+
+	this.skillA.anchor.setTo(0.5, 1);
+	this.skillB.anchor.setTo(0.5, 1);
+	this.skillC.anchor.setTo(0.5, 1);
+	this.skillD.anchor.setTo(0.5, 1);
+
+	this.cropRectA = new Phaser.Rectangle(0, 0, this.skillA.width, this.skillA.height);
+	this.cropRectB = new Phaser.Rectangle(0, 0, this.skillB.width, this.skillB.height);
+	this.cropRectC = new Phaser.Rectangle(0, 0, this.skillC.width, this.skillC.height);
+	this.cropRectD = new Phaser.Rectangle(0, 0, this.skillD.width, this.skillD.height);
+
+	this.healthBarEmpty = this.game.add.image(250, this.game.height - 20, 'hpEmpty');
+	this.healthBarEmpty.fixedToCamera = true;
+	this.healthBarEmpty.anchor.setTo(0, 1);
+
+
+	this.healthBar = this.game.add.image(250, this.game.height - 20, 'hpFull');
+	this.healthBar.fixedToCamera = true;
+	this.healthBar.anchor.setTo(0, 1);
+	this.healthRect = new Phaser.Rectangle(0, 0, this.healthBar.width, this.healthBar.height);
 };
 
 BasicGame.Multiplayer.prototype.update = function() {
@@ -168,7 +207,28 @@ BasicGame.Multiplayer.prototype.update = function() {
 	
 	this.physics.arcade.overlap(BasicGame.projectileCG, BasicGame.playerCG, this.colliderCallback);
 	this.physics.arcade.overlap(BasicGame.colliderCG, BasicGame.playerCG, this.colliderCallback);
+
+	this.handleHUD();
 };
+
+BasicGame.Multiplayer.prototype.handleHUD = function() {
+	// Health
+	this.healthRect.width = 283 * this.player.getHP();
+	this.healthBar.crop(this.healthRect);
+
+	// Skills
+	this.cropRectA.height = 66 * (this.player.getSkillA() + 1);
+	this.skillA.crop(this.cropRectA);
+
+	this.cropRectB.height = 66 * (this.player.getSkillB() + 1);
+	this.skillB.crop(this.cropRectB);
+
+	this.cropRectC.height = 66 * (this.player.getSkillC() + 1);
+	this.skillC.crop(this.cropRectC);
+
+	this.cropRectD.height = 66 * (this.player.getSkillD() + 1);
+	this.skillD.crop(this.cropRectD);
+}
 
 BasicGame.Multiplayer.prototype.projectileCallback= function(obj1, obj2) {
 	obj1.onCollide();

@@ -39,6 +39,8 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
 	this.jumpStrength = -2000;
 	this.moveSpeed = 500;
 	this.facingRight = 1;
+	this.maxHealth = 100;
+	this.curHealth = this.maxHealth;
 
 	// Skills
 	this.skillACooldown = 500;
@@ -323,6 +325,12 @@ BasicGame.HeroWalkerMP.prototype.shootCallback = function() {
 
 BasicGame.HeroWalkerMP.prototype.getHit = function() {
 	this.effect.play('anim_4', this);
+	if (this.curHealth <= 0) {
+		this.curHealth = 0;
+		console.log("Dead");
+	} else {
+		this.curHealth -= 10;
+	}
 };
 
 BasicGame.HeroWalkerMP.prototype.render = function() {
@@ -331,17 +339,21 @@ BasicGame.HeroWalkerMP.prototype.render = function() {
 };
 
 BasicGame.HeroWalkerMP.prototype.getSkillA = function() {
-	return this.game.math.clamp((this.game.time.now - this.skillATimer) / this.skillACooldown, 0, 1);
+	return this.game.math.clamp((this.game.time.now - this.skillATimer) / this.skillACooldown, -1, 0);
 };
 
 BasicGame.HeroWalkerMP.prototype.getSkillB = function() {
-	return this.game.math.clamp((this.game.time.now - this.skillBTimer) / this.skillBCooldown, 0, 1);
+	return this.game.math.clamp((this.game.time.now - this.skillBTimer) / this.skillBCooldown, -1, 0);
 };
 
 BasicGame.HeroWalkerMP.prototype.getSkillC = function() {
-	return this.game.math.clamp((this.game.time.now - this.skillCTimer) / this.skillCCooldown, 0, 1);
+	return this.game.math.clamp((this.game.time.now - this.skillCTimer) / this.skillCCooldown, -1, 0);
 };
 
 BasicGame.HeroWalkerMP.prototype.getSkillD = function() {
-	return this.game.math.clamp((this.game.time.now - this.skillDTimer) / this.skillDCooldown, 0, 1);
+	return this.game.math.clamp((this.game.time.now - this.skillDTimer) / this.skillDCooldown, -1, 0);
 };
+
+BasicGame.HeroWalkerMP.prototype.getHP = function() {
+	return this.curHealth / this.maxHealth;
+}

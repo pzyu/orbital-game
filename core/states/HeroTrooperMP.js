@@ -39,11 +39,13 @@ BasicGame.HeroTrooperMP = function (id, game, x, y) {
 	this.jumpStrength = -1500;
 	this.moveSpeed = 800;
 	this.facingRight = 1;
+	this.maxHealth = 100;
+	this.curHealth = this.maxHealth;
 
 	// Skills
-	this.skillACooldown = 500;
-	this.skillBCooldown = 500;
-	this.skillCCooldown = 1000;
+	this.skillACooldown = 1000;
+	this.skillBCooldown = 1500;
+	this.skillCCooldown = 2000;
 	this.skillDCooldown = 5000;	
 	this.skillATimer = 0;
 	this.skillBTimer = 0;
@@ -149,6 +151,7 @@ BasicGame.HeroTrooperMP.prototype.handleControls = function() {
 
 	if (myInputChanged) {
 		if (this.ID == this.refMP.myID) {
+			// Passes current x and y to myInput
 			this.myInput.x = this.x;
 			this.myInput.y = this.y;
 
@@ -325,4 +328,32 @@ BasicGame.HeroTrooperMP.prototype.shootCallback = function() {
 
 BasicGame.HeroTrooperMP.prototype.getHit = function() {
 	this.effect.play('anim_4', this);
+
+	if (this.curHealth <= 0) {
+		this.curHealth = 0;
+		console.log("Dead");
+	} else {
+		this.curHealth -= 10;
+	}
 };
+
+BasicGame.HeroTrooperMP.prototype.getSkillA = function() {
+	//console.log((this.game.time.now - this.skillATimer) / this.skillACooldown);
+	return this.game.math.clamp((this.game.time.now - this.skillATimer) / this.skillACooldown, -1, 0);
+};
+
+BasicGame.HeroTrooperMP.prototype.getSkillB = function() {
+	return this.game.math.clamp((this.game.time.now - this.skillBTimer) / this.skillBCooldown, -1, 0);
+};
+
+BasicGame.HeroTrooperMP.prototype.getSkillC = function() {
+	return this.game.math.clamp((this.game.time.now - this.skillCTimer) / this.skillCCooldown, -1, 0);
+};
+
+BasicGame.HeroTrooperMP.prototype.getSkillD = function() {
+	return this.game.math.clamp((this.game.time.now - this.skillDTimer) / this.skillDCooldown, -1, 0);
+};
+
+BasicGame.HeroTrooperMP.prototype.getHP = function() {
+	return this.curHealth / this.maxHealth;
+}

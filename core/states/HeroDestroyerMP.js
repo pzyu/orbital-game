@@ -38,7 +38,9 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y) {
 	this.jumpStrength = -1200;
 	this.moveSpeed = 650;
 	this.facingRight = 1;
-
+	this.maxHealth = 100;
+	this.curHealth = this.maxHealth;
+	
 	// Skills
 	this.skillACooldown = 500;
 	this.skillBCooldown = 500;
@@ -302,6 +304,12 @@ BasicGame.HeroDestroyerMP.prototype.shootCallback = function() {
 
 BasicGame.HeroDestroyerMP.prototype.getHit = function() {
 	this.effect.play('anim_4', this);
+	if (this.curHealth <= 0) {
+		this.curHealth = 0;
+		console.log("Dead");
+	} else {
+		this.curHealth -= 10;
+	}
 };
 
 BasicGame.HeroDestroyerMP.prototype.render = function() {
@@ -310,17 +318,21 @@ BasicGame.HeroDestroyerMP.prototype.render = function() {
 };
 
 BasicGame.HeroDestroyerMP.prototype.getSkillA = function() {
-	return this.game.math.clamp((this.game.time.now - this.skillATimer) / this.skillACooldown, 0, 1);
+	return this.game.math.clamp((this.game.time.now - this.skillATimer) / this.skillACooldown, -1, 0);
 };
 
 BasicGame.HeroDestroyerMP.prototype.getSkillB = function() {
-	return this.game.math.clamp((this.game.time.now - this.skillBTimer) / this.skillBCooldown, 0, 1);
+	return this.game.math.clamp((this.game.time.now - this.skillBTimer) / this.skillBCooldown, -1, 0);
 };
 
 BasicGame.HeroDestroyerMP.prototype.getSkillC = function() {
-	return this.game.math.clamp((this.game.time.now - this.skillCTimer) / this.skillCCooldown, 0, 1);
+	return this.game.math.clamp((this.game.time.now - this.skillCTimer) / this.skillCCooldown, -1, 0);
 };
 
 BasicGame.HeroDestroyerMP.prototype.getSkillD = function() {
-	return this.game.math.clamp((this.game.time.now - this.skillDTimer) / this.skillDCooldown, 0, 1);
+	return this.game.math.clamp((this.game.time.now - this.skillDTimer) / this.skillDCooldown, -1, 0);
 };
+
+BasicGame.HeroDestroyerMP.prototype.getHP = function() {
+	return this.curHealth / this.maxHealth;
+}

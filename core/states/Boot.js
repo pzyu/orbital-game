@@ -55,6 +55,8 @@ BasicGame.Boot.prototype = {
 
 
         this.load.image('skill', 'images/sprites/heroes/skill.png');
+        this.load.image('hpEmpty', 'images/sprites/heroes/hpEmpty.png');
+        this.load.image('hpFull', 'images/sprites/heroes/hpFull.png');
 
         // Effect atlas
         this.load.atlas('blood_effect_sprite', 'images/sprites/effects/blood_spritesheet.png', 'images/sprites/effects/blood_spritemap.json');
