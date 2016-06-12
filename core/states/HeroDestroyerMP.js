@@ -113,6 +113,9 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y) {
 	BasicGame.playerCG.add(this);
 
 	this.refMP = this.game.state.states['Multiplayer'];
+	this.stepTimer = 0;
+	this.timeStep = this.refMP.timeStep;
+	this.delta = this.refMP.delta;
 }
 
 // Kind of like inherts Sprite
@@ -153,6 +156,18 @@ BasicGame.HeroDestroyerMP.prototype.handleControls = function() {
 			this.myInput.y = this.y;
 
 			this.refMP.eurecaServer.handleKeys(this.myInput);
+		}
+	}
+	
+	// Every time step, update all clients of local position
+	if (this.game.time.now > this.stepTimer) {
+
+		if (this.ID == this.refMP.myID) {
+			this.stepTimer = this.game.time.now + this.timeStep;
+			this.myInput.x = this.x;
+			this.myInput.y = this.y;
+
+			this.refMP.eurecaServer.compensate(this.myInput);
 		}
 	}
 
@@ -204,6 +219,7 @@ BasicGame.HeroDestroyerMP.prototype.handleControls = function() {
     this.handleSkillB();
     this.handleSkillC();
     this.handleSkillD();
+    this.step(this.delta);
 };
 
 BasicGame.HeroDestroyerMP.prototype.handleSkillA = function() {
@@ -335,4 +351,28 @@ BasicGame.HeroDestroyerMP.prototype.getSkillD = function() {
 
 BasicGame.HeroDestroyerMP.prototype.getHP = function() {
 	return this.curHealth / this.maxHealth;
-}
+};
+
+BasicGame.HeroDestroyerMP.prototype.interpolateTo = function (dataX, dataY, duration) {
+	// Calculates amount to step based on duration, then sets target to step to
+	this.stepValueX = this.game.math.difference(dataX, this.x) / duration;
+	this.targetX = dataX;
+
+	this.stepValueY = this.game.math.difference(dataY, this.y) / duration;
+	this.targetY = dataY;
+};
+
+BasicGame.HeroDestroyerMP.prototype.step = function(delta) {
+	// Steps to target with respect to delta
+	if (this.x < this.targetX) {
+		this.x += delta * this.stepValueX;
+	} else if (this.x > this.targetX) {
+		this.x -= delta * this.stepValueX;
+	}
+
+	if (this.y < this.targetY) {
+		this.y += delta * this.stepValueY;
+	} else if (this.y > this.targetY) {
+		this.y -= delta * this.stepValueY;
+	}
+};

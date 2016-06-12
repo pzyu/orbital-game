@@ -4,11 +4,19 @@ var express = require('express')
 
 app.use(express.static(__dirname));
 
+//For avoidong Heroku $PORT error
+app.get('/', function(request, response) {
+    var result = 'App is running'
+    response.send(result);
+}).listen(app.get('port'), function() {
+    console.log('App is running, server is listening on port ', app.get('port'));
+});
+
 // Get EurecaServer class
 var Eureca = require('eureca.io');
 
 // Create an instance of EurecaServer
-var eurecaServer = new Eureca.Server({allow:['setID', 'spawnEnemy', 'kill', 'updateState', 'getChar']});
+var eurecaServer = new Eureca.Server({allow:['setID', 'spawnEnemy', 'kill', 'updateState', 'getChar', 'compensate']});
 var clients = {};
 var selectedChar = "test";
 
@@ -83,4 +91,20 @@ eurecaServer.exports.handleKeys = function(keys) {
 	}
 }
 
-server.listen(8000);
+eurecaServer.exports.compensate = function(keys) {
+	//console.log('handling');
+	var conn = this.connection;
+	var updatedClient = clients[conn.id];
+
+	// For each client, update last input
+	for (var c in clients) {
+		// Update server side
+		var remote = clients[c].remote;
+		remote.compensate(updatedClient.id, keys);
+
+		// Key track of last state for spawning new players
+		clients[c].lastState = keys;
+	}
+}
+
+server.listen(process.env.PORT || 8000);

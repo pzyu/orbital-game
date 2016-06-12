@@ -5,6 +5,8 @@ BasicGame.Multiplayer = function (game) {
 	this.gravity = 5000;
 	this.spawnX = 100;
 	this.spawnY = 1000;
+	this.timeStep = 1000;
+	this.delta = 5;
 };
 
 BasicGame.Multiplayer.prototype.init = function() {
@@ -72,27 +74,27 @@ BasicGame.Multiplayer.prototype.preload = function() {
 			}
 			ref.playerList[i] = player;
 		}
+		BasicGame.playerCG.sort('z', Phaser.Group.SORT_DESCENDING);
 	}
 
 	this.eurecaClient.exports.updateState = function(id, state) {
 		var curPlayer = ref.playerList[id];
 		if (curPlayer && this.myID != id) {
-			//console.log("state: " + state.y + " current: " + curPlayer.y);
-			//console.log(state);
-			// So called compensation, can use tween for smoother compensation but more expensive
-			curPlayer.x = state.x;
-		
-			// If diff within threshold then update otherwise keeps jittering
-			if (ref.game.math.difference(curPlayer.y, state.y) < 5) {
-				curPlayer.y = state.y;
-			}
-			//state.x = curPlayer.x;
-			//state.y = curPlayer.y;
 			// Update player's cursor with state
 			curPlayer.cursor = state;
 			curPlayer.update();
 		}
 	}
+
+	this.eurecaClient.exports.compensate = function(id, state) {
+		var curPlayer = ref.playerList[id];
+		if (curPlayer && this.myID != id) {
+			//console.log('compensating');
+			//curPlayer.x = state.x;
+			//curPlayer.y = state.y;
+			curPlayer.interpolateTo(state.x, state.y, 1000);
+		}
+	};
 
 	this.eurecaClient.exports.getChar = function() {
 		// Return player's selected character

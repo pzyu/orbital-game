@@ -1,6 +1,6 @@
 BasicGame.MainMenu = function (game) {
 	// Game title, just edit from here
-	this.gameTitle = "Very Original";
+	this.gameTitle = "Zero+";
 };
 
 BasicGame.MainMenu.prototype = {
