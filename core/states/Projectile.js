@@ -45,18 +45,20 @@ BasicGame.Projectile.prototype.animationComplete = function() {
 };
 
 BasicGame.Projectile.prototype.animationLoop = function() {
+	// When animation has go past loop count, end animation
 	if (this.animations.currentAnim.loopCount > this.loopCount) {
-		console.log('over');
 		this.x = this.y = -100;
 		this.endAnimation();
 	}
 };
 
 // Takes in an animation string name, and target instantiated on
-BasicGame.Projectile.prototype.play = function(anim, target, velX, velY, angle, offsetX, offsetY) {
+BasicGame.Projectile.prototype.play = function(anim, target, velX, velY, angle, offsetX, offsetY, gravity) {
 	//	console.log(loadingText);
 	//console.log(this.animations.currentAnim.name + " playing");
 	this.reset(this.x, this.y);
+
+	this.body.allowGravity = gravity;
 
 	this.target = target;
 	this.angle = angle * target.facingRight;
@@ -113,6 +115,7 @@ BasicGame.Projectile.prototype.onCollide = function (collider) {
 BasicGame.Projectile.prototype.endAnimation = function () {
 	this.animations.currentAnim.isFinished = true;
 	this.animations.currentAnim.loop = false;
-	console.log('collided');
+	//console.log('collided');
+	// Kill temporary disables the object until needed again
 	this.kill();
 };

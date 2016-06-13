@@ -28,6 +28,7 @@ eurecaServer.onConnect(function(conn) {
 	console.log('New client id=%s ', conn.id, conn.remoteAddress);
 
 	var remote = eurecaServer.getClient(conn.id);
+	// Client contains id, remote, and selected character
 	clients[conn.id] = {id:conn.id, remote:remote, char:selectedChar};
 
 	// Set client's selected character
@@ -92,7 +93,7 @@ eurecaServer.exports.handleKeys = function(keys) {
 }
 
 eurecaServer.exports.compensate = function(keys) {
-	//console.log('handling');
+	// Compensate difference by interpolation
 	var conn = this.connection;
 	var updatedClient = clients[conn.id];
 
@@ -107,4 +108,5 @@ eurecaServer.exports.compensate = function(keys) {
 	}
 }
 
+// Either listen to host port or 8000 if testing locally
 server.listen(process.env.PORT || 8000);

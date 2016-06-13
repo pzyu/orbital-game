@@ -98,7 +98,7 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
     console.log(BasicGame.colliderCG.length);
 
     this.bulletGroup = this.game.add.group();
-    for (var i = 0; i < 100; i++) {
+    for (var i = 0; i < 20; i++) {
     	var proj = new BasicGame.Projectile(this.game, 'bolt_effect_sprite', 1);
     	BasicGame.projectileCG.add(proj);
     }

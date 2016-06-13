@@ -10,6 +10,8 @@ BasicGame.MainMenu.prototype = {
 		this.music.loop = true;							// Loop
 		this.music.play();								// Play the music
 
+		this.world.setBounds(0, 0, BasicGame.gameWidth, BasicGame.gameHeight);
+
 		// Add background in
 		this.background = this.add.sprite(0, 0, 'menu_background');
 		this.background.height = this.game.height;
@@ -26,7 +28,7 @@ BasicGame.MainMenu.prototype = {
 
 	create: function () {
 		this.addMenuOption('Start', function (target) {
-			// Move to character select screen
+			// Move to character select screen, last parameter is to determine if it's multiplayer or not
 			this.game.state.start('CharSelect', true, false, false);
 		});
 		this.addMenuOption('Multiplayer', function (target) {
@@ -39,11 +41,9 @@ BasicGame.MainMenu.prototype = {
 	},
 
 	update: function () {
-
 	},
 
 	startGame: function (pointer) {
-
 		//	Ok, the Play Button has been clicked or touched, so let's stop the music (otherwise it'll carry on playing)
 		this.music.stop();
 

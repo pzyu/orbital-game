@@ -267,7 +267,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillB = function() {
 		this.animations.play('anim_shoot');
 		this.skillBTimer = this.game.time.now + this.skillBCooldown;
 		this.isAttacking = true;
-		BasicGame.projectileCG.getFirstExists(false).play('anim_1', this, 1000, 0, 0, 100, 0);
+		BasicGame.projectileCG.getFirstExists(false).play('anim_1', this, 1000, 0, 0, 100, 0, false);
 	}
 
 	//console.log(BasicGame.projectileCG.getFirstExists(false));
@@ -283,22 +283,14 @@ BasicGame.HeroTrooperMP.prototype.handleSkillC = function() {
 		this.skillCTimer = this.game.time.now + this.skillCCooldown; 
 		
 		// Projectile variables
-		var shootAmt = 3;
-		var velX = 750;
-		var velY = 500;
+		var shootAmt = 1;
+		var velX = 500;
+		var velY = 1000;
 		var angle = 30;
-		var offsetX = 150;
+		var offsetX = 50;
 		var offsetY = 50;
 
-    	var ref = this;
-    	var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 200, shootAmt);
-    	tween.onStart.add(function() {
-    		tween.delay(0);
-    	});
-    	tween.onRepeat.add(function() {
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_4', ref, velX, -velY, -angle, offsetX, -offsetY);
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_4', ref, velX, velY, angle, offsetX, offsetY);
-    	});
+    	BasicGame.projectileCG.getFirstExists(false).play('anim_1', this, velX, -velY, -angle, offsetX, -offsetY, true);
 	}
 };
 

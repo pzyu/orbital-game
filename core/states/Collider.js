@@ -15,7 +15,6 @@ BasicGame.Collider.prototype = Object.create(Phaser.Sprite.prototype);
 BasicGame.Collider.prototype.constructor = BasicGame.Collider;
 
 BasicGame.Collider.prototype.update = function() {
-
 	// If it's active track target
 	if(this.isActive) {
 		this.x = this.target.x;

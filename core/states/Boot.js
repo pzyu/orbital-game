@@ -4,7 +4,7 @@
 BasicGame.Boot = function (game) {
     this.splashLogo = null;
     this.ready = false;
-    this.status = "PLS WAIT . . .";
+    this.status = "";
     this.loadingText = "PLS WAIT . . .";
 };
 
@@ -13,27 +13,27 @@ BasicGame.Boot.prototype = {
         // Load whatever scripts we need
         this.load.script('mainmenu_scr', 'states/MainMenu.js');
         this.load.script('game_scr', 'states/MainGame.js');
-        this.load.script('hero_scr', 'states/Hero.js');
-        
-        this.load.script('herodes_scr', 'states/HeroDestroyer.js');
-        this.load.script('herotrooper_scr', 'states/HeroTrooper.js');
-        this.load.script('herogunner_scr', 'states/HeroGunner.js');
-        this.load.script('herowalker_scr', 'states/HeroWalker.js');
-
-        this.load.script('herodesmp_scr', 'states/HeroDestroyerMP.js');
-        this.load.script('herotroopermp_scr', 'states/HeroTrooperMP.js');
-        this.load.script('herogunnermp_scr', 'states/HeroGunnerMP.js');
-        this.load.script('herowalkermp_scr', 'states/HeroWalkerMP.js');
-
         this.load.script('charselect_scr', 'states/CharSelect.js');
         this.load.script('effect_scr', 'states/Effect.js');
         this.load.script('proj_scr', 'states/Projectile.js');
         this.load.script('multiplayer_scr', 'states/Multiplayer.js');
         this.load.script('collider_scr', 'states/Collider.js');
+        
+        // For single player mode, but probably will change
+        this.load.script('herodes_scr', 'states/HeroDestroyer.js');
+        this.load.script('herotrooper_scr', 'states/HeroTrooper.js');
+        this.load.script('herogunner_scr', 'states/HeroGunner.js');
+        this.load.script('herowalker_scr', 'states/HeroWalker.js');
+
+        // Multiplayer
+        this.load.script('herodesmp_scr', 'states/HeroDestroyerMP.js');
+        this.load.script('herotroopermp_scr', 'states/HeroTrooperMP.js');
+        this.load.script('herogunnermp_scr', 'states/HeroGunnerMP.js');
+        this.load.script('herowalkermp_scr', 'states/HeroWalkerMP.js');
 
         // For webfonts
         this.load.script('WebFont', 'scripts/webfontloader.js');
-        // For greying
+        // Grey filter
         this.load.script('gray', 'scripts/Gray.js');
     },
 
@@ -53,7 +53,7 @@ BasicGame.Boot.prototype = {
         this.load.atlas('player_gunner', 'images/sprites/heroes/gunner.png', 'images/sprites/heroes/gunner.json');
         this.load.atlas('player_walker', 'images/sprites/heroes/walker.png', 'images/sprites/heroes/walker.json');
 
-
+        // HUD
         this.load.image('skill', 'images/sprites/heroes/skill.png');
         this.load.image('hpEmpty', 'images/sprites/heroes/hpEmpty.png');
         this.load.image('hpFull', 'images/sprites/heroes/hpFull.png');
@@ -76,22 +76,6 @@ BasicGame.Boot.prototype = {
                 urls: ['fonts/font.css']
             }
         }
-    },
-
-    loadCharSelect: function() {
-        /*BasicGame.charSelect_1 = new Phaser.Sprite(this.game, -100, -100, 'player_ninja', 0);
-        BasicGame.charSelect_2 = new Phaser.Sprite(this.game, -100, -100, 'player_cowgirl', 0);
-        BasicGame.charSelect_3 = new Phaser.Sprite(this.game, -100, -100, 'player_knight', 0);
-        BasicGame.charSelect_4 = new Phaser.Sprite(this.game, -100, -100, 'player_robot', 0);
-
-        BasicGame.charSelect_1.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true);
-        BasicGame.charSelect_1.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);
-        BasicGame.charSelect_2.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true);
-        BasicGame.charSelect_2.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);
-        BasicGame.charSelect_3.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true);
-        BasicGame.charSelect_3.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);
-        BasicGame.charSelect_4.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Idle ', 1, 10), 16, true);
-        BasicGame.charSelect_4.animations.add('anim_attack', Phaser.Animation.generateFrameNames('Attack ', 1, 10), 16, true);*/
     },
 
     // Init function to for game settings
@@ -145,7 +129,6 @@ BasicGame.Boot.prototype = {
     // Create function to start the actual preloader
     create: function () {
         this.addGameStates();
-        //this.loadCharSelect();
 
         // Set text here
         this.status.setText(this.loadingText);

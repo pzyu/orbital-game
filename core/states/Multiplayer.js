@@ -1,12 +1,14 @@
 BasicGame.Multiplayer = function (game) {
-	this.playerList;
-	this.myID = '';
-	this.selectedChar = '';
-	this.gravity = 5000;
-	this.spawnX = 100;
+	this.playerList;					// Player list
+	this.myID = '';						// Client ID
+	this.selectedChar = '';				// Selected character
+
+	this.gravity = 5000;				// Gravity
+	this.spawnX = 100;					// Starting spawn
 	this.spawnY = 1000;
-	this.timeStep = 1000;
-	this.delta = 5;
+
+	this.timeStep = 1000;				// Time step for interpolation
+	this.delta = 5;						// Delta for smoothing
 };
 
 BasicGame.Multiplayer.prototype.init = function() {
@@ -50,6 +52,8 @@ BasicGame.Multiplayer.prototype.preload = function() {
 	this.eurecaClient.exports.spawnEnemy = function(i, x, y, char) {
 		// If it's me
 		if (i == ref.myID) return;
+
+		// Spawn enemy at location
 		var curX = x;
 		var curY = y;
 		if (x == 0 || y == 0) {
@@ -74,6 +78,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 			}
 			ref.playerList[i] = player;
 		}
+		// Every time you add a player, sort the group so local client is always on top
 		BasicGame.playerCG.sort('z', Phaser.Group.SORT_DESCENDING);
 	}
 
@@ -129,7 +134,7 @@ BasicGame.Multiplayer.prototype.preloadGame = function() {
 	map.setCollisionBetween(63, 99, true, layer);	
 	map.setCollisionBetween(329, 341, true, layer);	
 
-	this.physics.arcade.TILE_BIAS = 60;
+	this.physics.arcade.TILE_BIAS = 60;				// The higher the tile bias, the more unlikely it is the player will fall through
 }
 
 BasicGame.Multiplayer.prototype.createGame = function() {
@@ -139,7 +144,7 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	var txt = this.add.text(this.world.width - this.world.width/2, this.world.height - 100,  "Back to main menu", optionStyle);
 	txt.inputEnabled = true;
 	txt.events.onInputUp.add(function() {
-		this.game.state.start("MainMenu");
+		ref.game.state.start("MainMenu", true);
 		ref.eurecaClient.disconnect();
 		//console.log(this.eurecaClient);
 	});
@@ -151,6 +156,7 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 
 	this.playerList = {};
 
+	// Create client's hero
 	if (BasicGame.selectedChar == "player_trooper") {
 		var player = new BasicGame.HeroTrooperMP(this.myID, this.game, 100, 1000);
 	}
@@ -169,6 +175,7 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 
 	this.player = player;
 
+	// HUD
 	this.skillA = this.game.add.image(50, this.game.height - 20, 'skill');
 	this.skillB = this.game.add.image(100, this.game.height - 20, 'skill');
 	this.skillC = this.game.add.image(150, this.game.height - 20, 'skill');
@@ -193,7 +200,6 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.healthBarEmpty.fixedToCamera = true;
 	this.healthBarEmpty.anchor.setTo(0, 1);
 
-
 	this.healthBar = this.game.add.image(250, this.game.height - 20, 'hpFull');
 	this.healthBar.fixedToCamera = true;
 	this.healthBar.anchor.setTo(0, 1);
@@ -206,7 +212,6 @@ BasicGame.Multiplayer.prototype.update = function() {
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
 	this.physics.arcade.collide(BasicGame.playerCG, BasicGame.playerCG);
 	this.physics.arcade.collide(BasicGame.projectileCG, layer, this.projectileCallback);
-	
 	this.physics.arcade.overlap(BasicGame.projectileCG, BasicGame.playerCG, this.colliderCallback);
 	this.physics.arcade.overlap(BasicGame.colliderCG, BasicGame.playerCG, this.colliderCallback);
 

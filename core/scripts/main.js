@@ -1,31 +1,21 @@
-
+// So called "parent" of all the states
 var BasicGame = {
-  score: 0,
+  gameWidth: 1024,
+  gameHeight: 768,
   projectileCG: null,
   colliderCG: null,
   playerCG: null,
-  selectCG: null,
-  selectedChar: null,
-  charSelect_1: null,
-  charSelect_2: null,
-  charSelect_3: null,
-  charSelect_4: null,
-};     // So called "parent" of all the states
-
-
+  selectedChar: null
+};     
 
 // Global Variables
-var game = new Phaser.Game(1024, 768, Phaser.AUTO, 'game');
-
-function preload() {
-    this.load.image('splashLogo', 'images/splash_logo.png');
-    this.load.script('boot_scr',  'states/Boot.js');
-}
+var game = new Phaser.Game(BasicGame.gameWidth, BasicGame.gameHeight, Phaser.AUTO, 'game');
 
 BasicGame.Main = function() {
 };
 
 BasicGame.Main.prototype = {
+  // Load whatever we need for Boot first
   preload: function () {
     this.load.image('splashLogo', 'images/splash_logo.png');
     this.load.script('boot_scr',  'states/Boot.js');

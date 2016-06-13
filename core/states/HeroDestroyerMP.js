@@ -35,16 +35,16 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y) {
 	this.jumpCount = 0;
 	this.jumpLimit = 2;
 	this.jumpTimer = 0;
-	this.jumpStrength = -1200;
-	this.moveSpeed = 650;
+	this.jumpStrength = -1500;
+	this.moveSpeed = 600;
 	this.facingRight = 1;
 	this.maxHealth = 100;
 	this.curHealth = this.maxHealth;
 	
 	// Skills
-	this.skillACooldown = 500;
+	this.skillACooldown = 2000;
 	this.skillBCooldown = 500;
-	this.skillCCooldown = 1000;
+	this.skillCCooldown = 2000;
 	this.skillDCooldown = 5000;	
 	this.skillATimer = 0;
 	this.skillBTimer = 0;
@@ -96,8 +96,9 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y) {
     console.log(BasicGame.colliderCG.length);
 
     this.bulletGroup = this.game.add.group();
-    for (var i = 0; i < 100; i++) {
+    for (var i = 0; i < 20; i++) {
     	var proj = new BasicGame.Projectile(this.game, 'bolt_effect_sprite', 1);
+    	// To fix, perhaps one projectile group per character
     	BasicGame.projectileCG.add(proj);
     }
 
@@ -112,6 +113,7 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y) {
 	this.game.add.existing(this);
 	BasicGame.playerCG.add(this);
 
+	// Multiplayer stuff
 	this.refMP = this.game.state.states['Multiplayer'];
 	this.stepTimer = 0;
 	this.timeStep = this.refMP.timeStep;
@@ -125,6 +127,7 @@ BasicGame.HeroDestroyerMP.prototype.constructor = BasicGame.Player;
 BasicGame.HeroDestroyerMP.prototype.update = function() {
 	this.handleControls();
 	//this.game.debug.body(this);
+	//console.log(BasicGame.projectileCG.length);
 };
 
 

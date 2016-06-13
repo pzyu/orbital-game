@@ -33,14 +33,10 @@ BasicGame.MainGame.prototype = {
 	},
 
 	create: function() {
-
-		//console.log(this.tilesCollisionGroup);
-
 		// Assign global groups
 		BasicGame.playerCG = this.add.group();
 		BasicGame.projectileCG = this.add.group();
 		BasicGame.colliderCG = this.add.group();
-
 
 		if (BasicGame.selectedChar == "player_destroyer") {
 			this.player = new BasicGame.HeroDestroyer(this.game, 100, 1000, 0, false, 'player');	
@@ -54,13 +50,9 @@ BasicGame.MainGame.prototype = {
 		if (BasicGame.selectedChar == "player_gunner") {
 			this.player = new BasicGame.HeroGunner(this.game, 100, 1000, 0, false, 'player');	
 		}
-		this.skillA = this.game.add.image(100, this.game.height - 100, 'skill');
-		this.skillA.fixedToCamera = true;
-		this.skillA.anchor.setTo(0.5, 1);
 		// Instantiate new player
 		//this.player = new BasicGame.HeroWalker(this.game, 100, 1000, 0, false, 'player');
-		//this.player2 = new BasicGame.Hero(this.game, 500, 1000, 0, true, 'dummy');
-		//BasicGame.playerCG.add(this.player2);
+		BasicGame.playerCG.add(this.player);
 
 		// Follow player
 		this.camera.follow(this.player);
@@ -72,11 +64,6 @@ BasicGame.MainGame.prototype = {
 		this.physics.arcade.collide(BasicGame.playerCG, layer);
 		this.physics.arcade.collide(BasicGame.projectileCG, layer, this.projectileCallback);
 		this.physics.arcade.overlap(BasicGame.colliderCG, BasicGame.playerCG, this.colliderCallback);
-		var cropRect = new Phaser.Rectangle(0, 0, this.skillA.width, this.skillA.height);
-		cropRect.height = 66 * this.player.getSkillA();
-		//cropRect.top = 0.5;
-		//console.log(cropRect.height);
-		this.skillA.crop(cropRect);
 	},
 
 	render: function() {

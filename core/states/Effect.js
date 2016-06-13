@@ -3,7 +3,6 @@
 BasicGame.Effect = function (game, x, y, atlasName, isProjectile, loopCount, frame) {
 	Phaser.Sprite.call(this, game, x, y, atlasName, frame);
 
-
 	this.scale.x = 0.4;
 	this.scale.y = 0.4;
 
@@ -30,7 +29,6 @@ BasicGame.Effect = function (game, x, y, atlasName, isProjectile, loopCount, fra
 	if (atlasName == 'bolt_effect_sprite') {
 		this.anchor.setTo(0.5, 0.5);
 
-
 		this.animations.add('anim_1', Phaser.Animation.generateFrameNames('bolt ', 1, 10), 16, true);		// Projectile
 		this.animations.add('anim_2', Phaser.Animation.generateFrameNames('bolt ', 11, 20), 16, false);		// Field
 		this.animations.add('anim_3', Phaser.Animation.generateFrameNames('bolt ', 21, 30), 16, false);		// Strike 1
@@ -54,6 +52,7 @@ BasicGame.Effect.prototype.animationComplete = function() {
 };
 
 BasicGame.Effect.prototype.animationLoop = function() {
+	// When animation has go past loop count, end animation
 	if (this.animations.currentAnim.loopCount > this.loopCount) {
 		this.endAnimation();
 	}
@@ -81,6 +80,7 @@ BasicGame.Effect.prototype.play = function(anim, target, velX, velY) {
 
 // Ends animation safely
 BasicGame.Effect.prototype.endAnimation = function () {
+	// Tell animation that it has finished, and to stop looping
 	this.animations.currentAnim.isFinished = true;
 	this.animations.currentAnim.loop = false;
 };
