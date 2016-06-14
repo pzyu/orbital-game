@@ -28,17 +28,6 @@ Todos:
 - Add single player mode
 - Tweak multiplayer 
 
-### Tools used
-- [Tiled]
-    - For generating tilemap json files
-    - Tile layer format must be set to "CSV"
-    - Tile size should be the same when creating a new map and when importing new tilesets
-    - Important to keep track of the name of the layers as they are referenced when creating a layer in Phaser, can check with json file to make sure.
-- [Leshy SpriteSheet Tool]
-    - For generating spritesheets and spritemaps
-    - Json file type must be set to "JSON-TP-Array"
-    - Naming convention should be standardized as Phaser can generate frome names automatically by providing the correct suffix such as "Anim_Run" and a range of numbers. For example, for example ('Anim_Run', 0, 9) will produce an array ['Anim_Run0', 'Anim_Run1', ... ... ,'Anim_Run9'] so adding it to the animations is a lot simpler.
-
 ### Installation
 zero+ uses the following to work properly:
 
@@ -53,7 +42,19 @@ $ npm install express
 $ npm install engine.io
 $ npm install eureca.io
 ````
-To run the game, navigate to /core, enter "node server.js" in terminal and open up "localhost:8000" in your browser.
+To run the game, navigate to /core, run "node server.js" in your terminal and open up "localhost:8000" in your browser.
+
+### Tools used
+- [Tiled]
+    - For generating tilemap json files
+    - Tile layer format must be set to "CSV"
+    - Tile size should be the same when creating a new map and when importing new tilesets
+    - Important to keep track of the name of the layers as they are referenced when creating a layer in Phaser, can check with json file to make sure.
+- [Leshy SpriteSheet Tool]
+    - For generating spritesheets and spritemaps
+    - Json file type must be set to "JSON-TP-Array"
+    - Naming convention should be standardized as Phaser can generate frome names automatically by providing the correct suffix such as "Anim_Run" and a range of numbers. For example, for example ('Anim_Run', 0, 9) will produce an array ['Anim_Run0', 'Anim_Run1', ... ... ,'Anim_Run9'] so adding it to the animations is a lot simpler.
+
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
 
