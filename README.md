@@ -44,8 +44,8 @@ zero+ uses the following to work properly
 
 * [node.js] - evented I/O for the backend
 * [Express] - fast node.js network app framework
-* engine.io - implementation of transport-based cross-browser/cross-device bi-directional communication layer for socket.io
-* eureca.io - a node.js bidirectional RPC library using Primus.io as a network layer.
+* [engine.io] - implementation of transport-based cross-browser/cross-device bi-directional communication layer for socket.io
+* [eureca.io] - a node.js bidirectional RPC library using Primus.io as a network layer.
 
 Install [node.js] and the following:
 ```sh
