@@ -1,5 +1,5 @@
 # zero+
-![](/core/images/menu_background.gif)
+![](/core/images/github_title.gif)
 zero+ is a HTML5 browser based online multiplayer arena game built on Phaser. Players can choose up to 4 heroes with different attributes and skills to pit against others in the arena. 
 
 Current features:
@@ -40,7 +40,7 @@ Todos:
     - Naming convention should be standardized as Phaser can generate frome names automatically by providing the correct suffix such as "Anim_Run" and a range of numbers. For example, for example ('Anim_Run', 0, 9) will produce an array ['Anim_Run0', 'Anim_Run1', ... ... ,'Anim_Run9'] so adding it to the animations is a lot simpler.
 
 ### Installation
-zero+ uses the following to work properly
+zero+ uses the following to work properly:
 
 * [node.js] - evented I/O for the backend
 * [Express] - fast node.js network app framework
@@ -60,7 +60,7 @@ To run the game, navigate to /core, enter "node server.js" in terminal and open 
    [node.js]: <http://nodejs.org>
    [express]: <http://expressjs.com>
    [engine.io]: <https://github.com/socketio/engine.io>
-   [eureca.io]: <eureca.io>
+   [eureca.io]: <http://eureca.io>
    [Tiled]: <http://www.mapeditor.org/>
    [Leshy SpriteSheet Tool]: <https://www.leshylabs.com/apps/sstool/>
 
