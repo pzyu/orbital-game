@@ -14,7 +14,7 @@ BasicGame.Boot.prototype = {
         this.load.script('mainmenu_scr', 'states/MainMenu.js');
         this.load.script('game_scr', 'states/MainGame.js');
         this.load.script('charselect_scr', 'states/CharSelect.js');
-        this.load.script('proj_scr', 'states/Options.js');
+        this.load.script('options_scr', 'states/Options.js');
         this.load.script('effect_scr', 'states/Effect.js');
         this.load.script('proj_scr', 'states/Projectile.js');
         this.load.script('multiplayer_scr', 'states/Multiplayer.js');
