@@ -35,6 +35,7 @@ BasicGame.MainMenu.prototype = {
 			this.game.state.start('CharSelect', true, false, true);
 		});
 		this.addMenuOption('Options', function (target) {
+			this.game.state.start('Options');
 		});
 		this.addMenuOption('Credits', function (target) {
 		});

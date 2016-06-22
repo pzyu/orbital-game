@@ -88,6 +88,7 @@ BasicGame.CharSelect.prototype = {
 	},
 
 	preload: function() {
+		var ref = this;
 		//this.loaded = true;
 		this.gray = this.game.add.filter('Gray');
 
@@ -101,9 +102,22 @@ BasicGame.CharSelect.prototype = {
 
 		// Add start game button
 		var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
-		this.startGame = this.add.text(this.world.width - this.world.width/4, this.world.height - 100,  "Join server", optionStyle);
+		if (ref.multiplayer) {
+			var joinTxt = "Join server";
+		} else {
+			var joinTxt = "Start Game";
+		}
+		this.returnMenu = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 100,  "Back", optionStyle);
+		this.startGame = this.add.text(this.world.width - this.world.width/3.5, this.world.height - 100,  joinTxt, optionStyle);
 		this.startGame.inputEnabled = true; 
-		var ref = this;
+		this.returnMenu.inputEnabled = true;
+
+		// Back button clicked
+		this.returnMenu.events.onInputUp.add(function() {
+			ref.game.state.start("MainMenu", true);
+		});
+
+		// Start game button clicked
 		this.startGame.events.onInputUp.add(function() {
 			if (BasicGame.selectedChar != null && !ref.multiplayer) {
 				// If not multiplayer, then start main game
