@@ -80,5 +80,4 @@ BasicGame.MainMenu.prototype = {
 		txt.events.onInputOut.add(onOut);
 		this.optionCount ++;
 	}
-
 };
