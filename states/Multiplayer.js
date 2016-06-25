@@ -4,7 +4,7 @@ BasicGame.Multiplayer = function (game) {
 	this.selectedChar = '';				// Selected character
 
 	this.gravity = 5000;				// Gravity
-	this.spawnX = 100;					// Starting spawn
+	this.spawnX = 1000;					// Starting spawn
 	this.spawnY = 1000;
 
 	this.timeStep = 2000;				// Time step for interpolation
