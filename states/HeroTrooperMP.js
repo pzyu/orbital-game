@@ -390,4 +390,6 @@ BasicGame.HeroTrooperMP.prototype.step = function(delta) {
 	} else if (this.y > this.targetY) {
 		this.y -= delta * this.stepValueY;
 	}
+
+	console.log(this.game.math.difference(this.y, this.targetY));
 };

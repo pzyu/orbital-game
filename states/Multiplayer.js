@@ -7,7 +7,7 @@ BasicGame.Multiplayer = function (game) {
 	this.spawnX = 100;					// Starting spawn
 	this.spawnY = 1000;
 
-	this.timeStep = 1000;				// Time step for interpolation
+	this.timeStep = 2000;				// Time step for interpolation
 	this.delta = 5;						// Delta for smoothing
 };
 
@@ -95,9 +95,9 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		var curPlayer = ref.playerList[id];
 		if (curPlayer && this.myID != id) {
 			//console.log('compensating');
-			//curPlayer.x = state.x;
-			//curPlayer.y = state.y;
-			curPlayer.interpolateTo(state.x, state.y, 1000);
+			curPlayer.x = state.x;
+			curPlayer.y = state.y;
+			//curPlayer.interpolateTo(state.x, state.y, 1000);
 		}
 	};
 

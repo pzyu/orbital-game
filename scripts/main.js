@@ -5,7 +5,8 @@ var BasicGame = {
   projectileCG: null,
   colliderCG: null,
   playerCG: null,
-  selectedChar: null
+  selectedChar: null,
+  musicPlayer: null
 };     
 
 // Global Variables
