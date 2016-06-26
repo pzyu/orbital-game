@@ -13,6 +13,10 @@ BasicGame.CharSelect.prototype = {
 		// On init, check if player has chose multiplayer
 		this.multiplayer = multiplayer;
 		this.charCount = 0;
+
+		this.background = this.add.sprite(0, 0, 'menu_background');
+		this.background.height = this.game.height;
+		this.background.width = this.game.width;
 	},
 
 	resetFilter: function(target) {
@@ -107,6 +111,8 @@ BasicGame.CharSelect.prototype = {
 		} else {
 			var joinTxt = "Start Game";
 		}
+		this.add.text(300, 300, "Arrow keys for controls, \nA,S,D,F for skills", optionStyle);
+
 		this.returnMenu = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 100,  "Back", optionStyle);
 		this.startGame = this.add.text(this.world.width - this.world.width/3.5, this.world.height - 100,  joinTxt, optionStyle);
 		this.startGame.inputEnabled = true; 

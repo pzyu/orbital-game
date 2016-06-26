@@ -27,7 +27,8 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
 		skillC: false,
 		skillD: false,
 		x: 0,
-		y: 0
+		y: 0,
+		hp: 0
 	}
 
 	this.anchor.setTo(0.5, 0.5);
@@ -41,6 +42,7 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
 	this.facingRight = 1;
 	this.maxHealth = 100;
 	this.curHealth = this.maxHealth;
+	this.isDead = false;
 
 	// Skills
 	this.skillACooldown = 500;
@@ -118,6 +120,8 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
 	this.stepTimer = 0;
 	this.timeStep = this.refMP.timeStep;
 	this.delta = this.refMP.delta;
+
+	this.spawn();
 }
 
 // Kind of like inherts Sprite
@@ -125,13 +129,32 @@ BasicGame.HeroWalkerMP.prototype = Object.create(Phaser.Sprite.prototype);
 BasicGame.HeroWalkerMP.prototype.constructor = BasicGame.Player;
 
 BasicGame.HeroWalkerMP.prototype.spawn = function() {
-	var index = this.game.rnd.integerInRange(0, this.refMP.spawnPoints.length - 1);
-	this.x = this.refMP.spawnPoints[index].x;
-	this.y = this.refMP.spawnPoints[index].y;
+	var ref = this;
+	if (this.isDead) {
+		var tween = this.game.add.tween(this).to({0: 0}, 5000, Phaser.Easing.Linear.None, true, 0, 0);
+		tween.onStart.add(function(){
+			console.log("Play dying animation");
+			ref.animations.play('anim_dead');
+		});
+		tween.onComplete.add(function(){
+			var index = ref.game.rnd.integerInRange(0, ref.refMP.spawnPoints.length - 1);
+			ref.x = ref.refMP.spawnPoints[index].x;
+			ref.y = ref.refMP.spawnPoints[index].y;
+			ref.curHealth = ref.maxHealth;
+			ref.animations.play('anim_idle');
+			ref.isDead = false;
+		});
+	} else {
+		var index = ref.game.rnd.integerInRange(0, this.refMP.spawnPoints.length - 1);
+		this.x = this.refMP.spawnPoints[index].x;
+		this.y = this.refMP.spawnPoints[index].y;
+	}
 };
 
 BasicGame.HeroWalkerMP.prototype.update = function() {
-	this.handleControls();
+	if (!this.isDead) {
+		this.handleControls();
+	}
 	//this.game.debug.body(this);
 };
 
@@ -174,6 +197,7 @@ BasicGame.HeroWalkerMP.prototype.handleControls = function() {
 			this.stepTimer = this.game.time.now + this.timeStep;
 			this.myInput.x = this.x;
 			this.myInput.y = this.y;
+			this.myInput.hp = this.curHealth;
 
 			this.refMP.eurecaServer.compensate(this.myInput);
 		}
@@ -347,10 +371,25 @@ BasicGame.HeroWalkerMP.prototype.shootCallback = function() {
 
 BasicGame.HeroWalkerMP.prototype.getHit = function() {
 	this.effect.play('anim_4', this);
-	if (this.curHealth <= 0) {
+	// If dead, respawn
+	if (this.curHealth <= 0 && !this.isDead) {
 		this.curHealth = 0;
+		this.isDead = true;
 		console.log("Dead");
-	} else {
+		this.spawn();
+		this.refMP.broadcast(this.ID + " has been killed!", 2);
+	} else if (!this.isDead) {
+		var ref = this;
+		var cur = 0;
+		var tween = this.game.add.tween(this).to({tint: 0xff0000}, 100, Phaser.Easing.Linear.None, true, 0, 5, true);
+		tween.onRepeat.add(function() {
+			cur++;
+			if (cur > 4) {	
+				tween.stop();
+				ref.tint = 0xffffff;
+			}
+		});
+
 		this.curHealth -= 10;
 	}
 };

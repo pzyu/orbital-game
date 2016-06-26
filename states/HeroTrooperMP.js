@@ -27,7 +27,8 @@ BasicGame.HeroTrooperMP = function (id, game, x, y) {
 		skillC: false,
 		skillD: false,
 		x: 0,
-		y: 0
+		y: 0,
+		hp: 0
 	}
 
 	this.anchor.setTo(0.5, 0.5);
@@ -61,7 +62,7 @@ BasicGame.HeroTrooperMP = function (id, game, x, y) {
 
 	// Enable physics
 	this.game.physics.arcade.enableBody(this);
-	this.body.setSize(70, 130, -35, -10);
+	this.body.setSize(70, 140, -20, -8);
 	this.body.maxVelocity.y = 3000;
 	this.body.drag.x = 5000;
 
@@ -125,6 +126,7 @@ BasicGame.HeroTrooperMP = function (id, game, x, y) {
 	this.stepTimer = 0;
 	this.timeStep = this.refMP.timeStep;
 	this.delta = this.refMP.delta;
+	this.refMP.broadcast(this.ID + " has joined the game!", 2);
 
 	this.spawn();
 };
@@ -136,15 +138,17 @@ BasicGame.HeroTrooperMP.prototype.constructor = BasicGame.Player;
 BasicGame.HeroTrooperMP.prototype.spawn = function() {
 	var ref = this;
 	if (this.isDead) {
-		var tween = this.game.add.tween(this).to({0: 0}, 2000, Phaser.Easing.Linear.None, true, 0, 0);
+		var tween = this.game.add.tween(this).to({0: 0}, 5000, Phaser.Easing.Linear.None, true, 0, 0);
 		tween.onStart.add(function(){
-			console.log("Play dying animation")
+			console.log("Play dying animation");
+			ref.animations.play('anim_dead');
 		});
 		tween.onComplete.add(function(){
 			var index = ref.game.rnd.integerInRange(0, ref.refMP.spawnPoints.length - 1);
 			ref.x = ref.refMP.spawnPoints[index].x;
 			ref.y = ref.refMP.spawnPoints[index].y;
 			ref.curHealth = ref.maxHealth;
+			ref.animations.play('anim_idle');
 			ref.isDead = false;
 		});
 	} else {
@@ -160,7 +164,7 @@ BasicGame.HeroTrooperMP.prototype.update = function() {
 		this.handleControls();
 	}
 
-	this.game.debug.spriteInfo(this, 32, 32);
+	//this.game.debug.body(this);
 };
 
 BasicGame.HeroTrooperMP.prototype.handleControls = function() {
@@ -203,6 +207,7 @@ BasicGame.HeroTrooperMP.prototype.handleControls = function() {
 			this.stepTimer = this.game.time.now + this.timeStep;
 			this.myInput.x = this.x;
 			this.myInput.y = this.y;
+			this.myInput.hp = this.curHealth;
 
 			this.refMP.eurecaServer.compensate(this.myInput);
 		}
@@ -212,7 +217,7 @@ BasicGame.HeroTrooperMP.prototype.handleControls = function() {
 	if (this.cursor.left && !this.isAttacking) {		
 		this.facingRight = -1;
     	this.scale.x = -this.scaleX;
-    	this.body.offset.x = 35;
+    	this.body.offset.x = 20;
 		this.body.velocity.x = -this.moveSpeed;
 
 		if (this.body.onFloor()) {
@@ -221,7 +226,7 @@ BasicGame.HeroTrooperMP.prototype.handleControls = function() {
 	} else if (this.cursor.right && !this.isAttacking) {
 		this.facingRight = 1;
     	this.scale.x = this.scaleX;
-    	this.body.offset.x = -35;
+    	this.body.offset.x = -20;
 		this.body.velocity.x = this.moveSpeed;
 		
 		if (this.body.onFloor()) {
@@ -280,6 +285,16 @@ BasicGame.HeroTrooperMP.prototype.handleSkillB = function() {
 		this.skillBTimer = this.game.time.now + this.skillBCooldown;
 		this.isAttacking = true;
 		this.alpha = 1;
+
+		var ref = this;
+		var tween = this.game.add.tween(this).to({0: 0}, 5000, Phaser.Easing.Linear.None, true, 0);
+		tween.onStart.add(function() {
+			ref.moveSpeed = 1600;
+		});
+		tween.onComplete.add(function() {
+			//ref.alpha = 1;
+			ref.moveSpeed = 800;
+		});
 	}
 };
 
@@ -351,12 +366,13 @@ BasicGame.HeroTrooperMP.prototype.getHit = function() {
 	this.effect.play('anim_4', this);
 
 	// If dead, respawn
-	if (this.curHealth <= 0) {
+	if (this.curHealth <= 0 && !this.isDead) {
 		this.curHealth = 0;
 		this.isDead = true;
 		console.log("Dead");
 		this.spawn();
-	} else {
+		this.refMP.broadcast(this.ID + " has been killed!", 2);
+	} else if (!this.isDead) {
 		var ref = this;
 		var cur = 0;
 		var tween = this.game.add.tween(this).to({tint: 0xff0000}, 100, Phaser.Easing.Linear.None, true, 0, 5, true);

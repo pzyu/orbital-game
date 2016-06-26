@@ -1,5 +1,6 @@
 BasicGame.Multiplayer = function (game) {
 	this.playerList;					// Player list
+	this.playerListHUD;
 	this.myID = '';						// Client ID
 	this.selectedChar = '';				// Selected character
 
@@ -52,7 +53,9 @@ BasicGame.Multiplayer.prototype.preload = function() {
 	this.eurecaClient.exports.kill = function(id) {	
 		if (ref.playerList[id]) {
 			ref.playerList[id].kill();
-			console.log('killing ', id, ref.playerList[id]);
+			ref.broadcast(id + " has left the game!", 2);
+			console.log('killing ', id, ref.playerList[id], Object.keys(ref.playerList).length);
+			delete ref.playerList[id];
 		}
 	}	
 
@@ -106,6 +109,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 			//console.log('compensating');
 			curPlayer.x = state.x;
 			curPlayer.y = state.y;
+			curPlayer.curHealth = state.hp;
 			//curPlayer.interpolateTo(state.x, state.y, 1000);
 		}
 	};
@@ -214,6 +218,49 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.healthBar.fixedToCamera = true;
 	this.healthBar.anchor.setTo(0, 1);
 	this.healthRect = new Phaser.Rectangle(0, 0, this.healthBar.width, this.healthBar.height);
+
+	var style = { font: '32pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 800, align: 'center'};
+	this.message = this.game.add.text(-500, 0, 'Default message', style), 
+	this.message.fixedToCamera = true;
+	this.message.anchor.setTo(0.5, 0.5);
+
+
+	var style2 = { font: '20pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 800, align: 'center'};
+	var player1 = this.game.add.text(50, 20, '', style2);
+	var player2 = this.game.add.text(50, 60, '', style2);
+	var player3 = this.game.add.text(50, 100, '', style2);
+	var player4 = this.game.add.text(50, 140, '', style2);
+
+	player1.fixedToCamera = true;
+	player2.fixedToCamera = true;
+	player3.fixedToCamera = true;
+	player4.fixedToCamera = true;
+
+	this.playerListHUD = [
+		player1,
+		player2,
+		player3,
+		player4
+	];
+
+
+};
+
+BasicGame.Multiplayer.prototype.broadcast = function(msg, duration) {
+	var ref = this;
+	console.log(msg, duration);
+	var tween = this.game.add.tween(this).to({0: 0}, duration * 1000, Phaser.Easing.Linear.None, true, 0);
+	tween.onStart.add(function() {
+		ref.message.x = ref.game.width/2;
+		ref.message.y = ref.game.height/4;
+		ref.message.setText(msg);
+		ref.message.fixedToCamera = true;
+	});
+	tween.onComplete.add(function(){
+		ref.message.fixedToCamera = false;
+		ref.message.position.x = ref.message.position.y = -50;
+	});
+
 };
 
 BasicGame.Multiplayer.prototype.update = function() {
@@ -226,6 +273,7 @@ BasicGame.Multiplayer.prototype.update = function() {
 	this.physics.arcade.overlap(BasicGame.colliderCG, BasicGame.playerCG, this.colliderCallback);
 
 	this.handleHUD();
+	this.showPlayerList();
 };
 
 BasicGame.Multiplayer.prototype.handleHUD = function() {
@@ -245,6 +293,22 @@ BasicGame.Multiplayer.prototype.handleHUD = function() {
 
 	this.cropRectD.height = 66 * (this.player.getSkillD() + 1);
 	this.skillD.crop(this.cropRectD);
+}
+
+BasicGame.Multiplayer.prototype.showPlayerList = function() {
+	//console.log(this.playerList);
+	var count = 0;
+	for (var player in this.playerList) {
+		this.playerListHUD[count].setText(player + " - " + this.playerList[player].curHealth);
+
+		count++;
+		//console.log(count);
+	}
+
+	for (var cur = count; cur < this.playerListHUD.length; cur++) {
+		//console.log(cur);
+		this.playerListHUD[cur].setText('');
+	}
 }
 
 BasicGame.Multiplayer.prototype.projectileCallback= function(obj1, obj2) {

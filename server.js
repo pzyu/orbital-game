@@ -16,7 +16,7 @@ app.get('/', function(request, response) {
 var Eureca = require('eureca.io');
 
 // Create an instance of EurecaServer
-var eurecaServer = new Eureca.Server({allow:['setID', 'spawnEnemy', 'kill', 'updateState', 'getChar', 'compensate']});
+var eurecaServer = new Eureca.Server({allow:['setID', 'spawnEnemy', 'kill', 'updateState', 'getChar', 'compensate', 'broadcast']});
 var clients = {};
 var selectedChar = "test";
 
