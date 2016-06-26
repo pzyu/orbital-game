@@ -124,6 +124,12 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
 BasicGame.HeroWalkerMP.prototype = Object.create(Phaser.Sprite.prototype);
 BasicGame.HeroWalkerMP.prototype.constructor = BasicGame.Player;
 
+BasicGame.HeroWalkerMP.prototype.spawn = function() {
+	var index = this.game.rnd.integerInRange(0, this.refMP.spawnPoints.length - 1);
+	this.x = this.refMP.spawnPoints[index].x;
+	this.y = this.refMP.spawnPoints[index].y;
+};
+
 BasicGame.HeroWalkerMP.prototype.update = function() {
 	this.handleControls();
 	//this.game.debug.body(this);

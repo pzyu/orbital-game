@@ -2,7 +2,7 @@
 BasicGame.HeroTrooperMP = function (id, game, x, y) {
 	Phaser.Sprite.call(this, game, x, y, 'player_trooper', 0);
 	this.ID = id;
-	console.log('creating trooper');
+	console.log('creating trooper ' + this.ID);
 
 	this.cursor = {
 		left: false,
@@ -41,6 +41,7 @@ BasicGame.HeroTrooperMP = function (id, game, x, y) {
 	this.facingRight = 1;
 	this.maxHealth = 100;
 	this.curHealth = this.maxHealth;
+	this.isDead = false;
 
 	// Skills
 	this.skillACooldown = 1000;
@@ -68,25 +69,30 @@ BasicGame.HeroTrooperMP = function (id, game, x, y) {
 	this.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Anim_Trooper_Idle_00', 0, 9), 16, true);
 	this.animations.add('anim_run', Phaser.Animation.generateFrameNames('Anim_Trooper_Run_00', 0, 9), 16, true);
 	this.animations.add('anim_thrust', Phaser.Animation.generateFrameNames('Anim_Trooper_Melee_00', 0, 9), 16, false);
-	this.animations.add('anim_shoot', Phaser.Animation.generateFrameNames('Anim_Trooper_Shoot_00', 0, 9), 16, false);
-	this.animations.add('anim_walkshoot', Phaser.Animation.generateFrameNames('Anim_Trooper_WalkShoot_00', 0, 9), 16, true);
 	this.animations.add('anim_jump', Phaser.Animation.generateFrameNames('Anim_Trooper_Jump_00', 0, 9), 16, false);
 	this.animations.add('anim_dead', Phaser.Animation.generateFrameNames('Anim_Trooper_Dead_00', 0, 9), 16, false);
+
+	// Skills
+	this.animations.add('anim_haste', Phaser.Animation.generateFrameNames('Anim_Trooper_Haste_00', 0, 9), 16, false);
+	this.animations.add('anim_stealth', Phaser.Animation.generateFrameNames('Anim_Trooper_Stealth_00', 0, 9), 16, false);
 	this.animations.add('anim_ultimate1', Phaser.Animation.generateFrameNames('Anim_Trooper_CrouchAim_00', 0, 9), 16, true);
 	this.animations.add('anim_ultimate2', Phaser.Animation.generateFrameNames('Anim_Trooper_CrouchShoot_00', 0, 9), 16, false);
 
 	// Keep track of animation
 	this.jumpAnim = this.animations.getAnimation('anim_jump');
 	this.thrustAnim = this.animations.getAnimation('anim_thrust');
-	this.shootAnim = this.animations.getAnimation('anim_shoot');
-	this.walkShootAnim = this.animations.getAnimation('anim_walkshoot');
+	this.hasteAnim = this.animations.getAnimation('anim_haste');
+	this.stealthAnim = this.animations.getAnimation('anim_stealth');
 	this.ultiAnim = this.animations.getAnimation('anim_ultimate2');
+
+	//console.log(this.jumpAnim);
 
     this.isAttacking = false;
 
 	// Add callback
 	this.thrustAnim.onComplete.add(this.attackCallback, this);
-	this.shootAnim.onComplete.add(this.shootCallback, this);
+	this.hasteAnim.onComplete.add(this.attackCallback, this);
+	this.stealthAnim.onComplete.add(this.attackCallback, this);
 	this.ultiAnim.onComplete.add(this.shootCallback, this);
 
 	// Each hero will have an effect object which basically plays whatever effect they have
@@ -119,17 +125,43 @@ BasicGame.HeroTrooperMP = function (id, game, x, y) {
 	this.stepTimer = 0;
 	this.timeStep = this.refMP.timeStep;
 	this.delta = this.refMP.delta;
+
+	this.spawn();
 };
 
 // Kind of like inherts Sprite
 BasicGame.HeroTrooperMP.prototype = Object.create(Phaser.Sprite.prototype);
 BasicGame.HeroTrooperMP.prototype.constructor = BasicGame.Player;
 
-BasicGame.HeroTrooperMP.prototype.update = function() {
-	this.handleControls();
-	//this.game.debug.body(this);
+BasicGame.HeroTrooperMP.prototype.spawn = function() {
+	var ref = this;
+	if (this.isDead) {
+		var tween = this.game.add.tween(this).to({0: 0}, 2000, Phaser.Easing.Linear.None, true, 0, 0);
+		tween.onStart.add(function(){
+			console.log("Play dying animation")
+		});
+		tween.onComplete.add(function(){
+			var index = ref.game.rnd.integerInRange(0, ref.refMP.spawnPoints.length - 1);
+			ref.x = ref.refMP.spawnPoints[index].x;
+			ref.y = ref.refMP.spawnPoints[index].y;
+			ref.curHealth = ref.maxHealth;
+			ref.isDead = false;
+		});
+	} else {
+		var index = ref.game.rnd.integerInRange(0, this.refMP.spawnPoints.length - 1);
+		this.x = this.refMP.spawnPoints[index].x;
+		this.y = this.refMP.spawnPoints[index].y;
+	}
+
 };
 
+BasicGame.HeroTrooperMP.prototype.update = function() {
+	if (!this.isDead) {
+		this.handleControls();
+	}
+
+	this.game.debug.spriteInfo(this, 32, 32);
+};
 
 BasicGame.HeroTrooperMP.prototype.handleControls = function() {
 
@@ -223,7 +255,7 @@ BasicGame.HeroTrooperMP.prototype.handleControls = function() {
     this.handleSkillB();
     this.handleSkillC();
     this.handleSkillD();
-    this.step(this.delta);
+    //this.step(this.delta);
 };
 
 BasicGame.HeroTrooperMP.prototype.handleSkillA = function() {
@@ -238,59 +270,36 @@ BasicGame.HeroTrooperMP.prototype.handleSkillA = function() {
 		this.isAttacking = true;
 		this.skillATimer = this.game.time.now + this.skillACooldown; 
 		this.attackCollider.activate();   
+		this.alpha = 1;
 	}
 };
 
 BasicGame.HeroTrooperMP.prototype.handleSkillB = function() {
-	if (this.cursor.left && this.cursor.skillB) {
-		this.facingRight = -1;
-    	this.scale.x = -this.scaleX;
-    	this.body.offset.x = 35;
-		this.body.velocity.x = -this.moveSpeed;
-
-		if (this.body.onFloor()) {
-			this.animations.play('anim_walkshoot');
-		}
-		
-	} else if (this.cursor.right && this.cursor.skillB) {
-		this.facingRight = 1;
-    	this.scale.x = this.scaleX;
-    	this.body.offset.x = -35;
-		this.body.velocity.x = this.moveSpeed;
-		
-		if (this.body.onFloor()) {
-			this.animations.play('anim_walkshoot');	
-		}
-	} 
-
 	if (this.cursor.skillB && this.game.time.now > this.skillBTimer) {
-		this.animations.play('anim_shoot');
+		this.animations.play('anim_haste');
 		this.skillBTimer = this.game.time.now + this.skillBCooldown;
 		this.isAttacking = true;
-		BasicGame.projectileCG.getFirstExists(false).play('anim_1', this, 1000, 0, 0, 100, 0, false);
+		this.alpha = 1;
 	}
-
-	//console.log(BasicGame.projectileCG.getFirstExists(false));
-	//BasicGame.projectileCG.getFirstExists(false).play('anim_1', this, 1000, 0, 0, 100, 0);
 };
 
 BasicGame.HeroTrooperMP.prototype.handleSkillC = function() {
 	if (this.cursor.skillC && this.game.time.now > this.skillCTimer) {
     	// Play the animation
-    	this.animations.play('anim_shoot');
+    	this.animations.play('anim_stealth');
     	this.animations.currentAnim.frame = 0;
 		this.isAttacking = true;
 		this.skillCTimer = this.game.time.now + this.skillCCooldown; 
-		
-		// Projectile variables
-		var shootAmt = 1;
-		var velX = 500;
-		var velY = 1000;
-		var angle = 30;
-		var offsetX = 50;
-		var offsetY = 50;
 
-    	BasicGame.projectileCG.getFirstExists(false).play('anim_1', this, velX, -velY, -angle, offsetX, -offsetY, true);
+		var ref = this;
+		var tween = this.game.add.tween(this).to({alpha: 0.5}, 500, Phaser.Easing.Linear.None, true, 500);
+		tween.onComplete.add(function() {
+			//ref.alpha = 1;
+		});
+
+
+
+		//this.alpha = 0.5;
 	}
 };
 
@@ -299,6 +308,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillD = function() {
     	// Play the animation
 		this.isAttacking = true;
 		this.skillDTimer = this.game.time.now + this.skillDCooldown; 
+		this.alpha = 1;
 
     	// Projectile variables
 		var repeat = 0;
@@ -328,6 +338,7 @@ BasicGame.HeroTrooperMP.prototype.kill = function() {
 };
 
 BasicGame.HeroTrooperMP.prototype.attackCallback = function() {
+	console.log('done');
 	this.isAttacking = false;
 	this.attackCollider.deactivate();
 };
@@ -339,10 +350,24 @@ BasicGame.HeroTrooperMP.prototype.shootCallback = function() {
 BasicGame.HeroTrooperMP.prototype.getHit = function() {
 	this.effect.play('anim_4', this);
 
+	// If dead, respawn
 	if (this.curHealth <= 0) {
 		this.curHealth = 0;
+		this.isDead = true;
 		console.log("Dead");
+		this.spawn();
 	} else {
+		var ref = this;
+		var cur = 0;
+		var tween = this.game.add.tween(this).to({tint: 0xff0000}, 100, Phaser.Easing.Linear.None, true, 0, 5, true);
+		tween.onRepeat.add(function() {
+			cur++;
+			if (cur > 4) {	
+				tween.stop();
+				ref.tint = 0xffffff;
+			}
+		});
+
 		this.curHealth -= 10;
 	}
 };
@@ -391,5 +416,5 @@ BasicGame.HeroTrooperMP.prototype.step = function(delta) {
 		this.y -= delta * this.stepValueY;
 	}
 
-	console.log(this.game.math.difference(this.y, this.targetY));
+	//console.log(this.game.math.difference(this.y, this.targetY));
 };

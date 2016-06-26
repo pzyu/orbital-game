@@ -7,8 +7,15 @@ BasicGame.Multiplayer = function (game) {
 	this.spawnX = 1000;					// Starting spawn
 	this.spawnY = 1000;
 
-	this.timeStep = 2000;				// Time step for interpolation
+	this.timeStep = 1000;				// Time step for interpolation
 	this.delta = 5;						// Delta for smoothing
+
+	this.spawnPoints = [				// Array of spawn points, set in each hero class
+		{x: 500,  y: 500},
+		{x: 1000,  y: 500},
+		{x: 2500,  y: 500},
+		{x: 3000, y: 500}
+	];
 };
 
 BasicGame.Multiplayer.prototype.init = function() {
@@ -83,8 +90,9 @@ BasicGame.Multiplayer.prototype.preload = function() {
 	}
 
 	this.eurecaClient.exports.updateState = function(id, state) {
+		// Update state sends local remote input to every client 
 		var curPlayer = ref.playerList[id];
-		if (curPlayer && this.myID != id) {
+		if (curPlayer) {
 			// Update player's cursor with state
 			curPlayer.cursor = state;
 			curPlayer.update();
@@ -92,8 +100,9 @@ BasicGame.Multiplayer.prototype.preload = function() {
 	}
 
 	this.eurecaClient.exports.compensate = function(id, state) {
+		// Compensate corrects server side position, does not touch local client
 		var curPlayer = ref.playerList[id];
-		if (curPlayer && this.myID != id) {
+		if (curPlayer && ref.myID != id) {
 			//console.log('compensating');
 			curPlayer.x = state.x;
 			curPlayer.y = state.y;
@@ -158,6 +167,7 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 
 	// Create client's hero
 	if (BasicGame.selectedChar == "player_trooper") {
+		//console.log(this.game.rnd.integerInRange(0, 3));
 		var player = new BasicGame.HeroTrooperMP(this.myID, this.game, 100, 1000);
 	}
 	if (BasicGame.selectedChar == "player_walker") {

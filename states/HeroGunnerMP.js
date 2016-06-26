@@ -122,6 +122,12 @@ BasicGame.HeroGunnerMP = function (id, game, x, y) {
 BasicGame.HeroGunnerMP.prototype = Object.create(Phaser.Sprite.prototype);
 BasicGame.HeroGunnerMP.prototype.constructor = BasicGame.Player;
 
+BasicGame.HeroGunnerMP.prototype.spawn = function() {
+	var index = this.game.rnd.integerInRange(0, this.refMP.spawnPoints.length - 1);
+	this.x = this.refMP.spawnPoints[index].x;
+	this.y = this.refMP.spawnPoints[index].y;
+};
+
 BasicGame.HeroGunnerMP.prototype.update = function() {
 	this.handleControls();
 	//this.game.debug.body(this);

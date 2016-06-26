@@ -36,7 +36,7 @@ BasicGame.CharSelect.prototype = {
 		this.resetFilter(target);
 		this.isClicked = target; // chosen character information is stored into this.isClicked
 		target.filters = null; // highlight chosen character
-		target.animations.play('anim_attack');
+		//target.animations.play('anim_attack');
 		target.animations.currentAnim.onLoop.add(function() { 
 			target.animations.play('anim_idle');
 		});

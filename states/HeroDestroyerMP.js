@@ -124,6 +124,12 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y) {
 BasicGame.HeroDestroyerMP.prototype = Object.create(Phaser.Sprite.prototype);
 BasicGame.HeroDestroyerMP.prototype.constructor = BasicGame.Player;
 
+BasicGame.HeroDestroyerMP.prototype.spawn = function() {
+	var index = this.game.rnd.integerInRange(0, this.refMP.spawnPoints.length - 1);
+	this.x = this.refMP.spawnPoints[index].x;
+	this.y = this.refMP.spawnPoints[index].y;
+};
+
 BasicGame.HeroDestroyerMP.prototype.update = function() {
 	this.handleControls();
 	//this.game.debug.body(this);
