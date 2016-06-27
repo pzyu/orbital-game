@@ -6,20 +6,17 @@
   "author": "Richard Davey <rdavey@gmail.com> (http://www.photonstorm.com)",
   "logo": "https://raw.github.com/photonstorm/phaser/master/phaser-logo-small.png",
   "homepage": "http://phaser.io",
-  "bugs": {
-    "url": "https://github.com/photonstorm/phaser/issues"
-  },
+  "bugs": "https://github.com/photonstorm/phaser/issues",
   "license": "MIT",
   "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
   "main": "./build/phaser.js",
   "repository": {
     "type": "git",
-    "url": "git+https://photonstorm@github.com/photonstorm/phaser.git"
+    "url": "https://photonstorm@github.com/photonstorm/phaser.git"
   },
   "scripts": {
     "prepublish": "grunt build",
-    "test": "NODE_ENV=test grunt jshint",
-    "start": "node server.js"
+    "test": "NODE_ENV=test grunt jshint"
   },
   "keywords": [
     "2d",
@@ -57,11 +54,5 @@
       "typescript/phaser.comments.d.ts",
       "typescript/pixi.comments.d.ts"
     ]
-  },
-  "dependencies": {
-    "eureca.io": "^0.6.42",
-    "engine.io": "^1.6.9",
-    "express": "^4.13.4",
-    "phaser-input": "^1.1.4"
   }
 }
