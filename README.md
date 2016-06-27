@@ -3,30 +3,29 @@
 zero+ is a HTML5 browser based online multiplayer arena game built on Phaser. Players can choose up to 4 heroes with different attributes and skills to pit against others in the arena. 
 
 Current features:
-- Game states 
-- Character select screen
-- Spritesheet and spritemap support
-- Tilemap support
-- Hero movement and skills
-- Hit box and collision detection
-- HUD with skill cooldowns and health
-- Multiplayer on a persistent server
+- Basic game states: Boot, Main menu, Options, Credits, Character select, Multiplayer
+- Tilemap and spritesheets support, anyone can create their own maps and characters by using the tools noted in our documentation
+- Four fully animated heroes, each with unique animations to suit their characters
+- Basic hero mechanics such as movement, health, skills, cool downs, damage, respawn system
+- Hero HUD showing health and skill cool downs
+- Simple free for all where everyone's objective is just to kill everyone else
+- Bare minimum tutorial where players are shown the controls in the character select screen
+- Online multiplayer hosted on Azure, currently serves as a persistent server where players can join in whenever they want.
+- Server broadcast messages where every player will be notified when someone has joined or left the game, or if they have died.
+- Dummy leaderboard that shows the list of players and their current health
  
 Planned features:
-- Hosting and joining of game sessions
-- Game modes: 
-    - Deathmatch
-    - Team deathmatch
-    - Survival
-- Mobile port
-
-Todos:
-- Complete hero skills and attributes
-- Change character select screen
-- Complete Options and Credits screen
-- Add music and sound effects
-- Add single player mode
-- Tweak multiplayer 
+- Skills and balance for all heroes
+- Team deathmatch game mode (MVP)
+- Team mechanics
+- Game mechanics
+- Hero and skill levels
+- Lobby hosting and joining game sessions
+- Allowing users to create their own game room where they could play privately with friends.
+- Cross platform
+    - Providing support to mobile devices for the game
+    - Allowing users on mobile device to play with users on web platforms.
+    - Can explore electron
 
 ### Installation
 zero+ uses the following to work properly:
