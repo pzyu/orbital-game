@@ -149,7 +149,7 @@ BasicGame.Multiplayer.prototype.preloadGame = function() {
 
 	this.physics.arcade.TILE_BIAS = 60;				// The higher the tile bias, the more unlikely it is the player will fall through
 
-    this.inputField = this.game.plugins.add(Fabrique.Plugins.InputField);
+    //this.inputField = this.game.plugins.add(Fabrique.Plugins.InputField);
     //this.nineSlice = this.game.plugins.add(Fabrique.Plugins.NineSlice);
 
     // Uncomment for chat
