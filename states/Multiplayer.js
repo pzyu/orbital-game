@@ -148,6 +148,27 @@ BasicGame.Multiplayer.prototype.preloadGame = function() {
 	map.setCollisionBetween(329, 341, true, layer);	
 
 	this.physics.arcade.TILE_BIAS = 60;				// The higher the tile bias, the more unlikely it is the player will fall through
+
+    this.inputField = this.game.plugins.add(Fabrique.Plugins.InputField);
+    //this.nineSlice = this.game.plugins.add(Fabrique.Plugins.NineSlice);
+
+    // Uncomment for chat
+	//this.chatBox = this.game.add.inputField(260, 680, {
+	//	width: 260,
+	//	height: 20,
+	//	placeHolder: 'Type something here'
+	//});
+	//this.chatBox.fixedToCamera = true;
+
+	this.cursors = this.game.input.keyboard.createCursorKeys();
+	this.enter = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+
+
+	// Chat
+	var test =  { font: '16pt myfont', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 400};
+	this.playerText = this.game.add.text(-100, -100, "Default", test);
+	console.log(this.playerText);
+	this.textTimer = 0;
 }
 
 BasicGame.Multiplayer.prototype.createGame = function() {
@@ -242,8 +263,6 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 		player3,
 		player4
 	];
-
-
 };
 
 BasicGame.Multiplayer.prototype.broadcast = function(msg, duration) {
@@ -274,6 +293,7 @@ BasicGame.Multiplayer.prototype.update = function() {
 
 	this.handleHUD();
 	this.showPlayerList();
+	//this.chat();
 };
 
 BasicGame.Multiplayer.prototype.handleHUD = function() {
@@ -308,6 +328,26 @@ BasicGame.Multiplayer.prototype.showPlayerList = function() {
 	for (var cur = count; cur < this.playerListHUD.length; cur++) {
 		//console.log(cur);
 		this.playerListHUD[cur].setText('');
+	}
+}
+
+BasicGame.Multiplayer.prototype.chat = function() {
+	if (this.enter.isDown && this.game.time.now > this.textTimer) {
+		this.textTimer = this.game.time.now + 1000;
+		
+		var ref = this;
+		var tween = this.game.add.tween(this).to({0: 0}, 2000, Phaser.Easing.Linear.None, true, 0);
+		tween.onStart.add(function() {
+			ref.playerText.x = ref.playerList[ref.myID].x + 20;
+			ref.playerText.y = ref.playerList[ref.myID].y - 50;
+			ref.playerText.setText(ref.chatBox.value);
+			ref.chatBox.resetText();
+
+			console.log(ref.playerText.x, ref.playerText.y, ref.playerText.text);
+		});
+		tween.onComplete.add(function(){
+			ref.playerText.position.x = ref.playerText.position.y = -50;
+		});
 	}
 }
 

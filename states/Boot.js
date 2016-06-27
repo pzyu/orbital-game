@@ -15,6 +15,7 @@ BasicGame.Boot.prototype = {
         this.load.script('game_scr', 'states/MainGame.js');
         this.load.script('charselect_scr', 'states/CharSelect.js');
         this.load.script('options_scr', 'states/Options.js');
+        this.load.script('credits_scr', 'states/Credits.js');
         this.load.script('effect_scr', 'states/Effect.js');
         this.load.script('proj_scr', 'states/Projectile.js');
         this.load.script('multiplayer_scr', 'states/Multiplayer.js');
@@ -34,6 +35,9 @@ BasicGame.Boot.prototype = {
 
         // For webfonts
         this.load.script('WebFont', 'scripts/webfontloader.js');
+        // Text input
+        this.load.script('textinput_src', 'node_modules/phaser-input/build/phaser-input.js');
+
         // Grey filter
         this.load.script('gray', 'scripts/Gray.js');
     },
@@ -126,6 +130,7 @@ BasicGame.Boot.prototype = {
         this.state.add('MainGame', BasicGame.MainGame);
         this.state.add('Multiplayer', BasicGame.Multiplayer);
         this.state.add('Options', BasicGame.Options);
+        this.state.add('Credits', BasicGame.Credits);
     },
 
     // Create function to start the actual preloader

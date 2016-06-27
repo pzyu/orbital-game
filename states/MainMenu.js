@@ -27,7 +27,7 @@ BasicGame.MainMenu.prototype = {
 	},
 
 	create: function () {
-		this.addMenuOption('Start', function (target) {
+		this.addMenuOption('Start Game', function (target) {
 			// Move to character select screen, last parameter is to determine if it's multiplayer or not
 			this.game.state.start('CharSelect', true, false, false);
 		});
@@ -38,6 +38,7 @@ BasicGame.MainMenu.prototype = {
 			this.game.state.start('Options');
 		});
 		this.addMenuOption('Credits', function (target) {
+			this.game.state.start('Credits');
 		});
 	},
 

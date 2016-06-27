@@ -46,8 +46,8 @@ BasicGame.HeroTrooperMP = function (id, game, x, y) {
 
 	// Skills
 	this.skillACooldown = 1000;
-	this.skillBCooldown = 1500;
-	this.skillCCooldown = 2000;
+	this.skillBCooldown = 8000;
+	this.skillCCooldown = 9000;
 	this.skillDCooldown = 5000;	
 	this.skillATimer = 0;
 	this.skillBTimer = 0;
