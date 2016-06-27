@@ -36,7 +36,7 @@ BasicGame.Boot.prototype = {
         // For webfonts
         this.load.script('WebFont', 'scripts/webfontloader.js');
         // Text input
-        this.load.script('textinput_src', 'node_modules/phaser-input/build/phaser-input.js');
+        //this.load.script('textinput_src', 'node_modules/phaser-input/build/phaser-input.js');
 
         // Grey filter
         this.load.script('gray', 'scripts/Gray.js');
