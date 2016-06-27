@@ -59,11 +59,10 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
 	this.scaleY = 1;
 	this.scale.x = this.scaleX;
 	this.scale.y = this.scaleY;
-	this.bodyOffset = 10;
 
 	// Enable physics
 	this.game.physics.arcade.enableBody(this);
-	this.body.setSize(160, 200, this.bodyOffset, -2);
+	this.body.setSize(160, 200, 44, 24);
 	this.body.maxVelocity.y = 3000;
 	this.body.drag.x = 5000;
 
@@ -94,7 +93,7 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
 	this.game.add.existing(this.effect);
 
 	// Attack collider
-    this.attackCollider = new BasicGame.Collider(this.game, this);
+    this.attackCollider = new BasicGame.Collider(this.game, this,  100, 100, 100, -40, 1000);
     this.game.add.existing(this.attackCollider);
     BasicGame.colliderCG.add(this.attackCollider);
     console.log(BasicGame.colliderCG.length);
@@ -155,7 +154,7 @@ BasicGame.HeroWalkerMP.prototype.update = function() {
 	if (!this.isDead) {
 		this.handleControls();
 	}
-	//this.game.debug.body(this);
+	// this.game.debug.body(this);
 };
 
 
@@ -207,7 +206,6 @@ BasicGame.HeroWalkerMP.prototype.handleControls = function() {
 	if (this.cursor.left && !this.isAttacking) {
 		this.facingRight = -1;
     	this.scale.x = -this.scaleX;
-    	this.body.offset.x = this.bodyOffset;
 		this.body.velocity.x = -this.moveSpeed;
 
 		if (this.body.onFloor()) {
@@ -217,7 +215,6 @@ BasicGame.HeroWalkerMP.prototype.handleControls = function() {
 	} else if (this.cursor.right && !this.isAttacking) {
 		this.facingRight = 1;
     	this.scale.x = this.scaleX;
-    	this.body.offset.x = -this.bodyOffset;
 		this.body.velocity.x = this.moveSpeed;
 		
 		if (this.body.onFloor()) {
@@ -295,7 +292,7 @@ BasicGame.HeroWalkerMP.prototype.handleSkillB = function() {
 		this.skillBTimer = this.game.time.now + this.skillBCooldown; 
 
 		//console.log(BasicGame.projectileCG.getFirstExists(false));
-    	BasicGame.projectileCG.getFirstExists(false).play('anim_1', this, 1000, 0, 0, 100, 0);
+    	BasicGame.projectileCG.getFirstExists(false).play('anim_1', this, 1000, 0, 0, 175, 0);
 	}
 };
 
@@ -312,7 +309,7 @@ BasicGame.HeroWalkerMP.prototype.handleSkillC = function() {
 		var velX = 750;
 		var velY = 500;
 		var angle = 30;
-		var offsetX = 150;
+		var offsetX = 175;
 		var offsetY = 50;
 
     	var ref = this;
@@ -369,7 +366,7 @@ BasicGame.HeroWalkerMP.prototype.shootCallback = function() {
 	this.isAttacking = false;
 };
 
-BasicGame.HeroWalkerMP.prototype.getHit = function() {
+BasicGame.HeroWalkerMP.prototype.getHit = function(knockback) {
 	this.effect.play('anim_4', this);
 	// If dead, respawn
 	if (this.curHealth <= 0 && !this.isDead) {
@@ -390,6 +387,8 @@ BasicGame.HeroWalkerMP.prototype.getHit = function() {
 			}
 		});
 
+		this.body.velocity.x += knockback * this.facingRight;
+		this.body.velocity.y -= knockback;
 		this.curHealth -= 10;
 	}
 };

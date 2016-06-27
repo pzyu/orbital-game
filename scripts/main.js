@@ -1,7 +1,7 @@
 // So called "parent" of all the states
 var BasicGame = {
-  gameWidth: 1024,
-  gameHeight: 768,
+  gameWidth: 1280,
+  gameHeight: 720,
   projectileCG: null,
   colliderCG: null,
   playerCG: null,
@@ -9,8 +9,10 @@ var BasicGame = {
   musicPlayer: null
 };     
 
+var config = {  width: BasicGame.gameWidth,  height: BasicGame.gameHeight,  renderer: Phaser.AUTO, forceSetTimeOut: false};
+
 // Global Variables
-var game = new Phaser.Game(BasicGame.gameWidth, BasicGame.gameHeight, Phaser.AUTO, 'game');
+var game = new Phaser.Game(config);
 
 BasicGame.Main = function() {
 };

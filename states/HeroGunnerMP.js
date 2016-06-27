@@ -58,11 +58,10 @@ BasicGame.HeroGunnerMP = function (id, game, x, y) {
 	this.scaleY = 1;
 	this.scale.x = this.scaleX;
 	this.scale.y = this.scaleY;
-	this.bodyOffset = 20;
 
 	// Enable physics
 	this.game.physics.arcade.enableBody(this);
-	this.body.setSize(150, 100, this.bodyOffset, 20);
+	this.body.setSize(180, 100, 60, 74);
 	this.body.maxVelocity.y = 3000;
 	this.body.drag.x = 5000;
 
@@ -93,7 +92,7 @@ BasicGame.HeroGunnerMP = function (id, game, x, y) {
 	this.game.add.existing(this.effect);
 
 	// Attack collider
-    this.attackCollider = new BasicGame.Collider(this.game, this);
+    this.attackCollider = new BasicGame.Collider(this.game, this, 80, 150, 100, 0, 1000);
     this.game.add.existing(this.attackCollider);
     BasicGame.colliderCG.add(this.attackCollider);
 
@@ -154,7 +153,7 @@ BasicGame.HeroGunnerMP.prototype.update = function() {
 	if (!this.isDead) {
 		this.handleControls();
 	}
-	//this.game.debug.body(this);
+	// this.game.debug.body(this);
 };
 
 
@@ -206,7 +205,6 @@ BasicGame.HeroGunnerMP.prototype.handleControls = function() {
 	if (this.cursor.left && !this.isAttacking) {
 		this.facingRight = -1;
     	this.scale.x = -this.scaleX;
-    	this.body.offset.x = this.bodyOffset;
 		this.body.velocity.x = -this.moveSpeed;
 
 		if (this.body.onFloor()) {
@@ -216,7 +214,6 @@ BasicGame.HeroGunnerMP.prototype.handleControls = function() {
 	} else if (this.cursor.right && !this.isAttacking) {
 		this.facingRight = 1;
     	this.scale.x = this.scaleX;
-    	this.body.offset.x = -this.bodyOffset;
 		this.body.velocity.x = this.moveSpeed;
 		
 		if (this.body.onFloor()) {
@@ -280,7 +277,7 @@ BasicGame.HeroGunnerMP.prototype.handleSkillB = function() {
 		this.skillBTimer = this.game.time.now + this.skillBCooldown; 
 
 		//console.log(BasicGame.projectileCG.getFirstExists(false));
-    	BasicGame.projectileCG.getFirstExists(false).play('anim_1', this, 1000, 0, 0, 100, 0);
+    	BasicGame.projectileCG.getFirstExists(false).play('anim_1', this, 1000, 0, 0, 120, -42);
 	}
 };
 
@@ -356,7 +353,7 @@ BasicGame.HeroGunnerMP.prototype.shootCallback = function() {
 	this.attackCollider.deactivate();
 };
 
-BasicGame.HeroGunnerMP.prototype.getHit = function() {
+BasicGame.HeroGunnerMP.prototype.getHit = function(knockback) {
 	this.effect.play('anim_4', this);
 
 	// If dead, respawn
@@ -378,6 +375,8 @@ BasicGame.HeroGunnerMP.prototype.getHit = function() {
 			}
 		});
 
+		this.body.velocity.x += knockback * this.facingRight;
+		this.body.velocity.y -= knockback;
 		this.curHealth -= 10;
 	}
 };

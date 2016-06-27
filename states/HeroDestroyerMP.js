@@ -61,7 +61,7 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y) {
 
 	// Enable physics
 	this.game.physics.arcade.enableBody(this);
-	this.body.setSize(90, 220, -35, -15);
+	this.body.setSize(110, 220, 110, 20);
 	this.body.maxVelocity.y = 2500;
 	this.body.drag.x = 5000;
 
@@ -92,7 +92,7 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y) {
 	this.game.add.existing(this.effect);
 
 	// Attack collider
-    this.attackCollider = new BasicGame.Collider(this.game, this);
+    this.attackCollider = new BasicGame.Collider(this.game, this, 80, 100, 100, 0, 2000);
     this.game.add.existing(this.attackCollider);
     BasicGame.colliderCG.add(this.attackCollider);
     console.log(BasicGame.colliderCG.length);
@@ -155,7 +155,7 @@ BasicGame.HeroDestroyerMP.prototype.update = function() {
 	if (!this.isDead) {
 		this.handleControls();
 	}
-	//this.game.debug.body(this);
+	// this.game.debug.body(this);
 	//console.log(BasicGame.projectileCG.length);
 };
 
@@ -208,7 +208,6 @@ BasicGame.HeroDestroyerMP.prototype.handleControls = function() {
 	if (this.cursor.left && !this.isAttacking) {
 		this.facingRight = -1;
     	this.scale.x = -this.scaleX;
-    	this.body.offset.x = 35;
 		this.body.velocity.x = -this.moveSpeed;
 
 		if (this.body.onFloor()) {
@@ -218,7 +217,6 @@ BasicGame.HeroDestroyerMP.prototype.handleControls = function() {
 	} else if (this.cursor.right && !this.isAttacking) {
 		this.facingRight = 1;
     	this.scale.x = this.scaleX;
-    	this.body.offset.x = -35;
 		this.body.velocity.x = this.moveSpeed;
 		
 		if (this.body.onFloor()) {
@@ -351,7 +349,7 @@ BasicGame.HeroDestroyerMP.prototype.shootCallback = function() {
 	this.isAttacking = false;
 };
 
-BasicGame.HeroDestroyerMP.prototype.getHit = function() {
+BasicGame.HeroDestroyerMP.prototype.getHit = function(knockback) {
 	this.effect.play('anim_4', this);
 
 	// If dead, respawn
@@ -373,6 +371,8 @@ BasicGame.HeroDestroyerMP.prototype.getHit = function() {
 			}
 		});
 
+		this.body.velocity.x += knockback * this.facingRight;
+		this.body.velocity.y -= knockback;
 		this.curHealth -= 10;
 	}
 };

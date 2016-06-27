@@ -18,7 +18,7 @@ BasicGame.Projectile = function (game, atlasName, loopCount, frame, target) {
 	this.game.physics.arcade.enableBody(this);
 	//this.enableBody = true;
 
-	this.body.setSize(150, 150, 0, 0);
+	this.body.setSize(100, 100, 200, 200);
 	this.body.allowGravity = false;
 	//this.body.bounce.setTo(1, 1);
 
@@ -37,7 +37,7 @@ BasicGame.Projectile.prototype = Object.create(Phaser.Sprite.prototype);
 BasicGame.Projectile.prototype.constructor = BasicGame.Projectile;
 
 BasicGame.Projectile.prototype.update = function() {
-	//this.game.debug.body(this);
+	this.game.debug.body(this);
 };	
 
 BasicGame.Projectile.prototype.animationComplete = function() {
@@ -71,7 +71,7 @@ BasicGame.Projectile.prototype.play = function(anim, target, velX, velY, angle, 
 	// Correct collider velocity and offset
 	if (this.correctDirection(this.target)) {
 		this.body.velocity.x *= -1;
-		this.body.offset.x *= -1;
+		//this.body.offset.x *= -1;
 		this.x -= offsetX * 2;
 	}
 	

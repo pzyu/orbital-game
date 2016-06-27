@@ -1,11 +1,13 @@
-BasicGame.Collider = function (game, target) {
+BasicGame.Collider = function (game, target, width, height, offsetX, offsetY, force) {
     Phaser.Sprite.call(this, game, -100, -100);
-    this.anchor.setTo(0.5, 0.5);
+    this.anchor.setTo(1.0, 1.0);
+    this.force = force;
 
 	this.game.physics.arcade.enableBody(this);
-	this.body.setSize(100, 100, 0, 0);
+	this.body.setSize(width, height, 0, offsetY);
 	this.body.allowGravity = false;
 
+	this.offX = offsetX;
 	this.target = target;
 
 	this.isActive = false;
@@ -19,8 +21,8 @@ BasicGame.Collider.prototype.update = function() {
 	if(this.isActive) {
 		this.x = this.target.x;
 		this.y = this.target.y;
-		this.body.offset.x = this.body.width/2 * this.target.facingRight;
-		this.body.velocity.x = 1000 * this.target.facingRight;
+		this.body.offset.x = this.offX * this.target.facingRight;
+		//this.body.velocity.x = 10 * this.target.facingRight;
 		
 	} else {
 		// Otherwise go out of screen.
@@ -41,7 +43,7 @@ BasicGame.Collider.prototype.deactivate = function() {
 BasicGame.Collider.prototype.onCollide = function(collider) {
 	if (collider != this.target) {
 		this.isActive = false;
-		collider.getHit();
+		collider.getHit(this.force);
 	}
 };
 
