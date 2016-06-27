@@ -6,6 +6,7 @@ BasicGame.CharSelect = function (game) {
 	this.isClicked = null;
 	this.multiplayer = false;
 	this.loaded = false;
+	this.charArr = new Array(4);
 };
 
 BasicGame.CharSelect.prototype = {
@@ -19,8 +20,10 @@ BasicGame.CharSelect.prototype = {
 		this.background.width = this.game.width;
 	},
 
-	resetFilter: function(target) {
-		target.filters = [this.gray];
+	resetFilter: function() {
+		for (var i=0; i<this.charArr.length; i++) {
+			this.charArr[i].filters = [this.gray];
+		}
 	},
 
 	// On over style
@@ -30,8 +33,9 @@ BasicGame.CharSelect.prototype = {
  
 	// On out style
 	onOut: function (target) {
-		if(this.isClicked != target) {
-			this.resetFilter(target);
+		this.resetFilter(target);
+		if (this.isClicked != null) {
+			this.isClicked.filters = null;
 		}
 	},
 
@@ -45,7 +49,6 @@ BasicGame.CharSelect.prototype = {
 			target.animations.play('anim_idle');
 		});
 		BasicGame.selectedChar = target.key;
-		//console.log(BasicGame.selectedChar);
 	},
 
 	addCharacter: function(spriteName) {
@@ -79,8 +82,7 @@ BasicGame.CharSelect.prototype = {
 		char.animations.add('anim_attack', Phaser.Animation.generateFrameNames(animName + 'Shoot_00', 0, 10), 16, true);
 		char.animations.play('anim_idle');
 
-		this.resetFilter(char);
-		this.isClicked = null;
+		this.charArr[this.charCount] = char;
 
 		// Set input functions
 		char.inputEnabled = true;
@@ -103,6 +105,8 @@ BasicGame.CharSelect.prototype = {
 		this.addCharacter('player_trooper');
 		this.addCharacter('player_walker');
 		this.addCharacter('player_gunner');
+		this.resetFilter();
+		this.isClicked = null;
 
 		// Add start game button
 		var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
