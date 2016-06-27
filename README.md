@@ -1,5 +1,5 @@
 # zero+
-![](/core/images/github_title.gif)
+![](/images/github_title.gif)
 zero+ is a HTML5 browser based online multiplayer arena game built on Phaser. Players can choose up to 4 heroes with different attributes and skills to pit against others in the arena. 
 
 Current features:
