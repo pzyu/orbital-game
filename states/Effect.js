@@ -1,10 +1,12 @@
 
 // Constructor takes in game, x and y position, atlas name, duration of animation, whether effect is a projectile
-BasicGame.Effect = function (game, x, y, atlasName, isProjectile, loopCount, frame) {
-	Phaser.Sprite.call(this, game, x, y, atlasName, frame);
+BasicGame.Effect = function (game, x, y, atlasName, loopCount, scale) {
+	Phaser.Sprite.call(this, game, x, y, atlasName, 0);
 
-	this.scale.x = 0.4;
-	this.scale.y = 0.4;
+	this.scale.x = this.scale.y = scale;
+	this.scaleX = this.scale.x;
+	// this.scale.x = 0.4;
+	// this.scale.y = 0.4;
 
 	this.x = -100;
 	this.y = -100;
@@ -35,8 +37,20 @@ BasicGame.Effect = function (game, x, y, atlasName, isProjectile, loopCount, fra
 		this.animations.add('anim_4', Phaser.Animation.generateFrameNames('bolt ', 31, 40), 16, false);		// Strike 2
 	}
 
+	if (atlasName == 'muzzle_effect_sprite') {
+		this.anchor.setTo(0.5, 0.5);
+
+		this.animations.add('anim_1', Phaser.Animation.generateFrameNames('BlueMuzzle__00', 0, 9), 60, false);
+		this.animations.add('anim_2', Phaser.Animation.generateFrameNames('YellowMuzzle__00', 0, 9), 60, false);
+
+		console.log(this.scale);
+	}
+
 	//this.animations.play('anim_1');
 	this.target = null;
+
+	this.offX = 0;
+	this.offY = 0;
 }
 
 // Effect is declared as a Sprite so it will only have Sprite attributes
@@ -45,6 +59,12 @@ BasicGame.Effect.prototype.constructor = BasicGame.Effect;
 
 BasicGame.Effect.prototype.update = function() {
 	//this.game.debug.body(this);
+	// Follow player when playing
+	if (this.animations.currentAnim.isPlaying) {
+		this.x = this.target.x + this.offX * this.target.facingRight;
+		this.y = this.target.y + this.offY;
+		this.scale.x = this.scaleX * this.target.facingRight;
+	}
 };	
 
 BasicGame.Effect.prototype.animationComplete = function() {
@@ -59,16 +79,21 @@ BasicGame.Effect.prototype.animationLoop = function() {
 };
 
 // Takes in an animation string name, and target instantiated on
-BasicGame.Effect.prototype.play = function(anim, target, velX, velY) {
-	var offset = 0;
+BasicGame.Effect.prototype.play = function(anim, target, offX, offY) {
+	//var offset = 0 + offX;
 	//	console.log(loadingText);
 	//console.log(this.animations.currentAnim.name + " playing");
 	this.reset(this.x, this.y);
 
 	this.target = target;
 
-	this.x = this.target.x + offset;
-	this.y = this.target.y;
+	this.offX = offX;
+	this.offY = offY;
+
+	//this.x = this.target.x + offset * this.target.facingRight;
+	//this.y = this.target.y + offY;
+
+	//this.scale.x = this.scaleX * this.target.facingRight;
 
 	//console.log(target);
 	this.animations.play(anim);

@@ -1,5 +1,8 @@
-BasicGame.Collider = function (game, target, width, height, offsetX, offsetY, force) {
-    Phaser.Sprite.call(this, game, -100, -100);
+BasicGame.Collider = function (game, target, width, height, offsetX, offsetY, force, scale, sprite) {
+    Phaser.Sprite.call(this, game, -100, -100, sprite);
+
+    this.scaleX = scale;
+    this.scale.setTo(scale, scale);
     this.anchor.setTo(1.0, 1.0);
     this.force = force;
 
@@ -19,9 +22,10 @@ BasicGame.Collider.prototype.constructor = BasicGame.Collider;
 BasicGame.Collider.prototype.update = function() {
 	// If it's active track target
 	if(this.isActive) {
-		this.x = this.target.x;
+		this.x = this.target.x + this.offX * this.target.facingRight;
 		this.y = this.target.y;
-		this.body.offset.x = this.offX * this.target.facingRight;
+		this.scale.x = this.scaleX * this.target.facingRight;
+		//this.body.offset.x = this.offX * this.target.facingRight;
 		//this.body.velocity.x = 10 * this.target.facingRight;
 		
 	} else {
@@ -29,7 +33,7 @@ BasicGame.Collider.prototype.update = function() {
 		this.x = this.y = -100;
 	}
 
-	this.game.debug.body(this);
+	//this.game.debug.body(this);
 };
 
 BasicGame.Collider.prototype.activate = function() {

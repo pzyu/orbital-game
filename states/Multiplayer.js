@@ -112,7 +112,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 			curPlayer.curHealth = state.hp;
 			//curPlayer.interpolateTo(state.x, state.y, 1000);
 		}
-	};
+	};	
 
 	this.eurecaClient.exports.getChar = function() {
 		// Return player's selected character
@@ -187,6 +187,7 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	BasicGame.playerCG = this.add.group();
 	BasicGame.projectileCG = this.add.group();
 	BasicGame.colliderCG = this.add.group();
+	BasicGame.shieldCG = this.add.group();
 
 	this.playerList = {};
 
@@ -288,6 +289,9 @@ BasicGame.Multiplayer.prototype.update = function() {
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
 	this.physics.arcade.collide(BasicGame.playerCG, BasicGame.playerCG);
 	this.physics.arcade.collide(BasicGame.projectileCG, layer, this.projectileCallback);
+	this.physics.arcade.collide(BasicGame.projectileCG, BasicGame.shieldCG, this.shieldCallBack);
+
+	// Overlap
 	this.physics.arcade.overlap(BasicGame.projectileCG, BasicGame.playerCG, this.colliderCallback);
 	this.physics.arcade.overlap(BasicGame.colliderCG, BasicGame.playerCG, this.colliderCallback);
 
@@ -356,7 +360,13 @@ BasicGame.Multiplayer.prototype.projectileCallback= function(obj1, obj2) {
 };
 
 BasicGame.Multiplayer.prototype.colliderCallback= function(obj1, obj2) {
+	//console.log(obj1.__proto__);
+	//if (obj1.__proto__ != Phaser.Sprite) {}
 	obj1.onCollide(obj2);
+};
+
+BasicGame.Multiplayer.prototype.shieldCallBack = function(obj1, obj2) {
+	obj1.onCollide();
 };
 
 BasicGame.Multiplayer.prototype.getID = function() {

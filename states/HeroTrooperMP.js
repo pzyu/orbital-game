@@ -19,12 +19,12 @@ BasicGame.HeroTrooperMP = function (id, game, x, y) {
 	this.skillECooldown = 8000;
 
 	// Attack collider
-    this.attackCollider = new BasicGame.Collider(this.game, this, 80, 100, 100, 0, 2000);
+    this.attackCollider = new BasicGame.Collider(this.game, this, 80, 100, 100, 0, 2000, 1);
     this.game.add.existing(this.attackCollider);
     BasicGame.colliderCG.add(this.attackCollider);
 
     // Each hero will have an effect object which basically plays whatever effect they have
-	this.effect = new BasicGame.Effect(this.game, 100, 1000, 'blood_effect_sprite', false, 0);
+	this.effect = new BasicGame.Effect(this.game, 100, 1000, 'blood_effect_sprite', 0, 0.4);
 	this.game.add.existing(this.effect);
 	this.hitAnim = "anim_4";
 

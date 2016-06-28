@@ -17,15 +17,15 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
 	this.skillBCooldown = 3000;
 	this.skillCCooldown = 5000;
 	this.skillDCooldown = 6000;	
-	this.skillECooldown = 8000;
+	this.skillECooldown = 6000;
 
 	// Attack collider
-    this.attackCollider = new BasicGame.Collider(this.game, this,  100, 100, 100, -40, 1000);
+    this.attackCollider = new BasicGame.Collider(this.game, this, 120, 120, 120, -50, 1000, 1);
     this.game.add.existing(this.attackCollider);
     BasicGame.colliderCG.add(this.attackCollider);
 
 	// Each hero will have an effect object which basically plays whatever effect they have
-	this.effect = new BasicGame.Effect(this.game, 100, 1000, 'bolt_effect_sprite', false, 0);
+	this.effect = new BasicGame.Effect(this.game, 100, 1000, 'bolt_effect_sprite', 0, 0.4);
 	this.game.add.existing(this.effect);
 	this.hitAnim = "anim_4";
 
@@ -56,6 +56,20 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
     	var proj = new BasicGame.Projectile(this.game, 'bolt_effect_sprite', 1);
     	BasicGame.projectileCG.add(proj);
     }
+    // Shield
+    //this.shield = this.game.add.sprite(-100, -100, 'walker_shield');
+    this.shield = new BasicGame.Collider(this.game, this, 340, 800, 100, 0, 0, 0.25, 'walker_shield');
+    this.shield.anchor.setTo(0.5, 0.5);
+    this.shieldActive = false;
+    this.shieldDuration = 5000;
+    this.shield.body.immovable = true;
+    BasicGame.shieldCG.add(this.shield);
+
+    // Backdash
+    this.backdashFX = new BasicGame.Effect(this.game, -100, -100, 'muzzle_effect_sprite', 0, 1);
+    this.backdashFX2 = new BasicGame.Effect(this.game, -100, -100, 'muzzle_effect_sprite', 0, 1);
+    this.game.add.existing(this.backdashFX);
+    this.game.add.existing(this.backdashFX2);
 }
 
 // Inherit HeroBase
@@ -65,29 +79,39 @@ BasicGame.HeroWalkerMP.prototype.constructor = BasicGame.HeroWalkerMP;
 BasicGame.HeroWalkerMP.prototype.update = function() {
 	if (!this.isDead) {		
 		this.handleControls();
-		this.handleSkillA();	
-		this.handleSkillB();
-		this.handleSkillC();
-		this.handleSkillD();
+
+		if (!this.shieldActive) {
+			this.handleSkillA();	
+			this.handleSkillB();
+			this.handleSkillC();
+			this.handleSkillD();
+		}
 		this.handleSkillE();
 	}
 	// this.game.debug.body(this);
+	this.game.debug.body(this.shield);
 };
 
 BasicGame.HeroWalkerMP.prototype.handleSkillA = function() {
 	if (this.cursor.skillA && this.game.time.now > this.skillATimer) {
 		this.isAttacking = true;
 
+		var ref = this;
 		var skillTween = this.game.add.tween(this.body.velocity);
-		skillTween.to({x: -1500 * this.facingRight, y: -500}, 250, Phaser.Easing.Cubic.Out, false, 250);
+		skillTween.to({x: -1500 * this.facingRight, y: -500}, 250, Phaser.Easing.Cubic.Out, true, 250);
+		skillTween.onStart.add(function() {
+    		// Play muzzle effect
+    		ref.backdashFX.play('anim_2', ref, 180, -25, 1);
+    		ref.backdashFX2.play('anim_2', ref, 50, -25, 1);
 
-		skillTween.start();
+    		// Activate collider
+			ref.attackCollider.activate();   
+		});
+		//skillTween.start();
 
     	// Play the animation
     	this.animations.play('anim_backdash');
-    	//this.animations.currentAnim.frame = 0;
 		this.skillATimer = this.game.time.now + this.skillACooldown; 
-		this.attackCollider.activate();   
 	}
 };
 
@@ -165,9 +189,32 @@ BasicGame.HeroWalkerMP.prototype.handleSkillD = function() {
 };
 
 BasicGame.HeroWalkerMP.prototype.handleSkillE = function(){ 
-	if (this.cursor.skillE && this.game.time.now > this.skillETimer) {
+
+	//console.log(this.skillETimer - this.game.time.now);
+	if (this.cursor.skillE && this.game.time.now > this.skillETimer && !this.shieldActive) {
 		// Passive
 		//this.isAttacking = true;
 		this.skillETimer = this.game.time.now + this.skillECooldown; 
+
+		var ref = this;
+		var tween = this.game.add.tween(this).to({0: 0}, this.shieldDuration, Phaser.Easing.Linear.None, true, 0);
+		tween.onStart.add(function() {
+			ref.shieldActive = true;
+		});
+		tween.onComplete.add(function() {
+			ref.shieldActive = false;
+		});
+	}
+	// Allow players to deactivate shield after 500ms
+	else if (this.shieldActive && this.cursor.skillE && (this.skillETimer - this.game.time.now) < this.shieldDuration - 500){
+		this.shieldActive = false;
+	}
+
+	// Update position of shield if active
+	if (this.shieldActive) {
+		this.body.velocity.x = 0;
+		this.shield.activate();
+	} else {
+		this.shield.deactivate();
 	}
 };

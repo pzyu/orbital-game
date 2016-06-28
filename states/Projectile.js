@@ -4,7 +4,7 @@ BasicGame.Projectile = function (game, atlasName, loopCount, frame, target) {
 	Phaser.Sprite.call(this, game, -100, -100, atlasName, frame);
 	this.target = target;
 	this.scale.x = 0.4;
-	this.scale.y = 0.4;
+	this.scale.y = 0.4;	
 
 	if (atlasName == 'bolt_effect_sprite') {
 		this.anchor.setTo(0.5, 0.5);

@@ -4,6 +4,7 @@ var BasicGame = {
   gameHeight: 720,
   projectileCG: null,
   colliderCG: null,
+  shieldCG: null,
   playerCG: null,
   selectedChar: null,
   musicPlayer: null

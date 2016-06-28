@@ -58,6 +58,9 @@ BasicGame.Boot.prototype = {
         this.load.atlas('player_trooper', 'images/sprites/heroes/trooper.png', 'images/sprites/heroes/trooper.json');
         this.load.atlas('player_gunner', 'images/sprites/heroes/gunner.png', 'images/sprites/heroes/gunner.json');
         this.load.atlas('player_walker', 'images/sprites/heroes/walker.png', 'images/sprites/heroes/walker.json');
+        
+        // Destroyer assets
+        this.load.image('walker_shield', 'images/sprites/heroes/walker_shield.png');
 
         // HUD
         this.load.image('skill', 'images/sprites/heroes/skill.png');
@@ -67,6 +70,7 @@ BasicGame.Boot.prototype = {
         // Effect atlas
         this.load.atlas('blood_effect_sprite', 'images/sprites/effects/blood_spritesheet.png', 'images/sprites/effects/blood_spritemap.json');
         this.load.atlas('bolt_effect_sprite', 'images/sprites/effects/bolt_spritesheet.png', 'images/sprites/effects/bolt_spritemap.json');
+        this.load.atlas('muzzle_effect_sprite', 'images/sprites/effects/muzzle.png', 'images/sprites/effects/muzzle.json');
     },
 
     loadAudio: function() {

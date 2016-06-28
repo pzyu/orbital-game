@@ -219,7 +219,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 };
 
 BasicGame.HeroBase.prototype.getHit = function(knockbackX, knockbackY) {
-	this.effect.play(this.hitAnim, this);
+	this.effect.play(this.hitAnim, this, 0, 0);
 
 	// Can only get hit if not dead
 	if (!this.isDead) {
