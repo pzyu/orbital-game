@@ -43,7 +43,7 @@ BasicGame.Collider.prototype.deactivate = function() {
 BasicGame.Collider.prototype.onCollide = function(collider) {
 	if (collider != this.target) {
 		this.isActive = false;
-		collider.getHit(this.force);
+		collider.getHit(this.force * this.target.facingRight, this.force);
 	}
 };
 

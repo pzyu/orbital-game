@@ -22,10 +22,11 @@ BasicGame.Boot.prototype = {
         this.load.script('collider_scr', 'states/Collider.js');
         
         // For single player mode, but probably will change
-        this.load.script('herodes_scr', 'states/HeroDestroyer.js');
-        this.load.script('herotrooper_scr', 'states/HeroTrooper.js');
-        this.load.script('herogunner_scr', 'states/HeroGunner.js');
-        this.load.script('herowalker_scr', 'states/HeroWalker.js');
+        this.load.script('herobase_scr', 'states/HeroBase.js');
+        // this.load.script('herodes_scr', 'states/HeroDestroyer.js');
+        // this.load.script('herotrooper_scr', 'states/HeroTrooper.js');
+        // this.load.script('herogunner_scr', 'states/HeroGunner.js');
+        // this.load.script('herowalker_scr', 'states/HeroWalker.js');
 
         // Multiplayer
         this.load.script('herodesmp_scr', 'states/HeroDestroyerMP.js');

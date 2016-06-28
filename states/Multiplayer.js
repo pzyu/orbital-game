@@ -302,16 +302,16 @@ BasicGame.Multiplayer.prototype.handleHUD = function() {
 	this.healthBar.crop(this.healthRect);
 
 	// Skills
-	this.cropRectA.height = 66 * (this.player.getSkillA() + 1);
+	this.cropRectA.height = 66 * (this.player.getSkillB() + 1);
 	this.skillA.crop(this.cropRectA);
 
-	this.cropRectB.height = 66 * (this.player.getSkillB() + 1);
+	this.cropRectB.height = 66 * (this.player.getSkillC() + 1);
 	this.skillB.crop(this.cropRectB);
 
-	this.cropRectC.height = 66 * (this.player.getSkillC() + 1);
+	this.cropRectC.height = 66 * (this.player.getSkillD() + 1);
 	this.skillC.crop(this.cropRectC);
 
-	this.cropRectD.height = 66 * (this.player.getSkillD() + 1);
+	this.cropRectD.height = 66 * (this.player.getSkillE() + 1);
 	this.skillD.crop(this.cropRectD);
 }
 
