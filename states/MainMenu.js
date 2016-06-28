@@ -5,10 +5,12 @@ BasicGame.MainMenu = function (game) {
 
 BasicGame.MainMenu.prototype = {
 	preload: function() {
-		this.music = this.add.audio('titleMusic');		// Add music, titleMusic is defined in Boot.js
-		this.music.volume = 0.0;						// Volume
-		this.music.loop = true;							// Loop
-		this.music.play();								// Play the music
+		if (BasicGame.musicPlayer == null) {
+			BasicGame.musicPlayer = this.add.audio('titleMusic');	// Add music, titleMusic is defined in Boot.js
+			BasicGame.musicPlayer.volume = 0.0;						// Volume
+			BasicGame.musicPlayer.loop = true;						// Loop
+			BasicGame.musicPlayer.play();							// Play the music
+		}
 
 		this.world.setBounds(0, 0, BasicGame.gameWidth, BasicGame.gameHeight);
 
@@ -35,10 +37,10 @@ BasicGame.MainMenu.prototype = {
 			this.game.state.start('CharSelect', true, false, true);
 		});
 		this.addMenuOption('Options', function (target) {
-			this.game.state.start('Options');
+			this.game.state.start('Options', true);
 		});
 		this.addMenuOption('Credits', function (target) {
-			this.game.state.start('Credits');
+			this.game.state.start('Credits', true);
 		});
 	},
 
