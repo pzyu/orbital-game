@@ -128,6 +128,7 @@ BasicGame.HeroGunnerMP.prototype.constructor = BasicGame.Player;
 BasicGame.HeroGunnerMP.prototype.spawn = function() {
 	var ref = this;
 	if (this.isDead) {
+		ref.body.velocity.x = ref.body.velocity.y = 0;
 		var tween = this.game.add.tween(this).to({0: 0}, 5000, Phaser.Easing.Linear.None, true, 0, 0);
 		tween.onStart.add(function(){
 			console.log("Play dying animation");
@@ -356,14 +357,8 @@ BasicGame.HeroGunnerMP.prototype.shootCallback = function() {
 BasicGame.HeroGunnerMP.prototype.getHit = function(knockback) {
 	this.effect.play('anim_4', this);
 
-	// If dead, respawn
-	if (this.curHealth <= 0 && !this.isDead) {		
-		this.curHealth = 0;
-		this.isDead = true;
-		console.log("Dead");
-		this.spawn();
-		this.refMP.broadcast(this.ID + " has been killed!", 2);
-	} else if (!this.isDead) {
+	// Can only get hit if not dead
+	if (!this.isDead) {
 		var ref = this;
 		var cur = 0;
 		var tween = this.game.add.tween(this).to({tint: 0xff0000}, 100, Phaser.Easing.Linear.None, true, 0, 5, true);
@@ -378,6 +373,15 @@ BasicGame.HeroGunnerMP.prototype.getHit = function(knockback) {
 		this.body.velocity.x += knockback * this.facingRight;
 		this.body.velocity.y -= knockback;
 		this.curHealth -= 10;
+
+		// If dead, respawn
+		if (this.curHealth <= 0) {
+			this.curHealth = 0;
+			this.isDead = true;
+			console.log("Dead");
+			this.spawn();
+			this.refMP.broadcast(this.ID + " has been killed!", 2);
+		}
 	}
 };
 
