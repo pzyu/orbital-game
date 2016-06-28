@@ -121,7 +121,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillC = function() {
 		this.skillCTimer = this.game.time.now + this.skillCCooldown; 
 
 		var ref = this;
-		var tween = this.game.add.tween(this).to({alpha: 0.5}, 500, Phaser.Easing.Linear.None, true, 500);
+		var tween = this.game.add.tween(this).to({alpha: 0.2}, 500, Phaser.Easing.Linear.None, true, 500);
 		tween.onComplete.add(function() {
 			//ref.alpha = 1;
 		});

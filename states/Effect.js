@@ -39,11 +39,9 @@ BasicGame.Effect = function (game, x, y, atlasName, loopCount, scale) {
 
 	if (atlasName == 'muzzle_effect_sprite') {
 		this.anchor.setTo(0.5, 0.5);
-
+		
 		this.animations.add('anim_1', Phaser.Animation.generateFrameNames('BlueMuzzle__00', 0, 9), 60, false);
 		this.animations.add('anim_2', Phaser.Animation.generateFrameNames('YellowMuzzle__00', 0, 9), 60, false);
-
-		console.log(this.scale);
 	}
 
 	//this.animations.play('anim_1');

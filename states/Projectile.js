@@ -37,7 +37,7 @@ BasicGame.Projectile.prototype = Object.create(Phaser.Sprite.prototype);
 BasicGame.Projectile.prototype.constructor = BasicGame.Projectile;
 
 BasicGame.Projectile.prototype.update = function() {
-	this.game.debug.body(this);
+	//this.game.debug.body(this);
 };	
 
 BasicGame.Projectile.prototype.animationComplete = function() {

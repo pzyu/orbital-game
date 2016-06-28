@@ -70,6 +70,7 @@ BasicGame.HeroBase = function (id, game, x, y, sprite) {
 	//this.body.gravity.y = 1000;
 	this.body.maxVelocity.y = 2500;
 	this.body.drag.x = 5000;
+	this.body.drag.y = 100;
     this.isAttacking = false;
 
     // Hit effect assigned in child classes
@@ -284,4 +285,5 @@ BasicGame.HeroBase.prototype.attackCallback = function() {
 
 BasicGame.HeroBase.prototype.shootCallback = function() {
 	this.isAttacking = false;
+	this.attackCollider.deactivate();
 };
