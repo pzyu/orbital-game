@@ -61,6 +61,7 @@ BasicGame.Boot.prototype = {
         
         // Destroyer assets
         this.load.image('walker_shield', 'images/sprites/heroes/walker_shield.png');
+        this.load.image('walker_rocket', 'images/sprites/effects/rocket.png');
 
         // HUD
         this.load.image('skill', 'images/sprites/heroes/skill.png');

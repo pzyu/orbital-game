@@ -54,11 +54,24 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
 	this.shootAnim.onComplete.add(this.shootCallback, this);
 	this.ultiAnim.onComplete.add(this.shootCallback, this);
 
-    this.bulletGroup = this.game.add.group();
-    for (var i = 0; i < 20; i++) {
-    	var proj = new BasicGame.Projectile(this.game, 'bolt_effect_sprite', 1);
-    	BasicGame.projectileCG.add(proj);
-    }
+    //this.bulletGroup = this.game.add.group();
+    //for (var i = 0; i < 20; i++) {
+    // 	var proj = new BasicGame.Projectile(this.game, 'bolt_effect_sprite', 1);
+    //	BasicGame.projectileCG.add(proj);
+    //}
+    // Rocket
+    this.weapon = this.game.add.weapon(2, 'walker_rocket');
+    this.weapon.fireAngle = 0;
+    //this.weapon.bulletRotateToVelocity = true;
+   	//this.weapon.bulletAngleOffset = ;
+    //this.weapon.bulletAngleVariance = 10;
+    this.weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
+    this.weapon.bulletSpeed = 1000;
+    this.weapon.bulletGravity = new Phaser.Point(0, -this.refMP.gravity);
+    this.weapon.trackSprite(this);
+    this.weapon.bulletInheritSpriteSpeed = true;
+    console.log(this.weapon);
+
     // Shield
     //this.shield = this.game.add.sprite(-100, -100, 'walker_shield');
     this.shield = new BasicGame.Collider(this.game, this, 360, 800, 100, -40, 0, 0.25, 'walker_shield');
@@ -166,7 +179,8 @@ BasicGame.HeroWalkerMP.prototype.handleSkillC = function() {
 		// Rocket
     	this.animations.play('anim_shoot');
     	this.animations.currentAnim.frame = 0;
-    	BasicGame.projectileCG.getFirstExists(false).play('anim_1', this, 1000, 0, 0, 175, 0);
+    	//BasicGame.projectileCG.getFirstExists(false).play('anim_1', this, 1000, 0, 0, 175, 0);
+    	this.weapon.fire();
 
 		this.isAttacking = true;
 		this.skillCTimer = this.game.time.now + this.skillCCooldown; 
