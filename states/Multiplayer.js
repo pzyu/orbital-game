@@ -8,6 +8,8 @@ BasicGame.Multiplayer = function (game) {
 	this.spawnX = 1000;					// Starting spawn
 	this.spawnY = 1000;
 
+	this.mapLayer;
+
 	this.timeStep = 1000;				// Time step for interpolation
 	this.delta = 5;						// Delta for smoothing
 
@@ -142,6 +144,8 @@ BasicGame.Multiplayer.prototype.preloadGame = function() {
 	layer = map.createLayer('Level 1');				// 'Level 1' must be the same in the json file
 	layer.resizeWorld();
 	layer.wrap = true;
+
+	this.mapLayer = layer;
 
 	map.setCollisionBetween(0, 60, true, layer);	// Set collision layers between json tile representation
 	map.setCollisionBetween(63, 99, true, layer);	
@@ -296,6 +300,8 @@ BasicGame.Multiplayer.prototype.update = function() {
 	this.physics.arcade.overlap(BasicGame.projectileCG, BasicGame.playerCG, this.colliderCallback);
 	this.physics.arcade.overlap(BasicGame.colliderCG, BasicGame.playerCG, this.colliderCallback);
 
+	this.physics.arcade.collide(this.player.rocket.bullets, layer, this.bulletCallback);
+
 	this.handleHUD();
 	this.showPlayerList();
 	//this.chat();
@@ -358,6 +364,11 @@ BasicGame.Multiplayer.prototype.chat = function() {
 
 BasicGame.Multiplayer.prototype.projectileCallback= function(obj1, obj2) {
 	obj1.onCollide();
+};
+
+BasicGame.Multiplayer.prototype.bulletCallback= function(obj1, obj2) {
+	//console.log(obj1);
+	obj1.kill();
 };
 
 BasicGame.Multiplayer.prototype.colliderCallback= function(obj1, obj2) {

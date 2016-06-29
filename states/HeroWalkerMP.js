@@ -60,17 +60,28 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
     //	BasicGame.projectileCG.add(proj);
     //}
     // Rocket
-    this.weapon = this.game.add.weapon(2, 'walker_rocket');
-    this.weapon.fireAngle = 0;
-    //this.weapon.bulletRotateToVelocity = true;
-   	//this.weapon.bulletAngleOffset = ;
-    //this.weapon.bulletAngleVariance = 10;
-    this.weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;
-    this.weapon.bulletSpeed = 1000;
-    this.weapon.bulletGravity = new Phaser.Point(0, -this.refMP.gravity);
-    this.weapon.trackSprite(this);
-    this.weapon.bulletInheritSpriteSpeed = true;
-    console.log(this.weapon);
+    this.rocket = this.game.add.weapon(4, 'walker_rocket');					// Takes in amount of bullet, and sprite key
+    this.rocket.fireAngle = 0;												// Angle to be fired from
+    this.rocket.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;			// Kill when out of bounds
+    this.rocket.bulletSpeed = 1000;											// Speed of bullet
+    this.rocket.bulletGravity = new Phaser.Point(0, -this.refMP.gravity);	// Must be offset with world's gravity
+    this.rocket.trackSprite(this, 0, -20);									// Follow this sprite, offset X and offset Y
+    this.rocket.bullets.setAll('scale.x', 0.5);								// Set scale of all bullets
+    this.rocket.bullets.setAll('scale.y', 0.5);
+    this.rocket.setBulletBodyOffset(50, 40, 10, 10);
+
+    // Ultimate
+    this.nuke = this.game.add.weapon(4, 'walker_rocket');
+    this.nuke.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;				// Kill when out of bounds
+    this.nuke.bulletSpeed = 2000;											// Speed of bullet
+    this.nuke.bulletGravity = new Phaser.Point(0, -2000);					// Must be offset with world's gravity
+    this.nuke.trackSprite(this, 0, -80);									// Follow this sprite, offset X and offset Y
+    this.nuke.bullets.setAll('scale.x', 0.6);								// Set scale of all bullets
+    this.nuke.bullets.setAll('scale.y', 0.6);
+    this.nuke.bullets.setAll('body.maxVelocity.y', 1000);
+    this.nuke.bullets.setAll('body.maxVelocity.x', 1000);
+    this.nuke.setBulletBodyOffset(50, 40, 10, 10);
+    this.nuke.bulletRotateToVelocity = true;
 
     // Shield
     //this.shield = this.game.add.sprite(-100, -100, 'walker_shield');
@@ -87,6 +98,8 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
     this.backdashFX2 = new BasicGame.Effect(this.game, -100, -100, 'muzzle_effect_sprite', 0, 1);
     this.game.add.existing(this.backdashFX);
     this.game.add.existing(this.backdashFX2);
+
+    // Setup tweens
 }
 
 // Inherit HeroBase
@@ -106,12 +119,18 @@ BasicGame.HeroWalkerMP.prototype.update = function() {
 		// Only for shield so players can deactivate
 		this.handleSkillB();
 	}
+
+	this.refMP.physics.arcade.collide(this.nuke.bullets, this.refMP.mapLayer, function(obj1, obj2) {obj1.kill();});
+
 	//this.game.debug.body(this);
 	// this.game.debug.body(this.shield);
+	this.rocket.debug(0, 0, true);
 };
 
 BasicGame.HeroWalkerMP.prototype.handleSkillA = function() {
 	if (this.cursor.skillA && this.game.time.now > this.skillATimer) {
+		this.backdashFX.angle = 0;
+		this.backdashFX2.angle = 0;
 
 		var ref = this;
 		var skillTween = this.game.add.tween(this.body.velocity);
@@ -179,8 +198,39 @@ BasicGame.HeroWalkerMP.prototype.handleSkillC = function() {
 		// Rocket
     	this.animations.play('anim_shoot');
     	this.animations.currentAnim.frame = 0;
-    	//BasicGame.projectileCG.getFirstExists(false).play('anim_1', this, 1000, 0, 0, 175, 0);
-    	this.weapon.fire();
+
+    	this.backdashFX.angle = 0;
+		this.backdashFX2.angle = 0;
+
+
+		this.rocket.bulletGravity = new Phaser.Point(0, -this.refMP.gravity);
+    	if (this.facingRight == 1) {
+    		this.rocket.fireAngle = 0;
+    	} else {
+    		this.rocket.fireAngle = 180;
+    	}
+
+    	var ref = this;
+    	var tween = this.game.add.tween(this).to({0: 0}, 400, Phaser.Easing.Linear.None, true); 
+    	tween.onStart.add(function() {
+    		ref.rocket.trackOffset.x = 0;
+    		ref.rocket.fire();
+
+    		// Muzzle
+    		ref.backdashFX.play('anim_2', ref, 70, -25, 1);
+    	});
+    	tween.onComplete.add(function() {
+    		// Correct offset
+    		if (ref.facingRight == 1) {
+    			ref.rocket.trackOffset.x = 100;	
+    		} else {
+    			ref.rocket.trackOffset.x = -100;
+    		}
+    		ref.rocket.fire();
+
+    		// Muzzle
+    		ref.backdashFX2.play('anim_2', ref, 190, -25, 1);
+    	});
 
 		this.isAttacking = true;
 		this.skillCTimer = this.game.time.now + this.skillCCooldown; 
@@ -190,6 +240,9 @@ BasicGame.HeroWalkerMP.prototype.handleSkillC = function() {
 BasicGame.HeroWalkerMP.prototype.handleSkillD = function() {
 	if (this.cursor.skillD && this.game.time.now > this.skillDTimer) {
 		// Backdash
+		this.backdashFX.angle = 0;
+		this.backdashFX2.angle = 0;
+
 		var ref = this;
 		var skillTween = this.game.add.tween(this.body.velocity);
 		skillTween.to({x: -1500 * this.facingRight, y: -500}, 250, Phaser.Easing.Cubic.Out, true, 250);
@@ -215,29 +268,79 @@ BasicGame.HeroWalkerMP.prototype.handleSkillE = function() {
 		// Play the animation
     	this.animations.play('anim_ultimate');
     	this.animations.currentAnim.frame = 0;
+		
+		if (this.facingRight == 1) {
+    		this.nuke.fireAngle = -30;
+    	} else {
+    		this.nuke.fireAngle = 210;
+    	}
 
+    	var left = true;
     	var ref = this;
-		var firstShot = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, false, 50);
-		var secondShot = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, false, 0);
-		var thirdShot = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, false, 0);
-		var forthShot = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, false, 0);
-		firstShot.onStart.add(function() {
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_1', ref, 1200, -1500, 0, 0, -100, true);
-		});
-		secondShot.onStart.add(function() {
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_1', ref, 1200, -1500, 0, 175, -100, true);
-		});
-		thirdShot.onStart.add(function() {
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_1', ref, 1200, -1500, 0, 0, -100, true);
-		});
-		forthShot.onStart.add(function() {
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_1', ref, 1200, -1500, 0, 175, -100, true);
-		});
-		firstShot.chain(secondShot);
-		secondShot.chain(thirdShot);
-		thirdShot.chain(forthShot);
+    	var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 0, 4); 
+    	tween.onRepeat.add(function() {
+    		// Correct offset
+    		if (ref.facingRight == 1) {
+				ref.backdashFX.angle = -30;
+				ref.backdashFX2.angle = -30;
 
-		firstShot.start();
+    			if (left) {
+    				ref.nuke.trackOffset.x = 0;		
+    				ref.nuke.fire();
+
+    				// Muzzle
+    				ref.backdashFX.play('anim_2', ref, 40, -80, 1);
+    			} else {
+    				ref.nuke.trackOffset.x = 100;		
+    				ref.nuke.fire();    			
+    				// Muzzle
+    				ref.backdashFX2.play('anim_2', ref, 170, -80, 1);
+    			}
+
+    			left = !left;
+    		} else {
+    			ref.backdashFX.angle = 30;
+				ref.backdashFX2.angle = 30;
+
+    			if (left) {
+    				ref.nuke.trackOffset.x = -100;		
+    				ref.nuke.fire();
+
+    				// Muzzle
+    				ref.backdashFX.play('anim_2', ref, 40, -90, 1);
+    			} else {
+    				ref.nuke.trackOffset.x = 0;		
+    				ref.nuke.fire();    			
+    				// Muzzle
+    				ref.backdashFX2.play('anim_2', ref, 170, -90, 1);
+    			}
+
+    			left = !left;
+    		}
+    	});
+
+  //   	var ref = this;
+		// var firstShot = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, false, 50);
+		// var secondShot = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, false, 0);
+		// var thirdShot = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, false, 0);
+		// var forthShot = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, false, 0);
+		// firstShot.onStart.add(function() {
+  //   		BasicGame.projectileCG.getFirstExists(false).play('anim_1', ref, 1200, -1500, 0, 0, -100, true);
+		// });
+		// secondShot.onStart.add(function() {
+  //   		BasicGame.projectileCG.getFirstExists(false).play('anim_1', ref, 1200, -1500, 0, 175, -100, true);
+		// });
+		// thirdShot.onStart.add(function() {
+  //   		BasicGame.projectileCG.getFirstExists(false).play('anim_1', ref, 1200, -1500, 0, 0, -100, true);
+		// });
+		// forthShot.onStart.add(function() {
+  //   		BasicGame.projectileCG.getFirstExists(false).play('anim_1', ref, 1200, -1500, 0, 175, -100, true);
+		// });
+		// firstShot.chain(secondShot);
+		// secondShot.chain(thirdShot);
+		// thirdShot.chain(forthShot);
+
+		// firstShot.start();
 
 		this.isAttacking = true;
 		this.skillETimer = this.game.time.now + this.skillECooldown; 
