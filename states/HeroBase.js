@@ -1,8 +1,9 @@
 'use strict';
 BasicGame.HeroBase = function (id, game, x, y, sprite) {
 	Phaser.Sprite.call(this, game, x, y, sprite, 0);
-	console.log("called");
 	this.ID = id;
+
+	console.log('my id ' + this.ID);
 
 	this.cursor = {
 		left: false,

@@ -22,7 +22,8 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
 	// Attack collider
     this.attackCollider = new BasicGame.Collider(this.game, this, 100, 120, 120, -50, 1200, 1);
     this.game.add.existing(this.attackCollider);
-    BasicGame.colliderCG.add(this.attackCollider);
+    this.knockbackForce = 1200;
+    //BasicGame.colliderCG.add(this.attackCollider);
 
 	// Each hero will have an effect object which basically plays whatever effect they have
 	this.effect = new BasicGame.Effect(this.game, 100, 1000, 'bolt_effect_sprite', 0, 0.4);
@@ -120,11 +121,41 @@ BasicGame.HeroWalkerMP.prototype.update = function() {
 		this.handleSkillB();
 	}
 
+	// Collide with map
+	this.refMP.physics.arcade.collide(this.rocket.bullets, this.refMP.mapLayer, function(obj1, obj2) {obj1.kill();});
 	this.refMP.physics.arcade.collide(this.nuke.bullets, this.refMP.mapLayer, function(obj1, obj2) {obj1.kill();});
+	this.refMP.physics.arcade.collide(this.nuke.bullets, BasicGame.shieldCG, function(obj1, obj2) {obj1.kill();});
+	this.refMP.physics.arcade.collide(this.rocket.bullets, BasicGame.shieldCG, function(obj1, obj2) {obj1.kill();});
+
+	// Collide with other players
+	this.refMP.physics.arcade.overlap(this.attackCollider, BasicGame.playerCG, this.attCallback.bind(this));		// Bind for context
+	this.refMP.physics.arcade.overlap(this.rocket.bullets, BasicGame.playerCG, this.bulletCallback.bind(this));
+	this.refMP.physics.arcade.overlap(this.nuke.bullets, BasicGame.playerCG, this.bulletCallback.bind(this));
 
 	//this.game.debug.body(this);
 	// this.game.debug.body(this.shield);
-	this.rocket.debug(0, 0, true);
+	//this.rocket.debug(0, 0, true);
+};
+
+BasicGame.HeroWalkerMP.prototype.attCallback = function(obj1, obj2) {
+	// If not colliding with yourself
+	if (obj2.ID != this.ID) {
+		// Kill collider
+		this.isAttacking = false;
+		this.attackCollider.deactivate();
+		// Call get hit of other person
+		obj2.getHit(this.knockbackForce * this.facingRight, this.knockbackForce);
+	}
+};
+
+BasicGame.HeroWalkerMP.prototype.bulletCallback = function(obj1, obj2) {
+	// If not colliding with yourself
+	if (obj2.ID != this.ID) {
+		// Kill the projectile
+		obj1.kill();
+		// Call get hit of other person
+		obj2.getHit();
+	}
 };
 
 BasicGame.HeroWalkerMP.prototype.handleSkillA = function() {
@@ -318,29 +349,6 @@ BasicGame.HeroWalkerMP.prototype.handleSkillE = function() {
     			left = !left;
     		}
     	});
-
-  //   	var ref = this;
-		// var firstShot = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, false, 50);
-		// var secondShot = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, false, 0);
-		// var thirdShot = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, false, 0);
-		// var forthShot = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, false, 0);
-		// firstShot.onStart.add(function() {
-  //   		BasicGame.projectileCG.getFirstExists(false).play('anim_1', ref, 1200, -1500, 0, 0, -100, true);
-		// });
-		// secondShot.onStart.add(function() {
-  //   		BasicGame.projectileCG.getFirstExists(false).play('anim_1', ref, 1200, -1500, 0, 175, -100, true);
-		// });
-		// thirdShot.onStart.add(function() {
-  //   		BasicGame.projectileCG.getFirstExists(false).play('anim_1', ref, 1200, -1500, 0, 0, -100, true);
-		// });
-		// forthShot.onStart.add(function() {
-  //   		BasicGame.projectileCG.getFirstExists(false).play('anim_1', ref, 1200, -1500, 0, 175, -100, true);
-		// });
-		// firstShot.chain(secondShot);
-		// secondShot.chain(thirdShot);
-		// thirdShot.chain(forthShot);
-
-		// firstShot.start();
 
 		this.isAttacking = true;
 		this.skillETimer = this.game.time.now + this.skillECooldown; 

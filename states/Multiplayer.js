@@ -297,10 +297,8 @@ BasicGame.Multiplayer.prototype.update = function() {
 	this.physics.arcade.collide(BasicGame.projectileCG, layer, this.projectileCallback);
 	this.physics.arcade.collide(BasicGame.projectileCG, BasicGame.shieldCG, this.shieldCallBack);
 	// Overlap
-	this.physics.arcade.overlap(BasicGame.projectileCG, BasicGame.playerCG, this.colliderCallback);
-	this.physics.arcade.overlap(BasicGame.colliderCG, BasicGame.playerCG, this.colliderCallback);
-
-	this.physics.arcade.collide(this.player.rocket.bullets, layer, this.bulletCallback);
+	//this.physics.arcade.overlap(BasicGame.projectileCG, BasicGame.playerCG, this.colliderCallback);
+	//this.physics.arcade.overlap(BasicGame.colliderCG, BasicGame.playerCG, this.colliderCallback);
 
 	this.handleHUD();
 	this.showPlayerList();
