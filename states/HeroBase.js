@@ -2,9 +2,7 @@
 BasicGame.HeroBase = function (id, game, x, y, sprite) {
 	Phaser.Sprite.call(this, game, x, y, sprite, 0);
 	this.ID = id;
-
-	console.log('my id ' + this.ID);
-
+	
 	this.cursor = {
 		left: false,
 		right: false,
@@ -107,23 +105,22 @@ BasicGame.HeroBase.prototype = Object.create(Phaser.Sprite.prototype);
 BasicGame.HeroBase.prototype.constructor = BasicGame.HeroBase;
 
 BasicGame.HeroBase.prototype.spawn = function() {
-	var ref = this;
 	if (this.isDead) {
-		ref.body.velocity.x = ref.body.velocity.y = 0;
+		this.body.velocity.x = this.body.velocity.y = 0;
 		var tween = this.game.add.tween(this).to({0: 0}, 5000, Phaser.Easing.Linear.None, true, 0, 0);
 		tween.onStart.add(function(){
-			ref.animations.play('anim_dead');
-		});
+			this.animations.play('anim_dead');
+		}, this);
 		tween.onComplete.add(function(){
-			var index = ref.game.rnd.integerInRange(0, ref.refMP.spawnPoints.length - 1);
-			ref.x = ref.refMP.spawnPoints[index].x;
-			ref.y = ref.refMP.spawnPoints[index].y;
-			ref.curHealth = ref.maxHealth;
-			ref.animations.play('anim_idle');
-			ref.isDead = false;
-		});
+			var index = this.game.rnd.integerInRange(0, this.refMP.spawnPoints.length - 1);
+			this.x = this.refMP.spawnPoints[index].x;
+			this.y = this.refMP.spawnPoints[index].y;
+			this.curHealth = this.maxHealth;
+			this.animations.play('anim_idle');
+			this.isDead = false;
+		}, this);
 	} else {
-		var index = ref.game.rnd.integerInRange(0, this.refMP.spawnPoints.length - 1);
+		var index = this.game.rnd.integerInRange(0, this.refMP.spawnPoints.length - 1);
 		this.x = this.refMP.spawnPoints[index].x;
 		this.y = this.refMP.spawnPoints[index].y;
 	}
@@ -225,16 +222,15 @@ BasicGame.HeroBase.prototype.getHit = function(knockbackX, knockbackY) {
 
 	// Can only get hit if not dead
 	if (!this.isDead) {
-		var ref = this;
 		var cur = 0;
 		var tween = this.game.add.tween(this).to({tint: 0xff0000}, 100, Phaser.Easing.Linear.None, true, 0, 5, true);
 		tween.onRepeat.add(function() {
 			cur++;
 			if (cur > 4) {	
 				tween.stop();
-				ref.tint = 0xffffff;
+				this.tint = 0xffffff;
 			}
-		});
+		}, this);
 
 		this.body.velocity.x += knockbackX;
 		this.body.velocity.y -= knockbackY;

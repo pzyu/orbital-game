@@ -1,12 +1,13 @@
 
 // Constructor takes in game, x and y position, atlas name, duration of animation, whether effect is a projectile
-BasicGame.Effect = function (game, x, y, atlasName, loopCount, scale) {
+BasicGame.Effect = function (game, x, y, atlasName, loopCount, scale, trackTarget) {
 	Phaser.Sprite.call(this, game, x, y, atlasName, 0);
 
 	this.scale.x = this.scale.y = scale;
 	this.scaleX = this.scale.x;
 	// this.scale.x = 0.4;
 	// this.scale.y = 0.4;
+	this.trackTarget = trackTarget;
 
 	this.x = -100;
 	this.y = -100;
@@ -44,11 +45,24 @@ BasicGame.Effect = function (game, x, y, atlasName, loopCount, scale) {
 		this.animations.add('anim_2', Phaser.Animation.generateFrameNames('YellowMuzzle__00', 0, 9), 60, false);
 	}
 
+	if (atlasName == 'explosion_effect_sprite') {
+		this.anchor.setTo(0.5, 0.5);
+		
+		this.animations.add('anim_1', Phaser.Animation.generateFrameNames('Anim_Explosion_Ground_00', 0, 9), 60, false);
+		this.animations.add('anim_2', Phaser.Animation.generateFrameNames('Anim_Explosion_MidAir_00', 0, 9), 60, false);
+	}
+
 	//this.animations.play('anim_1');
 	this.target = null;
 
 	this.offX = 0;
 	this.offY = 0;
+
+	if (!this.trackTarget) {
+		this.kill();	
+	}
+	
+	this.game.add.existing(this);
 }
 
 // Effect is declared as a Sprite so it will only have Sprite attributes
@@ -58,11 +72,11 @@ BasicGame.Effect.prototype.constructor = BasicGame.Effect;
 BasicGame.Effect.prototype.update = function() {
 	//this.game.debug.body(this);
 	// Follow player when playing
-	if (this.animations.currentAnim.isPlaying) {
-		this.x = this.target.x + this.offX * this.target.facingRight;
-		this.y = this.target.y + this.offY;
-		this.scale.x = this.scaleX * this.target.facingRight;
-	}
+	if (this.animations.currentAnim && this.animations.currentAnim.isPlaying && this.trackTarget) {
+	 	this.x = this.target.x + this.offX * this.target.facingRight;
+	 	this.y = this.target.y + this.offY;
+	 	this.scale.x = this.scaleX * this.target.facingRight;
+	 }
 };	
 
 BasicGame.Effect.prototype.animationComplete = function() {
@@ -88,18 +102,22 @@ BasicGame.Effect.prototype.play = function(anim, target, offX, offY) {
 	this.offX = offX;
 	this.offY = offY;
 
-	//this.x = this.target.x + offset * this.target.facingRight;
+	//this.x = this.target.x + offX * this.target.facingRight;
 	//this.y = this.target.y + offY;
 
 	//this.scale.x = this.scaleX * this.target.facingRight;
 
-	//console.log(target);
 	this.animations.play(anim);
 
 	// On complete, callback and set position offscreen
 	this.animations.currentAnim.onComplete.add(this.animationComplete, this);
 	this.animations.currentAnim.onLoop.add(this.animationLoop, this);
 };
+
+BasicGame.Effect.prototype.playUntracked = function(anim, x, y) {
+	this.reset(x, y);
+	this.animations.play(anim, 16, false, true);
+}
 
 // Ends animation safely
 BasicGame.Effect.prototype.endAnimation = function () {

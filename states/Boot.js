@@ -72,6 +72,7 @@ BasicGame.Boot.prototype = {
         this.load.atlas('blood_effect_sprite', 'images/sprites/effects/blood_spritesheet.png', 'images/sprites/effects/blood_spritemap.json');
         this.load.atlas('bolt_effect_sprite', 'images/sprites/effects/bolt_spritesheet.png', 'images/sprites/effects/bolt_spritemap.json');
         this.load.atlas('muzzle_effect_sprite', 'images/sprites/effects/muzzle.png', 'images/sprites/effects/muzzle.json');
+        this.load.atlas('explosion_effect_sprite', 'images/sprites/effects/explosion.png', 'images/sprites/effects/explosion.json');
     },
 
     loadAudio: function() {

@@ -26,9 +26,8 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
     //BasicGame.colliderCG.add(this.attackCollider);
 
 	// Each hero will have an effect object which basically plays whatever effect they have
-	this.effect = new BasicGame.Effect(this.game, 100, 1000, 'bolt_effect_sprite', 0, 0.4);
-	this.game.add.existing(this.effect);
-	this.hitAnim = "anim_4";
+	this.effect = new BasicGame.Effect(this.game, 100, 1000, 'bolt_effect_sprite', 0, 0.4, true);
+	this.hitAnim = "anim_2";
 
 	// Movement animations
 	this.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Anim_Walker_Idle_00', 0, 9), 16, true);
@@ -95,12 +94,17 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
     BasicGame.shieldCG.add(this.shield);
 
     // Backdash
-    this.backdashFX = new BasicGame.Effect(this.game, -100, -100, 'muzzle_effect_sprite', 0, 1);
-    this.backdashFX2 = new BasicGame.Effect(this.game, -100, -100, 'muzzle_effect_sprite', 0, 1);
-    this.game.add.existing(this.backdashFX);
-    this.game.add.existing(this.backdashFX2);
+    this.muzzleFX = new BasicGame.Effect(this.game, -100, -100, 'muzzle_effect_sprite', 0, 1, true);
+    this.muzzleFX2 = new BasicGame.Effect(this.game, -100, -100, 'muzzle_effect_sprite', 0, 1, true);
+    this.game.add.existing(this.muzzleFX);
+    this.game.add.existing(this.muzzleFX2);
 
-    // Setup tweens
+    // Explosion group
+    this.explosionGroup = this.game.add.group(); 
+    for (var i = 0; i < 10; i++) {
+    	var proj = new BasicGame.Effect(this.game, 1000, 1000, 'explosion_effect_sprite', 1, 0.8, false);
+    	this.explosionGroup.add(proj);
+    }
 }
 
 // Inherit HeroBase
@@ -122,10 +126,12 @@ BasicGame.HeroWalkerMP.prototype.update = function() {
 	}
 
 	// Collide with map
-	this.refMP.physics.arcade.collide(this.rocket.bullets, this.refMP.mapLayer, function(obj1, obj2) {obj1.kill();});
-	this.refMP.physics.arcade.collide(this.nuke.bullets, this.refMP.mapLayer, function(obj1, obj2) {obj1.kill();});
-	this.refMP.physics.arcade.collide(this.nuke.bullets, BasicGame.shieldCG, function(obj1, obj2) {obj1.kill();});
-	this.refMP.physics.arcade.collide(this.rocket.bullets, BasicGame.shieldCG, function(obj1, obj2) {obj1.kill();});
+	this.refMP.physics.arcade.collide(this.rocket.bullets, this.refMP.mapLayer, this.collideCallback.bind(this));
+	this.refMP.physics.arcade.collide(this.nuke.bullets, this.refMP.mapLayer, this.collideCallback.bind(this));
+
+	// Collide with shield
+	this.refMP.physics.arcade.collide(this.nuke.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
+	this.refMP.physics.arcade.collide(this.rocket.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
 
 	// Collide with other players
 	this.refMP.physics.arcade.overlap(this.attackCollider, BasicGame.playerCG, this.attCallback.bind(this));		// Bind for context
@@ -151,29 +157,35 @@ BasicGame.HeroWalkerMP.prototype.attCallback = function(obj1, obj2) {
 BasicGame.HeroWalkerMP.prototype.bulletCallback = function(obj1, obj2) {
 	// If not colliding with yourself
 	if (obj2.ID != this.ID) {
+ 		this.explosionGroup.getFirstExists(false).playUntracked('anim_2', obj1.x, obj1.y);
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit();
+		obj2.getHit();	
 	}
+};
+
+BasicGame.HeroWalkerMP.prototype.collideCallback = function(obj1, obj2) {
+	//console.log(this.explosionGroup.getFirstExists(false));
+ 	this.explosionGroup.getFirstExists(false).playUntracked('anim_2', obj1.x, obj1.y);
+	obj1.kill();
 };
 
 BasicGame.HeroWalkerMP.prototype.handleSkillA = function() {
 	if (this.cursor.skillA && this.game.time.now > this.skillATimer) {
-		this.backdashFX.angle = 0;
-		this.backdashFX2.angle = 0;
+		this.muzzleFX.angle = 0;
+		this.muzzleFX2.angle = 0;
 
-		var ref = this;
 		var skillTween = this.game.add.tween(this.body.velocity);
 		skillTween.to({0:0}, 250, Phaser.Easing.Cubic.Out, true, 250);
 		skillTween.onStart.add(function() {
     		// Play muzzle effect
-    		ref.backdashFX.play('anim_1', ref, 190, -25, 1);
-    		ref.backdashFX2.play('anim_1', ref, 70, -25, 1);
+    		this.muzzleFX.play('anim_1', this, 190, -25, 1);
+    		this.muzzleFX2.play('anim_1', this, 70, -25, 1);
 
     		// Activate collider
-			ref.attackCollider.activate();   
-		});
+			this.attackCollider.activate();   
+		}, this);
 		
     	// Play the animation
     	this.animations.play('anim_melee');
@@ -191,17 +203,16 @@ BasicGame.HeroWalkerMP.prototype.handleSkillB = function(){
 		//this.isAttacking = true;
 		this.skillBTimer = this.game.time.now + this.skillBCooldown; 
 
-		var ref = this;
 		var tween = this.game.add.tween(this).to({0: 0}, this.shieldDuration, Phaser.Easing.Linear.None, true, 100);
 		tween.onStart.add(function() {
-			var tween = ref.game.add.tween(ref.shield).to({alpha: 1}, 250, Phaser.Easing.Linear.None, true, 0);
-			ref.shieldActive = true;
-		});
+			var tween = this.game.add.tween(this.shield).to({alpha: 1}, 250, Phaser.Easing.Linear.None, true, 0);
+			this.shieldActive = true;
+		}, this);
 		tween.onComplete.add(function() {
 			// Break shield here
-			ref.shield.alpha = 0;
-			ref.shieldActive = false;
-		});
+			this.shield.alpha = 0;
+			this.shieldActive = false;
+		}, this);
 
     	this.animations.play('anim_backdash');
     	this.animations.currentAnim.frame = 0;
@@ -230,8 +241,8 @@ BasicGame.HeroWalkerMP.prototype.handleSkillC = function() {
     	this.animations.play('anim_shoot');
     	this.animations.currentAnim.frame = 0;
 
-    	this.backdashFX.angle = 0;
-		this.backdashFX2.angle = 0;
+    	this.muzzleFX.angle = 0;
+		this.muzzleFX2.angle = 0;
 
 
 		this.rocket.bulletGravity = new Phaser.Point(0, -this.refMP.gravity);
@@ -241,27 +252,27 @@ BasicGame.HeroWalkerMP.prototype.handleSkillC = function() {
     		this.rocket.fireAngle = 180;
     	}
 
-    	var ref = this;
     	var tween = this.game.add.tween(this).to({0: 0}, 400, Phaser.Easing.Linear.None, true); 
     	tween.onStart.add(function() {
-    		ref.rocket.trackOffset.x = 0;
-    		ref.rocket.fire();
+    		this.rocket.trackOffset.x = 0;
+    		this.rocket.fire();
 
     		// Muzzle
-    		ref.backdashFX.play('anim_2', ref, 70, -25, 1);
-    	});
+    		this.muzzleFX.play('anim_2', this, 70, -25, 1);
+    	}, this);
     	tween.onComplete.add(function() {
     		// Correct offset
-    		if (ref.facingRight == 1) {
-    			ref.rocket.trackOffset.x = 100;	
+    		if (this.facingRight == 1) {
+    			this.rocket.trackOffset.x = 100;	
     		} else {
-    			ref.rocket.trackOffset.x = -100;
+    			this.rocket.trackOffset.x = -100;
     		}
-    		ref.rocket.fire();
+    		this.rocket.fire();
 
     		// Muzzle
-    		ref.backdashFX2.play('anim_2', ref, 190, -25, 1);
-    	});
+    		this.muzzleFX2.play('anim_2', this, 190, -25, 1);
+    		this.isAttacking = false;
+    	}, this);
 
 		this.isAttacking = true;
 		this.skillCTimer = this.game.time.now + this.skillCCooldown; 
@@ -271,20 +282,19 @@ BasicGame.HeroWalkerMP.prototype.handleSkillC = function() {
 BasicGame.HeroWalkerMP.prototype.handleSkillD = function() {
 	if (this.cursor.skillD && this.game.time.now > this.skillDTimer) {
 		// Backdash
-		this.backdashFX.angle = 0;
-		this.backdashFX2.angle = 0;
+		this.muzzleFX.angle = 0;
+		this.muzzleFX2.angle = 0;
 
-		var ref = this;
 		var skillTween = this.game.add.tween(this.body.velocity);
 		skillTween.to({x: -1500 * this.facingRight, y: -500}, 250, Phaser.Easing.Cubic.Out, true, 250);
 		skillTween.onStart.add(function() {
     		// Play muzzle effect
-    		ref.backdashFX.play('anim_2', ref, 180, -25, 1);
-    		ref.backdashFX2.play('anim_2', ref, 50, -25, 1);
+    		this.muzzleFX.play('anim_2', this, 180, -25, 1);
+    		this.muzzleFX2.play('anim_2', this, 50, -25, 1);
 
     		// Activate collider
-			ref.attackCollider.activate();   
-		});
+			this.attackCollider.activate();   
+		}, this);
 
     	// Play the animation
     	this.animations.play('anim_backdash');
@@ -302,53 +312,56 @@ BasicGame.HeroWalkerMP.prototype.handleSkillE = function() {
 		
 		if (this.facingRight == 1) {
     		this.nuke.fireAngle = -30;
+			this.muzzleFX.angle = -30;
+			this.muzzleFX2.angle = -30;
     	} else {
     		this.nuke.fireAngle = 210;
+			this.muzzleFX.angle = 30;
+			this.muzzleFX2.angle = 30;
     	}
 
     	var left = true;
-    	var ref = this;
     	var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 0, 4); 
     	tween.onRepeat.add(function() {
     		// Correct offset
-    		if (ref.facingRight == 1) {
-				ref.backdashFX.angle = -30;
-				ref.backdashFX2.angle = -30;
+    		if (this.facingRight == 1) {
 
     			if (left) {
-    				ref.nuke.trackOffset.x = 0;		
-    				ref.nuke.fire();
+    				this.nuke.trackOffset.x = 0;		
+    				this.nuke.fire();
 
     				// Muzzle
-    				ref.backdashFX.play('anim_2', ref, 40, -80, 1);
+    				this.muzzleFX.play('anim_2', this, 40, -80, 1);
     			} else {
-    				ref.nuke.trackOffset.x = 100;		
-    				ref.nuke.fire();    			
+    				this.nuke.trackOffset.x = 100;		
+    				this.nuke.fire();    			
     				// Muzzle
-    				ref.backdashFX2.play('anim_2', ref, 170, -80, 1);
+    				this.muzzleFX2.play('anim_2', this, 170, -80, 1);
     			}
 
     			left = !left;
     		} else {
-    			ref.backdashFX.angle = 30;
-				ref.backdashFX2.angle = 30;
 
     			if (left) {
-    				ref.nuke.trackOffset.x = -100;		
-    				ref.nuke.fire();
+    				this.nuke.trackOffset.x = -100;		
+    				this.nuke.fire();
 
     				// Muzzle
-    				ref.backdashFX.play('anim_2', ref, 40, -90, 1);
+    				this.muzzleFX.play('anim_2', this, 40, -90, 1);
     			} else {
-    				ref.nuke.trackOffset.x = 0;		
-    				ref.nuke.fire();    			
+    				this.nuke.trackOffset.x = 0;		
+    				this.nuke.fire();    			
     				// Muzzle
-    				ref.backdashFX2.play('anim_2', ref, 170, -90, 1);
+    				this.muzzleFX2.play('anim_2', this, 170, -90, 1);
     			}
 
     			left = !left;
     		}
-    	});
+    	}, this);
+
+    	tween.onComplete.add(function() {
+    		this.isAttacking = false;
+    	}, this);
 
 		this.isAttacking = true;
 		this.skillETimer = this.game.time.now + this.skillECooldown; 
