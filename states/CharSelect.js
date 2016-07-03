@@ -116,6 +116,7 @@ BasicGame.CharSelect.prototype = {
 			var joinTxt = "Start Game";
 		}
 		this.add.text(300, 300, "Arrow keys for controls, \nA,S,D,F for skills", optionStyle);
+		this.add.text(150, 400, "Please only select the big blue robot to play first\n as I am restructing the characters",  { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "red"});
 
 		this.returnMenu = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 100,  "Back", optionStyle);
 		this.startGame = this.add.text(this.world.width - this.world.width/3.5, this.world.height - 100,  joinTxt, optionStyle);

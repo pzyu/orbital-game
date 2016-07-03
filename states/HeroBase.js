@@ -156,7 +156,6 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 		if (this.ID == this.refMP.myID) {
 			this.myInput.x = this.x;
 			this.myInput.y = this.y;
-
 			this.refMP.eurecaServer.handleKeys(this.myInput);
 		}
 	}

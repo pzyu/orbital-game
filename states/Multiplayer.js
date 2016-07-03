@@ -100,7 +100,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		if (curPlayer) {
 			// Update player's cursor with state
 			curPlayer.cursor = state;
-			curPlayer.update();
+			//curPlayer.update();
 		}
 	}
 
