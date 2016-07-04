@@ -47,6 +47,9 @@ BasicGame.MainMenu.prototype = {
 		this.addMenuOption('Credits', function (target) {
 			this.game.state.start('Credits', true);
 		});
+		this.addMenuOption('Lobby Test', function (target) {
+			this.game.state.start('LobbyMulti', true);
+		});
 	},
 
 	update: function () {
