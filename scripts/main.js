@@ -48,8 +48,6 @@ BasicGame.Main.prototype = {
   },
 
   create: function () {
-    // activate inputbox plugin
-    game.add.plugin(Fabrique.Plugins.InputField); // for full API, go to : https://github.com/orange-games/phaser-input
     // Add only boot at this state, and start
     game.state.add('Boot', BasicGame.Boot);
     game.state.start('Boot');

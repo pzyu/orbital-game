@@ -39,7 +39,7 @@ BasicGame.Boot.prototype = {
         // For webfonts
         this.load.script('WebFont', 'scripts/webfontloader.js');
         // Text input
-        //this.load.script('textinput_src', 'node_modules/phaser-input/build/phaser-input.js');
+        //this.load.script('textinput_src', 'node_modules/phaser-input/build/phaser-input.js'); // like not needed (already loaded into index.html)
 
         // Grey filter
         this.load.script('gray', 'scripts/Gray.js');
@@ -80,6 +80,11 @@ BasicGame.Boot.prototype = {
     loadAudio: function() {
         // Loading music
         this.load.audio('titleMusic', ['audio/title.mp3']);
+    },
+
+    loadPlugins: function() {
+        this.inputField = this.game.plugins.add(Fabrique.Plugins.InputField);
+        //this.nineSlice = this.game.plugins.add(Fabrique.Plugins.NineSlice);
     },
 
     loadFonts: function(){
@@ -130,6 +135,7 @@ BasicGame.Boot.prototype = {
         this.loadFonts();
         this.loadImages();
         this.loadAudio();
+        this.loadPlugins();
     },
 
     addGameStates: function() {

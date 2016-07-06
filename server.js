@@ -32,10 +32,10 @@ var connectedCount = 0;
 var lobbylist = {};
 
 // Initialize public lobby
-lobbylist['publicLobby1'] = {gameType:'Team Death Match', maxPlayers:4, playerCount:0, status:'Open Host', password:'', clientInfo:{}};
-lobbylist['publicLobby2'] = {gameType:'Team Death Match', maxPlayers:6, playerCount:0, status:'Open Host', password:'', clientInfo:{}};
-lobbylist['publicLobby3'] = {gameType:'Team Death Match', maxPlayers:8, playerCount:0, status:'Open Host', password:'', clientInfo:{}};
-lobbylist['publicLobby4'] = {gameType:'Team Death Match', maxPlayers:12, playerCount:0, status:'Open Host', password:'', clientInfo:{}};
+lobbylist['publicLobby1'] = {gameType:'Team Death Match', maxPlayers:4, status:'Open Host', password:'', clientInfo:{}, playerCount:0};
+lobbylist['publicLobby2'] = {gameType:'Team Death Match', maxPlayers:6, status:'Open Host', password:'', clientInfo:{}, playerCount:0};
+lobbylist['publicLobby3'] = {gameType:'Team Death Match', maxPlayers:8, status:'Open Host', password:'', clientInfo:{}, playerCount:0};
+lobbylist['publicLobby4'] = {gameType:'Team Death Match', maxPlayers:12, status:'Open Host', password:'', clientInfo:{}, playerCount:0};
 
 
 //var selectedChar = "test";
@@ -77,6 +77,11 @@ eurecaServer.onDisconnect(function(conn) {
 
 	var removeID = clients[conn.id].id;
 
+	// check if disconnected client is in a lobby
+	if (clients[conn.id].lobbyID != '') {
+		eurecaServer.exports.destroyRoomLink(clients[conn.id].lobbyID, conn.id);
+	}
+
 	delete clients[conn.id];
 
 	for (var c in clients) {
@@ -87,7 +92,21 @@ eurecaServer.onDisconnect(function(conn) {
 	}
 });
 
+eurecaServer.exports.establishRoomLink = function(roomName, id) {
+	console.log("Player: " + id + " connected to room " + roomName);
+	clients[id].lobbyID = roomName; // update client lobby room status
+	lobbylist[roomName].clientInfo[id] = clients[id].remote;
+	lobbylist[roomName].playerCount++;
+	eurecaServer.exports.requestClientInfo(); // update all clients
+}
 
+eurecaServer.exports.destroyRoomLink = function(roomName, id) {
+	console.log("Player: " + id + " disconnected to room " + roomName);
+	clients[id].lobbyID = ''; // update client lobby room status
+	delete lobbylist[roomName].clientInfo[id];
+	lobbylist[roomName].playerCount--;
+	eurecaServer.exports.requestClientInfo(); // update all clients
+}
 
 eurecaServer.exports.requestClientInfo = function() {
 	for (var c in clients) {

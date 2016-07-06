@@ -66,7 +66,7 @@ BasicGame.LobbyMulti.prototype = {
 
 		/* server.js communication functions */
 		BasicGame.eurecaClient.exports.setID = function(id) {
-			//create() is moved here to make sure nothing is created before uniq id assignation
+			// assign id first. only start loading information when myID is obtained
 			BasicGame.myID = id;
 			ref.LoadLobby(); // load lobby information
 		}

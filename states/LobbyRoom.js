@@ -10,7 +10,13 @@ BasicGame.LobbyRoom.prototype = {
 			if (result) {
 				// valid credentials, continue loading room info
 				ref.roomID = roomName;
+
+				// establish connection to the room
+				BasicGame.eurecaServer.establishRoomLink(roomName, BasicGame.myID);
+				// load basic layout of room
 				ref.loadRoom();
+				// retrieve room info
+				
 			} else {
 				// wrong credentials, kick to lobby
 				ref.game.state.start("LobbyMulti", true);
@@ -51,8 +57,9 @@ BasicGame.LobbyRoom.prototype = {
 		// Back button clicked
 		this.returnMenu.events.onInputUp.add(function() {
 			console.log('disconnected from eureca');
-			BasicGame.eurecaClient.disconnect(); // server to disconnect client
-			BasicGame.disconnectClient(); // client to reset connection variable
+			BasicGame.eurecaServer.destroyRoomLink(ref.roomID, BasicGame.myID); // destroy connection
+			BasicGame.eurecaClient.disconnect(); // request server to disconnect client
+			BasicGame.disconnectClient(); // adjust client to reset connection variable
 			ref.game.state.start("MainMenu", true);
 		});
 
@@ -64,6 +71,7 @@ BasicGame.LobbyRoom.prototype = {
 		
 		// lobby button clicked
 		this.returnLobby.events.onInputUp.add(function() {
+			BasicGame.eurecaServer.destroyRoomLink(ref.roomID, BasicGame.myID); // destroy connection
 			ref.game.state.start("LobbyMulti", true);
 		});
 	},
