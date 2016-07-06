@@ -109,7 +109,7 @@ BasicGame.CharSelect.prototype = {
 		this.isClicked = null;
 
 		// Add start game button
-		var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
+		var optionStyle = {font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
 		if (ref.multiplayer) {
 			var joinTxt = "Join server";
 		} else {
@@ -122,6 +122,10 @@ BasicGame.CharSelect.prototype = {
 		this.startGame = this.add.text(this.world.width - this.world.width/3.5, this.world.height - 100,  joinTxt, optionStyle);
 		this.startGame.inputEnabled = true; 
 		this.returnMenu.inputEnabled = true;
+		this.returnMenu.events.onInputOver.add(BasicGame.onOver);
+		this.returnMenu.events.onInputOut.add(BasicGame.onOut);
+		this.startGame.events.onInputOver.add(BasicGame.onOver);
+		this.startGame.events.onInputOut.add(BasicGame.onOut);
 
 		// Back button clicked
 		this.returnMenu.events.onInputUp.add(function() {

@@ -65,26 +65,14 @@ BasicGame.Options.prototype = {
 	addMenuOption: function(xPosition, yPosition, text, callback) {
 		// Set default text
 		var txt = this.add.text(xPosition, yPosition, text, optionStyle);
-
-		// On over style
-		var onOver = function (target) {
-			target.fill = "#CCE8FF";
-			target.stroke = "rgba(255,255,255,1)";
-		};
-
-		// On out style
-		var onOut = function (target) {
-			target.fill = "white";
-			target.stroke = "rgba(0,0,0,0)";
-		};
-
+		
 		// Default style
 		txt.stroke = "rgba(0,0,0,0)";
 		txt.strokeThickness = 4;
 		txt.inputEnabled = true;
 		txt.events.onInputUp.add(callback);
-		txt.events.onInputOver.add(onOver);
-		txt.events.onInputOut.add(onOut);
+		txt.events.onInputOver.add(BasicGame.onOver);
+		txt.events.onInputOut.add(BasicGame.onOut);
 		return txt;
 	},
 

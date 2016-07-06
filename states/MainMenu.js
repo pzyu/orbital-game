@@ -50,6 +50,21 @@ BasicGame.MainMenu.prototype = {
 		this.addMenuOption('Lobby Test', function (target) {
 			this.game.state.start('LobbyMulti', true);
 		});
+
+		// for full API, go to : https://github.com/orange-games/phaser-input
+		var nicknameInput = game.add.inputField(this.world.width/3, this.world.height/2, {
+			font: '24px Arial',
+			fill: '#212121',
+			fontWeight: 'bold',
+			width: 427,
+			height: 30,
+			padding: 8,
+			borderWidth: 1,
+			borderColor: '#000',
+			borderRadius: 6,
+			max: 18,
+			placeHolder: 'Enter your nickname',
+		});
 	},
 
 	update: function () {
@@ -70,25 +85,13 @@ BasicGame.MainMenu.prototype = {
 		var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
 		var txt = this.add.text(this.world.width - this.world.width/4, this.world.height/1.5 + this.optionCount * 40, text, optionStyle);
 
-		// On over style
-		var onOver = function (target) {
-			target.fill = "#CCE8FF";
-			target.stroke = "rgba(255,255,255,1)";
-		};
-
-		// On out style
-		var onOut = function (target) {
-			target.fill = "white";
-			target.stroke = "rgba(0,0,0,0)";
-		};
-
 		// Default style
 		txt.stroke = "rgba(0,0,0,0)";
 		txt.strokeThickness = 4;
 		txt.inputEnabled = true;
 		txt.events.onInputUp.add(callback);
-		txt.events.onInputOver.add(onOver);
-		txt.events.onInputOut.add(onOut);
+		txt.events.onInputOver.add(BasicGame.onOver);
+		txt.events.onInputOut.add(BasicGame.onOut);
 		this.optionCount ++;
 	}
 };

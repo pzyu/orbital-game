@@ -31,12 +31,8 @@ BasicGame.Credits.prototype = {
 		this.addMenuOption(this.world.width - this.world.width/2.5, this.world.height/2  + 300,  "Back to main menu", function (target) {
 			ref.game.state.start("MainMenu", true);
 		});
-		// Button to mute volume
+
 		this.add.text(100, 300, "Move along now, nothing to see here", optionStyle);
-		//this.addMenuOption(300, 300,  "Mute", function (target) {
-			// console.log(BasicGame);
-			// add mute feature here
-		//});
 	},
 
 	// Factory function that lets you add options easily
@@ -44,25 +40,13 @@ BasicGame.Credits.prototype = {
 		// Set default text
 		var txt = this.add.text(xPosition, yPosition, text, optionStyle);
 
-		// On over style
-		var onOver = function (target) {
-			target.fill = "#CCE8FF";
-			target.stroke = "rgba(255,255,255,1)";
-		};
-
-		// On out style
-		var onOut = function (target) {
-			target.fill = "white";
-			target.stroke = "rgba(0,0,0,0)";
-		};
-
 		// Default style
 		txt.stroke = "rgba(0,0,0,0)";
 		txt.strokeThickness = 4;
 		txt.inputEnabled = true;
 		txt.events.onInputUp.add(callback);
-		txt.events.onInputOver.add(onOver);
-		txt.events.onInputOut.add(onOut);
+		txt.events.onInputOver.add(BasicGame.onOver);
+		txt.events.onInputOut.add(BasicGame.onOut);
 	},
 
 	update: function() {

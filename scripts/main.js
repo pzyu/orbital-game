@@ -7,7 +7,19 @@ var BasicGame = {
   shieldCG: null,
   playerCG: null,
   selectedChar: null,
-  musicPlayer: null
+  musicPlayer: null,
+  // On over style
+  onOver: function (target) {
+    target.fill = "#CCE8FF";
+    target.stroke = "rgba(255,255,255,1)";
+  },
+
+  // On out style
+  onOut: function (target) {
+    target.fill = "white";
+    target.stroke = "rgba(0,0,0,0)";
+  }
+
 };     
 
 var config = {  width: BasicGame.gameWidth,  height: BasicGame.gameHeight,  renderer: Phaser.AUTO, forceSetTimeOut: false};
@@ -26,6 +38,8 @@ BasicGame.Main.prototype = {
   },
 
   create: function () {
+    // activate inputbox plugin
+    game.add.plugin(Fabrique.Plugins.InputField); // for full API, go to : https://github.com/orange-games/phaser-input
     // Add only boot at this state, and start
     game.state.add('Boot', BasicGame.Boot);
     game.state.start('Boot');

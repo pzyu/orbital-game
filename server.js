@@ -25,16 +25,19 @@ eurecaServer.attach(server);
 
 // Detect client connection
 eurecaServer.onConnect(function(conn) {
-	console.log('New client id=%s ', conn.id, conn.remoteAddress);
+	console.log('Client connected id=%s ', conn.id, conn.remoteAddress);
 
 	var remote = eurecaServer.getClient(conn.id);
 	// Client contains id, remote, and selected character
-	clients[conn.id] = {id:conn.id, remote:remote, char:selectedChar};
-
+	clients[conn.id] = {id:conn.id, remote:remote};
+	
+	/*
+	separated first
 	// Set client's selected character
 	remote.getChar().onReady(function(result) {
 		clients[conn.id].char = result;
 	});
+	*/
 
 	// setID method in client side
 	remote.setID(conn.id);			
@@ -43,7 +46,7 @@ eurecaServer.onConnect(function(conn) {
 
 // Detect client disconnection
 eurecaServer.onDisconnect(function(conn) {
-	console.log('Client disconnected ', conn.id);
+	console.log('Client disconnected id=%s ', conn.id, conn.remoteAddress);
 
 	var removeID = clients[conn.id].id;
 
