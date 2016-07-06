@@ -16,6 +16,7 @@ BasicGame.Boot.prototype = {
         this.load.script('charselect_scr', 'states/CharSelect.js');
         this.load.script('options_scr', 'states/Options.js');
         this.load.script('lobbymulti_scr', 'states/LobbyMP.js');
+        this.load.script('lobbyroom_scr', 'states/LobbyRoom.js');
         this.load.script('credits_scr', 'states/Credits.js');
         this.load.script('effect_scr', 'states/Effect.js');
         this.load.script('proj_scr', 'states/Projectile.js');
@@ -137,6 +138,7 @@ BasicGame.Boot.prototype = {
         this.state.add('CharSelect', BasicGame.CharSelect);
         this.state.add('MainGame', BasicGame.MainGame);
         this.state.add('LobbyMulti', BasicGame.LobbyMulti);
+        this.state.add('LobbyRoom', BasicGame.LobbyRoom);
         this.state.add('Multiplayer', BasicGame.Multiplayer);
         this.state.add('Options', BasicGame.Options);
         this.state.add('Credits', BasicGame.Credits);

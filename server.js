@@ -32,10 +32,10 @@ var connectedCount = 0;
 var lobbylist = {};
 
 // Initialize public lobby
-lobbylist['publicLobby1'] = {gameType:'Team Death Match', maxPlayers:4, playerCount:0, status:'Open Host', clientInfo:{}};
-lobbylist['publicLobby2'] = {gameType:'Team Death Match', maxPlayers:6, playerCount:0, status:'Open Host', clientInfo:{}};
-lobbylist['publicLobby3'] = {gameType:'Team Death Match', maxPlayers:8, playerCount:0, status:'Open Host', clientInfo:{}};
-lobbylist['publicLobby4'] = {gameType:'Team Death Match', maxPlayers:12, playerCount:0, status:'Open Host', clientInfo:{}};
+lobbylist['publicLobby1'] = {gameType:'Team Death Match', maxPlayers:4, playerCount:0, status:'Open Host', password:'', clientInfo:{}};
+lobbylist['publicLobby2'] = {gameType:'Team Death Match', maxPlayers:6, playerCount:0, status:'Open Host', password:'', clientInfo:{}};
+lobbylist['publicLobby3'] = {gameType:'Team Death Match', maxPlayers:8, playerCount:0, status:'Open Host', password:'', clientInfo:{}};
+lobbylist['publicLobby4'] = {gameType:'Team Death Match', maxPlayers:12, playerCount:0, status:'Open Host', password:'', clientInfo:{}};
 
 
 //var selectedChar = "test";
@@ -87,8 +87,9 @@ eurecaServer.onDisconnect(function(conn) {
 	}
 });
 
+
+
 eurecaServer.exports.requestClientInfo = function() {
-	console.log("request clients");
 	for (var c in clients) {
 		var remote = clients[c].remote;
 		remote.updateLobby(connectedCount, 
@@ -97,6 +98,18 @@ eurecaServer.exports.requestClientInfo = function() {
 			lobbylist['publicLobby3'], 
 			lobbylist['publicLobby4']
 		);
+	}
+}
+
+eurecaServer.exports.passwordCheck = function(name, pass) {
+	if (lobbylist[name] != null) {
+		if (lobbylist[name].password == pass) {
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
 	}
 }
 

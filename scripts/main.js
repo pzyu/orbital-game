@@ -8,6 +8,10 @@ var BasicGame = {
   playerCG: null,
   selectedChar: null,
   musicPlayer: null,
+  eurecaServer: null,
+  eurecaClient: null,
+  myID: null,
+
   // On over style
   onOver: function (target) {
     target.fill = "#CCE8FF";
@@ -18,6 +22,12 @@ var BasicGame = {
   onOut: function (target) {
     target.fill = "white";
     target.stroke = "rgba(0,0,0,0)";
+  },
+
+  disconnectClient: function () {
+    BasicGame.eurecaServer = null;
+    BasicGame.eurecaClient = null;
+    BasicGame.myID = null;
   }
 
 };     

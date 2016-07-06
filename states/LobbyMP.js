@@ -1,11 +1,8 @@
 BasicGame.LobbyMulti = function (game) {
 	this,playerNick = '';
-	this.myID = '';
 	this.lobbyList;
-	this.eurecaServer;
-	this.eurecaClient;
 
-	// labels
+	// labels initialization
 	this.L1GameTxt;
 	this.L1CurrPlayersTxt;
 	this.L1MaxPlayersTxt;
@@ -23,6 +20,10 @@ BasicGame.LobbyMulti = function (game) {
 	this.L4MaxPlayersTxt;
 	this.L4StatusTxt;
 	this.playerStatus;
+	this.joinLobby1;
+	this.joinLobby2;
+	this.joinLobby3;
+	this.joinLobby4;
 };
 
 BasicGame.LobbyMulti.prototype = {
@@ -39,62 +40,71 @@ BasicGame.LobbyMulti.prototype = {
 	preload: function() {
 		// variable delcaration
 		var ref = this;
-		this.ready = false;
 
 		// connect to the eureca server client
 		this.eurecaClientSetup = function() {
-			ref.eurecaClient = new Eureca.Client();
-			ref.eurecaClient.ready(function(proxy) {
-				ref.eurecaServer = proxy;
+			BasicGame.eurecaClient = new Eureca.Client();
+			BasicGame.eurecaClient.ready(function(proxy) {
+				BasicGame.eurecaServer = proxy;
 				console.log('connected to eureca');
 			});
 		}
-		this.eurecaClientSetup(); // establish connection to eureca server
+		if (BasicGame.eurecaClient == null && BasicGame.eurecaServer == null) {
+			this.eurecaClientSetup(); // establish connection to eureca server
+		} else {
+			// connection is already establish. Load info
+			ref.LoadLobby(); // load lobby information
+			/* 
+			IMPORTANT!
+			When you enter this else statement, highly likely is because
+			the password entered is wrong!
+
+			Future additions : Fail message to entering lobby!
+			 */
+		}
 		this.preloadLobby(); // preload lobby
 
 		/* server.js communication functions */
-		this.eurecaClient.exports.setID = function(id) {
+		BasicGame.eurecaClient.exports.setID = function(id) {
 			//create() is moved here to make sure nothing is created before uniq id assignation
-			ref.myID = id;
-			this.ready = true; // information transfer complete
-			console.log("LOADING LOBBY");
+			BasicGame.myID = id;
 			ref.LoadLobby(); // load lobby information
 		}
 
-		this.eurecaClient.exports.getNick = function() {
+		BasicGame.eurecaClient.exports.getNick = function() {
 			// Return player's selected character
 			return ref.playerNick;
 		}
 
-		this.eurecaClient.exports.kill = function(id) {	
+		BasicGame.eurecaClient.exports.kill = function(id) {	
 			ref.LoadLobby(); // update client side disconnect
 		}
 
-		this.eurecaClient.exports.updateLobby = function(totalPlayer, lobby1, lobby2, lobby3, lobby4) {
+		BasicGame.eurecaClient.exports.updateLobby = function(totalPlayer, lobby1, lobby2, lobby3, lobby4) {
 			// Update lobby text status
 			ref.L1GameTxt.setText(lobby1.gameType);
 			ref.L1CurrPlayersTxt.setText(lobby1.playerCount);
 			ref.L1MaxPlayersTxt.setText(lobby1.maxPlayers);
 			ref.L1StatusTxt.setText(lobby1.status);
-
 			ref.L2GameTxt.setText(lobby2.gameType);
 			ref.L2CurrPlayersTxt.setText(lobby2.playerCount);
 			ref.L2MaxPlayersTxt.setText(lobby2.maxPlayers);
 			ref.L2StatusTxt.setText(lobby2.status);
-
 			ref.L3GameTxt.setText(lobby3.gameType);
 			ref.L3CurrPlayersTxt.setText(lobby3.playerCount);
 			ref.L3MaxPlayersTxt.setText(lobby3.maxPlayers);
 			ref.L3StatusTxt.setText(lobby3.status);
-
 			ref.L4GameTxt.setText(lobby4.gameType);
 			ref.L4CurrPlayersTxt.setText(lobby4.playerCount);
 			ref.L4MaxPlayersTxt.setText(lobby4.maxPlayers);
 			ref.L4StatusTxt.setText(lobby4.status);
-
 			ref.playerStatus.setText('Total Online Players : ' + totalPlayer);
 
-			//remote.updateLobby(connectedCount, lobbylist['publicLobby1'], lobbylist['publicLobby2'], lobbylist['publicLobby3'], lobbylist['publicLobby4'])
+			// Add join button to lobby
+			(lobby1.status == 'Open Host' && lobby1.playerCount < lobby1.maxPlayers) ? ref.joinLobby1.visible = true : ref.joinLobby1.visible = false;
+			(lobby2.status == 'Open Host' && lobby2.playerCount < lobby2.maxPlayers) ? ref.joinLobby2.visible = true : ref.joinLobby2.visible = false;
+			(lobby3.status == 'Open Host' && lobby3.playerCount < lobby3.maxPlayers) ? ref.joinLobby3.visible = true : ref.joinLobby3.visible = false;
+			(lobby4.status == 'Open Host' && lobby4.playerCount < lobby4.maxPlayers) ? ref.joinLobby4.visible = true : ref.joinLobby4.visible = false;
 		}	
 	},
 
@@ -102,7 +112,7 @@ BasicGame.LobbyMulti.prototype = {
 		var ref = this;
 
 		// Add back button
-		this.returnMenu = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 100,  "Back", optionStyle);
+		this.returnMenu = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 100,  "Back to Main Menu", optionStyle);
 		this.returnMenu.inputEnabled = true;
 		this.returnMenu.events.onInputOver.add(BasicGame.onOver);
 		this.returnMenu.events.onInputOut.add(BasicGame.onOut);
@@ -110,18 +120,17 @@ BasicGame.LobbyMulti.prototype = {
 		// Back button clicked
 		this.returnMenu.events.onInputUp.add(function() {
 			console.log('disconnected from eureca');
-			ref.eurecaClient.disconnect();
-			ref.myID = '';
+			BasicGame.eurecaClient.disconnect(); // server to disconnect client
+			BasicGame.disconnectClient(); // client to reset connection variable
 			ref.game.state.start("MainMenu", true);
 		});
 	},
 
 	update: function () {
-		if (!this.ready) return;
+		// nothing at all
 	},
 
 	preloadLobby: function () {
-		console.log("PRELOADING LOBBY");
 		// constant variables declaration
 		var lobbyFixedText1 = {font: '25pt myfont', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
 		var lobbyOptionText1 = {font: '14pt myfont', align: 'center', stroke: 'rgba(0,10,0,0)', strokeThickness: 2, fill: "white"};
@@ -158,10 +167,47 @@ BasicGame.LobbyMulti.prototype = {
 		this.L4MaxPlayersTxt = this.add.text((this.world.width/5 * 4) + 55, 280,  '', lobbyOptionText1);
 		this.L4StatusTxt = this.add.text((this.world.width/5 * 4) + 10, 330,  '', lobbyOptionText1);
 		// total players
-		this.playerStatus = this.add.text(30, 450,  "Total Online Players :", lobbyFixedText1);
+		this.playerStatus = this.add.text(30, 450,  "Total Online Players : NOT ONLINE! Check your connection!", lobbyFixedText1);
+
+		// Join lobby buttons
+		this.joinLobby1 = this.add.text((this.world.width/5 * 1) + 20, 380,  "Join", lobbyFixedText1);
+		this.joinLobby2 = this.add.text((this.world.width/5 * 2) + 20, 380,  "Join", lobbyFixedText1);
+		this.joinLobby3 = this.add.text((this.world.width/5 * 3) + 20, 380,  "Join", lobbyFixedText1);
+		this.joinLobby4 = this.add.text((this.world.width/5 * 4) + 20, 380,  "Join", lobbyFixedText1);
+
+		this.joinLobby1.visible = false;
+		this.joinLobby2.visible = false;
+		this.joinLobby3.visible = false;
+		this.joinLobby4.visible = false;
+
+		this.joinLobby1.inputEnabled = true;
+		this.joinLobby2.inputEnabled = true;
+		this.joinLobby3.inputEnabled = true;
+		this.joinLobby4.inputEnabled = true;
+		this.joinLobby1.events.onInputOver.add(BasicGame.onOver);
+		this.joinLobby1.events.onInputOut.add(BasicGame.onOut);
+		this.joinLobby2.events.onInputOver.add(BasicGame.onOver);
+		this.joinLobby2.events.onInputOut.add(BasicGame.onOut);
+		this.joinLobby3.events.onInputOver.add(BasicGame.onOver);
+		this.joinLobby3.events.onInputOut.add(BasicGame.onOut);
+		this.joinLobby4.events.onInputOver.add(BasicGame.onOver);
+		this.joinLobby4.events.onInputOut.add(BasicGame.onOut);
+
+		this.joinLobby1.events.onInputUp.add(function() {
+			this.game.state.start('LobbyRoom', true, false, 'publicLobby1', '');
+		});
+		this.joinLobby2.events.onInputUp.add(function() {
+			this.game.state.start('LobbyRoom', true, false, 'publicLobby2', '');
+		});
+		this.joinLobby3.events.onInputUp.add(function() {
+			this.game.state.start('LobbyRoom', true, false, 'publicLobby3', '');
+		});
+		this.joinLobby4.events.onInputUp.add(function() {
+			this.game.state.start('LobbyRoom', true, false, 'publicLobby4', '');
+		});
 	},
 
 	LoadLobby: function () {
-		this.eurecaServer.requestClientInfo();
+		BasicGame.eurecaServer.requestClientInfo();
 	}
 }
