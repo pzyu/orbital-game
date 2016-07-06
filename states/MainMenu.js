@@ -34,6 +34,7 @@ BasicGame.MainMenu.prototype = {
 	},
 
 	create: function () {
+		var ref = this;
 		this.addMenuOption('Start Game', function (target) {
 			// Move to character select screen, last parameter is to determine if it's multiplayer or not
 			this.game.state.start('CharSelect', true, false, false);
@@ -48,7 +49,12 @@ BasicGame.MainMenu.prototype = {
 			this.game.state.start('Credits', true);
 		});
 		this.addMenuOption('Lobby Test', function (target) {
-			this.game.state.start('LobbyMulti', true);
+			if (nicknameInput.value == "") {
+				// ask for nickname input
+				ref.add.text(ref.world.width/4 - 35, ref.world.height/2 + 50, "Enter a name before entering lobby!", optionStyle);
+			} else {
+				this.game.state.start('LobbyMulti', true, false, nicknameInput.value);
+			}
 		});
 
 		// for full API, go to : https://github.com/orange-games/phaser-input
@@ -65,6 +71,8 @@ BasicGame.MainMenu.prototype = {
 			max: 18,
 			placeHolder: 'Enter your nickname',
 		});
+
+		nicknameInput.value = 'moon moon tester!'; // DELETE WHEN NOT IN DEVELOPMENT!
 	},
 
 	update: function () {

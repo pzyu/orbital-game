@@ -16,23 +16,46 @@ app.get('/', function(request, response) {
 var Eureca = require('eureca.io');
 
 // Create an instance of EurecaServer
-var eurecaServer = new Eureca.Server({allow:['setID', 'spawnEnemy', 'kill', 'updateState', 'getChar', 'compensate', 'broadcast']});
+var eurecaServer = new Eureca.Server({allow:['setID', 
+	'getNick', 
+	'updateLobby',
+	'spawnEnemy', 
+	'kill', 
+	'updateState', 
+	'getChar', 
+	'compensate', 
+	'broadcast'
+]});
+// initialize server core data
 var clients = {};
-var selectedChar = "test";
+var connectedCount = 0;
+var lobbylist = {};
+
+// Initialize public lobby
+lobbylist['publicLobby1'] = {gameType:'Team Death Match', maxPlayers:4, playerCount:0, status:'Open Host', clientInfo:{}};
+lobbylist['publicLobby2'] = {gameType:'Team Death Match', maxPlayers:6, playerCount:0, status:'Open Host', clientInfo:{}};
+lobbylist['publicLobby3'] = {gameType:'Team Death Match', maxPlayers:8, playerCount:0, status:'Open Host', clientInfo:{}};
+lobbylist['publicLobby4'] = {gameType:'Team Death Match', maxPlayers:12, playerCount:0, status:'Open Host', clientInfo:{}};
+
+
+//var selectedChar = "test";
 
 // Attach eureca.io to our http server
 eurecaServer.attach(server);
 
 // Detect client connection
 eurecaServer.onConnect(function(conn) {
-	console.log('Client connected id=%s ', conn.id, conn.remoteAddress);
-
 	var remote = eurecaServer.getClient(conn.id);
 	// Client contains id, remote, and selected character
-	clients[conn.id] = {id:conn.id, remote:remote};
+	clients[conn.id] = {id:conn.id, remote:remote, lobbyID:''};
+	//clients[conn.id] = {id:conn.id, remote:remote, char:selectedChar};
 	
-	/*
-	separated first
+	// Set client's nickname
+	remote.getNick().onReady(function(result) {
+		clients[conn.id].nick = result;
+	});
+
+	/* Separated for now. Affects multiplayer
 	// Set client's selected character
 	remote.getChar().onReady(function(result) {
 		clients[conn.id].char = result;
@@ -42,11 +65,15 @@ eurecaServer.onConnect(function(conn) {
 	// setID method in client side
 	remote.setID(conn.id);			
 
+	// test output
+	connectedCount++;
+	console.log('Client connected id=%s ', conn.id, conn.remoteAddress);
 });
 
 // Detect client disconnection
 eurecaServer.onDisconnect(function(conn) {
 	console.log('Client disconnected id=%s ', conn.id, conn.remoteAddress);
+	connectedCount--;
 
 	var removeID = clients[conn.id].id;
 
@@ -59,6 +86,19 @@ eurecaServer.onDisconnect(function(conn) {
 		remote.kill(conn.id);
 	}
 });
+
+eurecaServer.exports.requestClientInfo = function() {
+	console.log("request clients");
+	for (var c in clients) {
+		var remote = clients[c].remote;
+		remote.updateLobby(connectedCount, 
+			lobbylist['publicLobby1'], 
+			lobbylist['publicLobby2'], 
+			lobbylist['publicLobby3'], 
+			lobbylist['publicLobby4']
+		);
+	}
+}
 
 eurecaServer.exports.handshake = function() {
 	console.log('handshaking');
