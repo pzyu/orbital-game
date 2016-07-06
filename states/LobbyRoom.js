@@ -9,7 +9,7 @@ BasicGame.LobbyRoom.prototype = {
 		BasicGame.eurecaServer.passwordCheck(roomName, pass).onReady(function(result) {
 			if (result) {
 				// valid credentials, continue loading room info
-
+				ref.roomID = roomName;
 				ref.loadRoom();
 			} else {
 				// wrong credentials, kick to lobby
@@ -38,8 +38,6 @@ BasicGame.LobbyRoom.prototype = {
 		ref.background = ref.add.sprite(0, 0, 'menu_background');
 		ref.background.height = ref.game.height;
 		ref.background.width = ref.game.width;
-		// add player nick
-		ref.roomID = roomName;
 
 		// Test welcome Message
 		ref.add.text(20, ref.world.height/2,  "If u see this message, means u have entered a lobby room", optionStyle);
