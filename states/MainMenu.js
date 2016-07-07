@@ -51,7 +51,8 @@ BasicGame.MainMenu.prototype = {
 		this.addMenuOption('Lobby Test', function (target) {
 			if (nicknameInput.value == "") {
 				// ask for nickname input
-				ref.add.text(ref.world.width/4 - 35, ref.world.height/2 + 50, "Enter a name before entering lobby!", optionStyle);
+				ref.add.text(ref.world.width/4 - 35, ref.world.height/2 + 50, "Enter a name before entering lobby!", 
+					{font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "red"});
 			} else {
 				this.game.state.start('LobbyMulti', true, false, nicknameInput.value);
 			}
@@ -72,7 +73,7 @@ BasicGame.MainMenu.prototype = {
 			placeHolder: 'Enter your nickname',
 		});
 
-		nicknameInput.value = 'moon moon tester!'; // DELETE WHEN NOT IN DEVELOPMENT!
+		nicknameInput.value = (nicknameInput.value == '') ? 'moon moon wow!' : nicknameInput.value; // DELETE WHEN NOT IN DEVELOPMENT!
 	},
 
 	update: function () {

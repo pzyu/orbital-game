@@ -1,5 +1,9 @@
 BasicGame.LobbyRoom = function (game) {
 	this.roomID = '';
+	this.PlayerText = [];
+	this.headerTextDefault = {font: '25pt myfont', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
+	this.subText = {font: '14pt myfont', align: 'center', stroke: 'rgba(0,10,0,0)', strokeThickness: 2, fill: "white"};
+	this.subTextCyan = {font: '14pt myfont', align: 'center', stroke: 'rgba(0,10,0,0)', strokeThickness: 2, fill: "cyan"}; 
 };
 
 BasicGame.LobbyRoom.prototype = {
@@ -15,8 +19,9 @@ BasicGame.LobbyRoom.prototype = {
 				BasicGame.eurecaServer.establishRoomLink(roomName, BasicGame.myID);
 				// load basic layout of room
 				ref.loadRoom();
+
 				// retrieve room info
-				
+				BasicGame.eurecaServer.updateLobbyRoom(roomName);
 			} else {
 				// wrong credentials, kick to lobby
 				ref.game.state.start("LobbyMulti", true);
@@ -27,6 +32,35 @@ BasicGame.LobbyRoom.prototype = {
 	preload: function() {
 		// variable delcaration
 		var ref = this;
+
+		BasicGame.eurecaClient.exports.kill = function(id) {	
+			BasicGame.eurecaServer.updateLobbyRoom(ref.roomID); // update client side disconnect
+		}
+
+		// function to load all players info obtained from server.js
+		BasicGame.eurecaClient.exports.loadPlayersLR = function(playerList) {
+			var t1Counter = 0;
+			var t2Counter = 0;
+			var plCounter = 0;
+			ref.clearPlayerText();
+
+			for (var id in playerList) {
+				var player = playerList[id];
+				var displayNick = (player.nick.length > 16) ? player.nick.substring(0,12) + '...' : player.nick;
+
+				if (player.position == null) {
+					// current player has no team
+					if (BasicGame.myID == player.id) {
+						ref.PlayerText[ref.PlayerText.length] = ref.add.text(ref.world.width/6 * 4.5 + 10, 100 + (plCounter * 25),  displayNick, ref.subTextCyan);
+					} else {
+						ref.PlayerText[ref.PlayerText.length] = ref.add.text(ref.world.width/6 * 4.5 + 10, 100 + (plCounter * 25),  displayNick, ref.subText);
+					}
+					plCounter++;
+				} else {
+					// do nothing
+				}
+			}
+		};
 	},
 
 	create: function () {
@@ -37,16 +71,29 @@ BasicGame.LobbyRoom.prototype = {
 		// nothing at all
 	},
 
+	clearPlayerText: function () {
+		var ref = this;
+		for (var i=0; i<ref.PlayerText.length; i++) {
+			ref.PlayerText[i].destroy();
+		}
+		ref.PlayerText = [];
+	},
+
 	loadRoom: function () {
 		var ref = this;
 
 		// Add background in
-		ref.background = ref.add.sprite(0, 0, 'menu_background');
-		ref.background.height = ref.game.height;
-		ref.background.width = ref.game.width;
+		this.background = ref.add.sprite(0, 0, 'menu_background');
+		this.background.height = ref.game.height;
+		this.background.width = ref.game.width;
 
-		// Test welcome Message
-		ref.add.text(20, ref.world.height/2,  "If u see this message, means u have entered a lobby room", optionStyle);
+		// Add Lobby name
+		this.LobbyName = this.add.text(50, 30, this.roomID, {font: "40pt myfont", fill: 'white', align: 'right'});
+
+		// Add Headers
+		this.add.text(this.world.width/6, 120,  "Team A", this.headerTextDefault);
+		this.add.text(this.world.width/2, 120,  "Team B", this.headerTextDefault);
+		this.add.text(this.world.width/6 * 4.5, 50,  "Player List", this.headerTextDefault);
 
 		// Add back button
 		this.returnMenu = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 100,  "Back to Main Menu", optionStyle);
@@ -58,6 +105,7 @@ BasicGame.LobbyRoom.prototype = {
 		this.returnMenu.events.onInputUp.add(function() {
 			console.log('disconnected from eureca');
 			BasicGame.eurecaServer.destroyRoomLink(ref.roomID, BasicGame.myID); // destroy connection
+			BasicGame.eurecaServer.updateLobbyRoom(ref.roomID); // update the rest of the clients after connection is destroyed
 			BasicGame.eurecaClient.disconnect(); // request server to disconnect client
 			BasicGame.disconnectClient(); // adjust client to reset connection variable
 			ref.game.state.start("MainMenu", true);
@@ -72,7 +120,8 @@ BasicGame.LobbyRoom.prototype = {
 		// lobby button clicked
 		this.returnLobby.events.onInputUp.add(function() {
 			BasicGame.eurecaServer.destroyRoomLink(ref.roomID, BasicGame.myID); // destroy connection
+			BasicGame.eurecaServer.updateLobbyRoom(ref.roomID); // update the rest of the clients after connection is destroyed
 			ref.game.state.start("LobbyMulti", true);
 		});
 	},
-}
+};

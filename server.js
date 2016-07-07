@@ -19,6 +19,7 @@ var Eureca = require('eureca.io');
 var eurecaServer = new Eureca.Server({allow:['setID', 
 	'getNick', 
 	'updateLobby',
+	'loadPlayersLR',
 	'spawnEnemy', 
 	'kill', 
 	'updateState', 
@@ -47,7 +48,13 @@ eurecaServer.attach(server);
 eurecaServer.onConnect(function(conn) {
 	var remote = eurecaServer.getClient(conn.id);
 	// Client contains id, remote, and selected character
-	clients[conn.id] = {id:conn.id, remote:remote, lobbyID:''};
+	clients[conn.id] = {
+		id:conn.id, 
+		remote:remote, 
+		lobbyID:'',
+		position: null,
+		ready:false
+	};
 	//clients[conn.id] = {id:conn.id, remote:remote, char:selectedChar};
 	
 	// Set client's nickname
@@ -92,22 +99,36 @@ eurecaServer.onDisconnect(function(conn) {
 	}
 });
 
+eurecaServer.exports.updateLobbyRoom = function(roomName) {
+	// for every client in the lobby, update their lobby room info
+	for (var id in lobbylist[roomName].clientInfo) { 
+		var remote = lobbylist[roomName].clientInfo[id].remote;
+		remote.loadPlayersLR(lobbylist[roomName].clientInfo); // Share clientinfo with all clients in the lobby
+	}
+}
+
+// function to add and update lobby information wtih connected player id
+// REF: Each obj in clientInfo is a clients[conn.id]
 eurecaServer.exports.establishRoomLink = function(roomName, id) {
 	console.log("Player: " + id + " connected to room " + roomName);
 	clients[id].lobbyID = roomName; // update client lobby room status
-	lobbylist[roomName].clientInfo[id] = clients[id].remote;
+	lobbylist[roomName].clientInfo[id] = clients[id]; // pass in the client object into clientInfo
 	lobbylist[roomName].playerCount++;
-	eurecaServer.exports.requestClientInfo(); // update all clients
+	eurecaServer.exports.requestClientInfo(); // update all lobby clients
 }
 
+// function to remove and update lobby information wtih connected player id
 eurecaServer.exports.destroyRoomLink = function(roomName, id) {
-	console.log("Player: " + id + " disconnected to room " + roomName);
+	//console.log("Player: " + id + " disconnected to room " + roomName);
 	clients[id].lobbyID = ''; // update client lobby room status
+	clients[id].position = null;
+	clients[id].ready = false;
 	delete lobbylist[roomName].clientInfo[id];
 	lobbylist[roomName].playerCount--;
-	eurecaServer.exports.requestClientInfo(); // update all clients
+	eurecaServer.exports.requestClientInfo(); // update all lobby clients
 }
 
+// function to update public lobby status
 eurecaServer.exports.requestClientInfo = function() {
 	for (var c in clients) {
 		var remote = clients[c].remote;
@@ -120,6 +141,8 @@ eurecaServer.exports.requestClientInfo = function() {
 	}
 }
 
+// function to validate if the client provided the correct credential
+// to enter the lobby room
 eurecaServer.exports.passwordCheck = function(name, pass) {
 	if (lobbylist[name] != null) {
 		if (lobbylist[name].password == pass) {
