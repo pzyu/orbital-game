@@ -59,8 +59,9 @@ eurecaServer.onConnect(function(conn) {
 	// Set client's selected character
 	remote.getChar().onReady(function(result) {
 		clients[conn.id].char = result;
-	});
-	*/
+		console.log(clients[conn.id].char);
+	});*/
+	
 
 	// setID method in client side
 	remote.setID(conn.id);			
@@ -133,10 +134,9 @@ eurecaServer.exports.passwordCheck = function(name, pass) {
 }
 
 eurecaServer.exports.handshake = function() {
-	console.log('handshaking');
+	console.log('handshaking test');
 	for (var c in clients) {
 		var remote = clients[c].remote;
-		var test = clients[c];
 		for (var cc in clients) {
 			// Get starting position for every client
 			var x = 0;

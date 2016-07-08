@@ -44,12 +44,12 @@ BasicGame.Collider.prototype.deactivate = function() {
 	this.isActive = false;
 };
 
-BasicGame.Collider.prototype.onCollide = function(collider) {
-	if (collider != this.target) {
-		this.isActive = false;
-		collider.getHit(this.force * this.target.facingRight, this.force);
-	}
-};
+// BasicGame.Collider.prototype.onCollide = function(collider) {
+// 	if (collider != this.target) {
+// 		this.isActive = false;
+// 		collider.getHit(this.force * this.target.facingRight, this.force);
+// 	}
+// };
 
 
 

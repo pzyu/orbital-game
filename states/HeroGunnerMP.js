@@ -8,25 +8,25 @@ BasicGame.HeroGunnerMP = function (id, game, x, y) {
 	// Hero attributes
 	this.jumpStrength = -1500;
 	this.moveSpeed = 800;
+	this.defaultMoveSpeed = this.moveSpeed;
 	this.maxHealth = 100;
 	this.curHealth = this.maxHealth;
+	this.healthAmt = 10;
 	
 	// Skill cooldowns in milliseconds
     this.skillACooldown = 1000;
-	this.skillBCooldown = 3000;
-	this.skillCCooldown = 5000;
-	this.skillDCooldown = 6000;	
-	this.skillECooldown = 8000;
+	this.skillBCooldown = 1000;
+	this.skillCCooldown = 1000;
+	this.skillDCooldown = 2000;	
+	this.skillECooldown = 2000;
 
-	// Attack collider
-    this.attackCollider = new BasicGame.Collider(this.game, this, 80, 150, 100, 0, 1000, 1);
+	// Revive collider
+    this.attackCollider = new BasicGame.Collider(this.game, this, 250, 100, 150, 20, 1000, 1);
     this.game.add.existing(this.attackCollider);
-    BasicGame.colliderCG.add(this.attackCollider);
 
     // Each hero will have an effect object which basically plays whatever effect they have
-	this.effect = new BasicGame.Effect(this.game, 100, 1000, 'blood_effect_sprite', 0, 0.4);
-	this.game.add.existing(this.effect);
-	this.hitAnim = "anim_4";
+	this.effect = new BasicGame.Effect(this.game, 'bolt', 0, 0.4, true);
+	this.hitAnim = "anim_1";
 
 	// Movement animations
 	this.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Anim_Gunner_Idle_00', 0, 9), 16, true);
@@ -35,26 +35,119 @@ BasicGame.HeroGunnerMP = function (id, game, x, y) {
 	this.animations.add('anim_dead', Phaser.Animation.generateFrameNames('Anim_Gunner_Dead_00', 0, 9), 16, false);
 	
 	// Skill animations
-	this.animations.add('anim_leap', Phaser.Animation.generateFrameNames('Anim_Gunner_Leap_00', 0, 9), 16, false);
+	this.animations.add('anim_trap', Phaser.Animation.generateFrameNames('Anim_Gunner_Trap_00', 0, 9), 16, false);
+	this.animations.add('anim_deploy', Phaser.Animation.generateFrameNames('Anim_Gunner_Deploy_00', 0, 9), 16, false);
 	this.animations.add('anim_shoot', Phaser.Animation.generateFrameNames('Anim_Gunner_Shoot_00', 0, 9), 16, false);
-	this.animations.add('anim_ultimate', Phaser.Animation.generateFrameNames('Anim_Gunner_Ultimate_00', 0, 9), 16, false);
+	this.animations.add('anim_ultimate', Phaser.Animation.generateFrameNames('Anim_Gunner_Ultimate_00', 0, 9), 16, true);
 	
 	// Keep track of animation
 	this.jumpAnim = this.animations.getAnimation('anim_jump');
-	this.thrustAnim = this.animations.getAnimation('anim_leap');
+	this.trapAnim = this.animations.getAnimation('anim_trap');
+	this.deployAnim = this.animations.getAnimation('anim_deploy');
 	this.shootAnim = this.animations.getAnimation('anim_shoot');
 	this.ultiAnim = this.animations.getAnimation('anim_ultimate');
 
 	// Add callback
-	this.thrustAnim.onComplete.add(this.attackCallback, this);
 	this.shootAnim.onComplete.add(this.shootCallback, this);
-	this.ultiAnim.onComplete.add(this.shootCallback, this);
+	this.trapAnim.onComplete.add(this.shootCallback, this);
+	this.deployAnim.onComplete.add(this.shootCallback, this);
+	//this.ultiAnim.onComplete.add(this.shootCallback, this);
 
-    this.bulletGroup = this.game.add.group();
-    for (var i = 0; i < 20; i++) {
-    	var proj = new BasicGame.Projectile(this.game, 'bolt_effect_sprite', 1);
-    	BasicGame.projectileCG.add(proj);
+	// Default attack
+	this.weapon = this.game.add.weapon(20, 'laser_green');				
+    this.weapon.fireAngle = 0;												
+    this.weapon.fireRate = 0;					
+    this.weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;			
+    this.weapon.bulletSpeed = 1200;											
+    this.weapon.bulletGravity = new Phaser.Point(0, -this.refMP.gravity);	
+    this.weapon.trackSprite(this, 0, -50);									
+    this.weapon.bullets.setAll('scale.x', 2);							
+    this.weapon.bullets.setAll('scale.y', 2);
+    this.weapon.setBulletBodyOffset(100, 20, 0, 0);
+
+    // Trap
+    this.trap = this.game.add.weapon(4, 'grenade');
+    this.trap.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;				
+    this.trap.bulletLifespan = 10000;
+    this.trap.bulletSpeed = 1000;											
+    this.trap.bulletGravity = new Phaser.Point(0, -2000);					
+    this.trap.trackSprite(this, 0, 0);										
+    this.trap.bullets.setAll('scale.x', 1);								
+    this.trap.bullets.setAll('scale.y', 1);
+    this.trap.bullets.setAll('body.maxVelocity.x', 500);
+    this.trap.bullets.setAll('body.drag.x', 1000);
+    this.trap.setBulletBodyOffset(50, 40, 10, 10);
+        
+    // Mite
+    this.mite = this.game.add.weapon(4, 'mite_sprite');
+    this.mite.addBulletAnimation('walk', Phaser.Animation.generateFrameNames('Anim_Mite_Walk_00', 0, 9), 16, true);
+    this.mite.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;				
+    this.mite.bulletLifespan = 3000;
+    this.mite.bulletSpeed = 1500;											
+    this.mite.bulletGravity = new Phaser.Point(0, -3000);					
+    this.mite.trackSprite(this, 0, 0);
+    this.mite.bullets.setAll('scale.x', 0.7);			
+    this.mite.bullets.setAll('scale.y', 0.7);
+    this.mite.bullets.setAll('body.bounce.x', 0);
+    this.mite.bullets.setAll('body.bounce.y', 1.1);
+    this.mite.bullets.setAll('anchor.x', 0.5);
+    this.mite.bullets.setAll('anchor.y', 0.5);
+    this.mite.bullets.setAll('body.maxVelocity.x', 500);
+    this.mite.bullets.setAll('body.maxVelocity.y', 1500);
+    this.mite.setBulletBodyOffset(100, 20, 20, 50);
+	this.mite.fireAngle = 0;
+
+	// Health pack
+    this.pack = this.game.add.weapon(4, 'grenade');
+    this.pack.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;				
+    this.pack.bulletLifespan = 10000;
+    this.pack.bulletSpeed = 1000;											
+    this.pack.bulletGravity = new Phaser.Point(0, -2000);					
+    this.pack.trackSprite(this, 0, -50);										
+    this.pack.bullets.setAll('scale.x', 1);								
+    this.pack.bullets.setAll('scale.y', 1);
+    this.pack.bullets.setAll('body.maxVelocity.x', 1000);
+    this.pack.bullets.setAll('body.drag.x', 1000);
+    this.pack.setBulletBodyOffset(50, 40, 10, 10);
+
+     // Explosion group
+    this.explosionGroup = this.game.add.group(); 
+    for (var i = 0; i < 10; i++) {
+    	var proj = new BasicGame.Effect(this.game, 'explosion', 1, 0.8, false);
+    	this.explosionGroup.add(proj);
     }
+
+    this.mite.onFire.add(function(mite) {
+    	mite.angle = 0;
+    	mite.scale.x = 0.7 * this.facingRight;
+    }, this);
+
+    this.trap.onFire.add(function(trap) {
+    	trap.angle = 0;
+    }, this);
+
+    this.pack.onFire.add(function(pack) {
+    	pack.angle = 0;
+    }, this);
+
+
+    // Add onKill listener
+    this.mite.onKill.add(function(mite) {
+    	this.explosionGroup.getFirstExists(false).playUntracked('anim_1', mite.x, mite.y - 60);
+	}, this);
+
+	// Add onKill listener
+    this.trap.onKill.add(function(trap) {
+    	this.explosionGroup.getFirstExists(false).playUntracked('anim_1', trap.x, trap.y - 60);
+	}, this);
+
+	// this.ultEffect = this.game.add.sprite(-200, -200, 'effects_sprite');
+	// this.ultEffect.anchor.setTo(0, 0.5);
+	// this.ultEffect.scale.setTo(0.5, 0.5);
+	// this.ultEffect.animations.add('anim_1', Phaser.Animation.generateFrameNames('beam (', 1, 10, ')'), 16, true);
+	// this.ultEffect.animations.play('anim_1');
+	this.ultEffect = new BasicGame.Effect(this.game, 'beam', 50, 0.5, false);
+	this.canRevive = false;
 }
 
 // Inherit HeroBase
@@ -71,102 +164,222 @@ BasicGame.HeroGunnerMP.prototype.update = function() {
 		this.handleSkillE();
 	}
 	// this.game.debug.body(this);
+
+	// Collide with map
+	this.refMP.physics.arcade.collide(this.weapon.bullets, this.refMP.mapLayer, this.collideCallback.bind(this));
+	this.refMP.physics.arcade.collide(this.trap.bullets, this.refMP.mapLayer);
+	this.refMP.physics.arcade.collide(this.mite.bullets, this.refMP.mapLayer);
+	this.refMP.physics.arcade.collide(this.pack.bullets, this.refMP.mapLayer);
+
+	// Collide with other players
+	this.refMP.physics.arcade.overlap(this.attackCollider, BasicGame.playerCG, this.reviveCallback.bind(this));
+	this.refMP.physics.arcade.overlap(this.weapon.bullets, BasicGame.playerCG, this.bulletCallback.bind(this));
+	this.refMP.physics.arcade.overlap(this.trap.bullets, BasicGame.playerCG, this.trapCallback.bind(this));
+	this.refMP.physics.arcade.overlap(this.mite.bullets, BasicGame.playerCG, this.bulletCallback.bind(this));
+	this.refMP.physics.arcade.overlap(this.pack.bullets, BasicGame.playerCG, this.healthPackCallback.bind(this));
+
+	// Collide with shield
+	this.refMP.physics.arcade.collide(this.weapon.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
+	this.refMP.physics.arcade.collide(this.trap.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
+	this.refMP.physics.arcade.collide(this.mite.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
+
+	//this.weapon.debug(0, 0, true);
+	this.trap.debug(0, 100, true);
+	//this.mite.debug(0, 200, true);
+	//this.game.debug.body(this.attackCollider);
+};
+
+BasicGame.HeroGunnerMP.prototype.healthPackCallback = function(obj1, obj2) {
+	if (obj2.curHealth < obj2.maxHealth && !obj2.isDead) {
+		obj2.curHealth += this.healthAmt;
+		obj1.kill();
+	}
+};
+
+BasicGame.HeroGunnerMP.prototype.trapCallback = function(obj1, obj2) {
+	// If not colliding with yourself
+	if (obj2.ID != this.ID) {
+		obj2.applyBuff("BUFF_SLOW", 300, 5000, 0);
+		obj1.kill();
+	}
+};
+
+
+BasicGame.HeroGunnerMP.prototype.reviveCallback = function(obj1, obj2) {
+	// If not colliding with yourself
+	if (obj2.ID != this.ID) {
+		// If can revive and target is dead
+		if (this.canRevive && obj2.isDead) {
+			obj2.curHealth = obj2.maxHealth;
+			obj2.animations.play('anim_idle');
+			obj2.isDead = false;
+			obj2.isRevived = true;
+		}
+	}
+};
+
+BasicGame.HeroGunnerMP.prototype.bulletCallback = function(obj1, obj2) {
+	// If not colliding with yourself
+	if (obj2.ID != this.ID) {
+		// Kill the projectile
+		obj1.kill();
+		// Call get hit of other person
+		obj2.getHit();	
+	}
+};
+
+BasicGame.HeroGunnerMP.prototype.collideCallback = function(obj1, obj2) {
+ 	// Don't kill grenade
+ 	if (obj1.key == "laser_green") {
+		obj1.kill();
+	}
 };
 
 BasicGame.HeroGunnerMP.prototype.handleSkillA = function() {
 	if (this.cursor.skillA && this.game.time.now > this.skillATimer) {
-		this.isAttacking = true;
+		// Default ranged attack
+		if (this.facingRight == 1) {
+			this.weapon.fireAngle = 0;
+			this.weapon.trackOffset.x = 80;	
+		} else {
+			this.weapon.fireAngle = 180;
+			this.weapon.trackOffset.x = -80;
+		}
 
-		var skillTween = this.game.add.tween(this.body.velocity);
-		skillTween.to({x: 1500 * this.facingRight, y: -500}, 250, Phaser.Easing.Cubic.Out, false, 250);
-
-		skillTween.start();
+    	var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 250);
+    	tween.onStart.add(function() {
+    		this.weapon.fire();
+    	}, this);
 
     	// Play the animation
-    	this.animations.play('anim_leap');
-    	//this.animations.currentAnim.frame = 0;
+    	this.animations.play('anim_shoot');
+    	this.animations.currentAnim.frame = 0;
+		this.isAttacking = true;
 		this.skillATimer = this.game.time.now + this.skillACooldown; 
-		this.attackCollider.activate();   
 	}
 };
 
 BasicGame.HeroGunnerMP.prototype.handleSkillB = function() {
 	if (this.cursor.skillB && this.game.time.now > this.skillBTimer) {
+		// Deploy mite
+    	var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 500); 
+    	tween.onStart.add(function() {
+    		this.mite.fire(null, this.x + this.facingRight * 100, this.y - 10);
+    	}, this);
+
     	// Play the animation
-    	this.animations.play('anim_shoot');
+    	this.animations.play('anim_deploy');
     	this.animations.currentAnim.frame = 0;
+
 		this.isAttacking = true;
 		this.skillBTimer = this.game.time.now + this.skillBCooldown; 
-
-		//console.log(BasicGame.projectileCG.getFirstExists(false));
-    	BasicGame.projectileCG.getFirstExists(false).play('anim_1', this, 1000, 0, 0, 120, -42);
 	}
 };
 
 BasicGame.HeroGunnerMP.prototype.handleSkillC = function() {
 	if (this.cursor.skillC && this.game.time.now > this.skillCTimer) {
+		// Trap
+		if (this.facingRight == 1) {
+			this.trap.fireAngle = -30;			
+		} else {
+			this.trap.fireAngle = 210;
+		}
+
+    	var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 500); 
+    	tween.onStart.add(function() {
+    		this.trap.fire();
+    	}, this);
+
     	// Play the animation
-    	this.animations.play('anim_shoot');
+    	this.animations.play('anim_trap');
     	this.animations.currentAnim.frame = 0;
 		this.isAttacking = true;
 		this.skillCTimer = this.game.time.now + this.skillCCooldown; 
-		
-		// Projectile variables
-		var shootAmt = 3;
-		var velX = 750;
-		var velY = 500;
-		var angle = 30;
-		var offsetX = 150;
-		var offsetY = 50;
-
-    	var ref = this;
-    	var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 200, shootAmt);
-    	tween.onStart.add(function() {
-    		tween.delay(0);
-    	});
-    	tween.onRepeat.add(function() {
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_4', ref, velX, -velY, -angle, offsetX, -offsetY);
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_4', ref, velX, velY, angle, offsetX, offsetY);
-    	});
 	}
 };
 
 BasicGame.HeroGunnerMP.prototype.handleSkillD = function() {
 	if (this.cursor.skillD && this.game.time.now > this.skillDTimer) {
+		// Health pack
+		if (this.facingRight == 1) {
+			this.pack.fireAngle = -30;			
+			this.pack.trackOffset.x = 80;
+		} else {
+			this.pack.fireAngle = 210;
+			this.pack.trackOffset.x = -80;
+		}
+
+    	var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 250); 
+    	tween.onStart.add(function() {
+    		this.pack.fire();
+    	}, this);
+
+
     	// Play the animation
-    	this.animations.play('anim_ultimate');
+    	this.animations.play('anim_shoot');
     	this.animations.currentAnim.frame = 0;
-    	this.animations.currentAnim.speed = 10;
 		this.isAttacking = true;
 		this.skillDTimer = this.game.time.now + this.skillDCooldown; 
-
-    	// Projectile variables
-		var shootAmt = 3;
-		var velX = 500;
-		var velY = -500;
-		var angle = 0;
-		var offsetX = 50;
-		var offsetY = -50;
-
-    	var ref = this;
-    	var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 200, shootAmt);
-    	tween.onStart.add(function() {
-    		tween.delay(100);
-    	});
-    	tween.onRepeat.add(function() {
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_2', ref, -velX, 0, 		angle, 	-offsetX, 	0);
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_2', ref, -velX, velY, 	angle, 	-offsetX, 	offsetY);
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_2', ref, 0, 	velY,	angle, 	0, 			offsetY);
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_2', ref, velX, 	velY, 	angle, 	offsetX, 	offsetY);
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_2', ref, velX, 	0, 		angle, 	offsetX, 	0);
-    	});
 	}
 };
 
 BasicGame.HeroGunnerMP.prototype.handleSkillE = function(){ 
 	if (this.cursor.skillE && this.game.time.now > this.skillETimer) {
-		// Passive
-		//this.isAttacking = true;
+		// Reset and kill
+    	//this.ultEffect.reset(-200, -200);
+    	//this.ultEffect.animations.play('anim_1');
+    	this.ultEffect.playLooped('anim_1');
+
+		if (this.facingRight == 1) {
+			this.ultEffect.scale.x = 0.5;
+		} else {
+			this.ultEffect.scale.x = -0.5;
+		}
+
+		var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 0, 20); 
+
+		var count = 0;
+		var gunNum = 0;
+
+		this.attackCollider.activate();
+
+    	tween.onRepeat.add(function() {
+    		if (gunNum == 0) {
+	    		this.ultEffect.x = this.x + 30 * this.facingRight;
+	    		this.ultEffect.y = this.y - 40;
+	    		this.ultEffect.angle = 20 * this.facingRight;
+    		} else if (gunNum == 1) {
+				this.ultEffect.x = this.x + 110 * this.facingRight;
+	    		this.ultEffect.y = this.y + 40;
+	    		this.ultEffect.angle = 0 * this.facingRight;
+    		} else if (gunNum == 2) {
+				this.ultEffect.x = this.x + 40 * this.facingRight;
+		    	this.ultEffect.y = this.y + 40;
+		    	this.ultEffect.angle = 5 * this.facingRight;
+	    	}
+
+    		if (count % 2 == 0) {
+    			gunNum++;
+    		}
+    		if (gunNum > 2) {
+    			gunNum = 0;
+    		}
+    		count++;
+    		if (count > 15) {
+    			this.canRevive = true;
+    		}
+    	}, this);
+
+    	tween.onComplete.add(function() {
+    		this.canRevive = false;
+    		this.ultEffect.killAnim();
+    		this.isAttacking = false;
+    		this.attackCollider.deactivate();
+    	}, this);
+
+    	// Play the animation
+    	this.animations.play('anim_ultimate');
+		this.isAttacking = true;
 		this.skillETimer = this.game.time.now + this.skillECooldown; 
 	}
 };

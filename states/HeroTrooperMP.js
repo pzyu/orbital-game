@@ -8,25 +8,33 @@ BasicGame.HeroTrooperMP = function (id, game, x, y) {
 	// Hero attributes
 	this.jumpStrength = -1500;
 	this.moveSpeed = 1000;
+	this.defaultMoveSpeed = this.moveSpeed;
 	this.maxHealth = 100;
 	this.curHealth = this.maxHealth;
+	this.knockbackForce = 500;
 
     // Skill cooldowns in milliseconds
-    this.skillACooldown = 2000;
-	this.skillBCooldown = 5000;
-	this.skillCCooldown = 8000;
-	this.skillDCooldown = 8000;	
-	this.skillECooldown = 8000;
+    this.skillACooldown = 500;
+	this.skillBCooldown = 2000;
+	this.skillCCooldown = 2000;
+	this.skillDCooldown = 2000;	
+	this.skillECooldown = 1000;
 
 	// Attack collider
-    this.attackCollider = new BasicGame.Collider(this.game, this, 80, 100, 100, 0, 2000, 1);
+    this.attackCollider = new BasicGame.Collider(this.game, this, 80, 100, 40, 0, 2000, 1);
     this.game.add.existing(this.attackCollider);
     BasicGame.colliderCG.add(this.attackCollider);
 
     // Each hero will have an effect object which basically plays whatever effect they have
-	this.effect = new BasicGame.Effect(this.game, 100, 1000, 'blood_effect_sprite', 0, 0.4);
-	this.game.add.existing(this.effect);
-	this.hitAnim = "anim_4";
+	this.effect = new BasicGame.Effect(this.game, 'blood', 0, 0.4, true);
+	this.hitAnim = "anim_1";
+
+	this.smokeEffect = new BasicGame.Effect(this.game, 'smoke', 0, 0.4);
+	this.slashEffect = new BasicGame.Effect(this.game, 'slash', 0, 0.3, true);
+	this.snipeEffect = new BasicGame.Effect(this.game, 'bolt', 0, 0.4, true);
+	this.game.add.existing(this.smokeEffect);
+	this.game.add.existing(this.slashEffect);
+	this.game.add.existing(this.snipeEffect);
 
     // Movement Animations
 	this.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Anim_Trooper_Idle_00', 0, 9), 16, true);
@@ -53,11 +61,15 @@ BasicGame.HeroTrooperMP = function (id, game, x, y) {
 	this.stealthAnim.onComplete.add(this.attackCallback, this);
 	this.ultiAnim.onComplete.add(this.shootCallback, this);
 
-	this.bulletGroup = this.game.add.group();
-    for (var i = 0; i < 20; i++) {
-    	var proj = new BasicGame.Projectile(this.game, 'bolt_effect_sprite', 1, this);
-    	BasicGame.projectileCG.add(proj);
-    }
+	this.snipe = this.game.add.weapon(4, 'laser_red');    
+    this.snipe.fireAngle = 0;												// Angle to be fired from
+    this.snipe.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;			// Kill when out of bounds
+    this.snipe.bulletSpeed = 2000;											// Speed of bullet
+    this.snipe.bulletGravity = new Phaser.Point(0, -this.refMP.gravity);	// Must be offset with world's gravity
+    this.snipe.trackSprite(this, 0, 20);									// Follow this sprite, offset X and offset Y
+    this.snipe.bullets.setAll('scale.x', 1);							
+    this.snipe.bullets.setAll('scale.y', 1);
+    this.snipe.setBulletBodyOffset(45, 10, 0, 0);
 };
 
 // Inherit HeroBase
@@ -73,23 +85,73 @@ BasicGame.HeroTrooperMP.prototype.update = function() {
 		this.handleSkillD();
 		this.handleSkillE();
 	}
-	//this.game.debug.body(this);
+	//this.game.debug.body(this.attackCollider);
 	// this.game.debug.bodyInfo(this, 32, 200);
+
+	// Collide with map
+	this.refMP.physics.arcade.collide(this.snipe.bullets, this.refMP.mapLayer, this.collideCallback.bind(this));
+
+	// Collide with other players
+	this.refMP.physics.arcade.overlap(this.attackCollider, BasicGame.playerCG, this.attCallback.bind(this));	
+	this.refMP.physics.arcade.overlap(this.snipe.bullets, BasicGame.playerCG, this.bulletCallback.bind(this));
+
+	// Collide with walker's shield
+	this.refMP.physics.arcade.collide(this.snipe.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
+
+	//this.snipe.debug(0, 0, true);
 };
+
+BasicGame.HeroTrooperMP.prototype.attCallback = function(obj1, obj2) {
+	// If not colliding with yourself
+	if (obj2.ID != this.ID) {
+		// Kill collider
+		this.isAttacking = false;
+		this.attackCollider.x = this.attackCollider.y = -100;
+		this.attackCollider.deactivate();
+
+		if (this.facingRight == obj2.facingRight) {
+			// Backstab
+			console.log("backstab");
+			obj2.getHit(this.knockbackForce * 3 * this.facingRight, this.knockbackForce * 2);
+		} else {			// Call get hit of other person
+			obj2.getHit(this.knockbackForce * this.facingRight, this.knockbackForce);
+		}
+	}
+};
+
+BasicGame.HeroTrooperMP.prototype.bulletCallback = function(obj1, obj2) {
+	// If not colliding with yourself
+	if (obj2.ID != this.ID) {
+ 		//this.explosionGroup.getFirstExists(false).playUntracked('anim_2', obj1.x, obj1.y);
+		// Kill the projectile
+		obj1.kill();
+		// Call get hit of other person
+		obj2.getHit();	
+	}
+};
+
+BasicGame.HeroTrooperMP.prototype.collideCallback = function(obj1, obj2) {
+	//console.log(this.explosionGroup.getFirstExists(false));
+ 	//this.explosionGroup.getFirstExists(false).playUntracked('anim_2', obj1.x, obj1.y);
+	obj1.kill();
+};
+
 
 BasicGame.HeroTrooperMP.prototype.handleSkillA = function() {
 	if (this.cursor.skillA && this.game.time.now > this.skillATimer) {
 		var skillTween = this.game.add.tween(this.body.velocity);
-		skillTween.to({x: 1500 * this.facingRight}, 250, Phaser.Easing.Cubic.Out);
+		skillTween.to({x: 1000 * this.facingRight}, 250, Phaser.Easing.Cubic.Out);
 		skillTween.start();
+
+		this.slashEffect.angle = 30;
+    	this.slashEffect.play('anim_1', this, 50, 0);
 
     	// Play the animation
     	this.animations.play('anim_thrust');
     	this.animations.currentAnim.frame = 0;
 		this.isAttacking = true;
 		this.skillATimer = this.game.time.now + this.skillACooldown; 
-		this.attackCollider.activate();   
-		this.alpha = 1;
+		this.attackCollider.activate(); 
 	}
 };
 
@@ -98,17 +160,8 @@ BasicGame.HeroTrooperMP.prototype.handleSkillB = function() {
 		this.animations.play('anim_haste');
 		this.skillBTimer = this.game.time.now + this.skillBCooldown;
 		this.isAttacking = true;
-		this.alpha = 1;
 
-		var ref = this;
-		var tween = this.game.add.tween(this).to({0: 0}, 5000, Phaser.Easing.Linear.None, true, 0);
-		tween.onStart.add(function() {
-			ref.moveSpeed = 1600;
-		});
-		tween.onComplete.add(function() {
-			//ref.alpha = 1;
-			ref.moveSpeed = 800;
-		});
+		this.applyBuff("BUFF_HASTE", 1600, 5000, 0);
 	}
 };
 
@@ -120,12 +173,13 @@ BasicGame.HeroTrooperMP.prototype.handleSkillC = function() {
 		this.isAttacking = true;
 		this.skillCTimer = this.game.time.now + this.skillCCooldown; 
 
-		var ref = this;
-		var tween = this.game.add.tween(this).to({alpha: 0.2}, 500, Phaser.Easing.Linear.None, true, 500);
-		tween.onComplete.add(function() {
-			//ref.alpha = 1;
-		});
-		//this.alpha = 0.5;
+
+    	var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 500, 0);
+    	tween.onStart.add(function() {
+    		this.smokeEffect.playUntracked('anim_4', this.x - 20 * this.facingRight, this.y - 10);
+    	}, this);
+
+		this.applyBuff("BUFF_INVIS", 0, 5000, 500);
 	}
 };
 
@@ -135,6 +189,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillD = function() {
 		// Passive
 		//this.isAttacking = true;
 		this.skillDTimer = this.game.time.now + this.skillDCooldown; 
+		console.log('backstab unlocked');
 	}
 }
 
@@ -144,27 +199,28 @@ BasicGame.HeroTrooperMP.prototype.handleSkillE = function() {
     	// Play the animation
 		this.isAttacking = true;
 		this.skillETimer = this.game.time.now + this.skillECooldown; 
-		this.alpha = 1;
 
-    	// Projectile variables
-		var repeat = 0;
-		var velX = 1500;
-		var velY = 0;
-		var angle = 0;
-		var offsetX = 50;
-		var offsetY = 0;
-
-    	var ref = this;
-    	var tween = this.game.add.tween(this).to({0: 0}, 1000, Phaser.Easing.Linear.None, true, 200, repeat);
+    	var tween = this.game.add.tween(this).to({0: 0}, 1000, Phaser.Easing.Linear.None, true, 200, 0);
     	tween.onStart.add(function() {
-    		ref.animations.play('anim_ultimate1');
-    		ref.animations.currentAnim.frame = 0;
+    		this.snipeEffect.play('anim_1', this, -20, 20);
+    		this.animations.play('anim_ultimate1');
+    		this.animations.currentAnim.frame = 0;
     		tween.delay(1000);
-    	});
+    	}, this);
     	tween.onComplete.add(function() {
-    		ref.animations.play('anim_ultimate2');
-    		ref.animations.currentAnim.frame = 0;
-    		BasicGame.projectileCG.getFirstExists(false).play('anim_1', ref, velX, -velY, angle, offsetX, offsetY);
-    	});
+    		this.snipeEffect.play('anim_2', this, 100, 30);
+    		this.animations.play('anim_ultimate2');
+    		this.animations.currentAnim.frame = 0;
+    		
+    		// Correct offset
+    		if (this.facingRight == 1) {
+    			this.snipe.fireAngle = 0;
+    			this.snipe.trackOffset.x = 80;	
+    		} else {
+    			this.snipe.fireAngle = 180;
+    			this.snipe.trackOffset.x = -80;
+    		}
+    		this.snipe.fire();
+    	}, this);
 	}
 };

@@ -102,7 +102,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 			curPlayer.cursor = state;
 			//curPlayer.update();
 		}
-	}
+	};
 
 	this.eurecaClient.exports.compensate = function(id, state) {
 		// Compensate corrects server side position, does not touch local client
@@ -119,10 +119,16 @@ BasicGame.Multiplayer.prototype.preload = function() {
 	this.eurecaClient.exports.getChar = function() {
 		// Return player's selected character
 		return BasicGame.selectedChar;
-	}
+	};
+
+	this.eurecaClient.exports.getNick = function() {
+		// Return player's selected character
+		return "default nick";
+	};
 
 	this.preloadGame();
 };
+
 
 BasicGame.Multiplayer.prototype.preloadGame = function() {
 	this.physics.startSystem(Phaser.Physics.ARCADE);
@@ -171,7 +177,6 @@ BasicGame.Multiplayer.prototype.preloadGame = function() {
 	// Chat
 	var test =  { font: '16pt myfont', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 400};
 	this.playerText = this.game.add.text(-100, -100, "Default", test);
-	console.log(this.playerText);
 	this.textTimer = 0;
 }
 

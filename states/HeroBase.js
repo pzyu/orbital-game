@@ -40,10 +40,13 @@ BasicGame.HeroBase = function (id, game, x, y, sprite) {
 	this.jumpTimer = 0;
 	this.jumpStrength = -1500;
 	this.moveSpeed = 1000;
+	this.defaultMoveSpeed = 1000;
 	this.facingRight = 1;
 	this.maxHealth = 100;
 	this.curHealth = this.maxHealth;
 	this.isDead = false;
+	this.isRevived = false; 		// Check if has been revived
+	this.isBuffed = false;
 	
 	// Skills
 	this.skillACooldown = 1000;
@@ -75,6 +78,10 @@ BasicGame.HeroBase = function (id, game, x, y, sprite) {
     // Hit effect assigned in child classes
 	this.effect;
 	this.hitAnim;
+
+	// Buff effect
+	this.buffEffect = new BasicGame.Effect(this.game, 'slime', 50, 0.5, true);
+	this.game.add.existing(this.buffEffect);
 
 	// Keep track of jump anim
 	this.jumpAnim;
@@ -112,12 +119,19 @@ BasicGame.HeroBase.prototype.spawn = function() {
 			this.animations.play('anim_dead');
 		}, this);
 		tween.onComplete.add(function(){
-			var index = this.game.rnd.integerInRange(0, this.refMP.spawnPoints.length - 1);
-			this.x = this.refMP.spawnPoints[index].x;
-			this.y = this.refMP.spawnPoints[index].y;
-			this.curHealth = this.maxHealth;
-			this.animations.play('anim_idle');
-			this.isDead = false;
+			// If not dead
+			if (this.isDead && !this.isRevived) {
+				var index = this.game.rnd.integerInRange(0, this.refMP.spawnPoints.length - 1);
+				this.x = this.refMP.spawnPoints[index].x;
+				this.y = this.refMP.spawnPoints[index].y;
+				this.curHealth = this.maxHealth;
+				this.animations.play('anim_idle');
+				this.isDead = false;
+			}
+			// If got revived, reset
+			if (this.isRevived) {
+				this.isRevived = false;
+			}
 		}, this);
 	} else {
 		var index = this.game.rnd.integerInRange(0, this.refMP.spawnPoints.length - 1);
@@ -282,4 +296,32 @@ BasicGame.HeroBase.prototype.attackCallback = function() {
 BasicGame.HeroBase.prototype.shootCallback = function() {
 	this.isAttacking = false;
 	this.attackCollider.deactivate();
+};
+
+BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, delay) {
+	if (buffName == "BUFF_SLOW" || buffName == "BUFF_HASTE") {
+		var tween = this.game.add.tween(this).to({0: 0}, duration, Phaser.Easing.Linear.None, true, delay);
+		tween.onStart.add(function() {
+			this.isBuffed = true;
+			this.moveSpeed = amount;
+		}, this);
+		tween.onComplete.add(function() {
+			this.isBuffed = false;
+			this.moveSpeed = this.defaultMoveSpeed;
+		}, this);
+
+		this.buffEffect.playTimed('anim_1', this, 0, 0, duration);
+	} 
+
+	if (buffName == "BUFF_INVIS") {
+		var invis = this.game.add.tween(this).to({alpha: 0.2}, 500, Phaser.Easing.Linear.None, true, delay);
+		invis.onStart.add(function() {
+			this.isBuffed = true;
+		}, this);
+		var invisEnd = this.game.add.tween(this).to({alpha: 1}, 500, Phaser.Easing.Linear.None, false, duration);
+		invisEnd.onComplete.add(function() {
+			this.isBuffed = false;
+		}, this);
+		invis.chain(invisEnd);
+	}
 };
