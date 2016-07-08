@@ -52,7 +52,7 @@ eurecaServer.onConnect(function(conn) {
 		id:conn.id, 
 		remote:remote, 
 		lobbyID:'',
-		position: null,
+		team: null,
 		ready:false
 	};
 	//clients[conn.id] = {id:conn.id, remote:remote, char:selectedChar};
@@ -99,12 +99,18 @@ eurecaServer.onDisconnect(function(conn) {
 	}
 });
 
+// function to update player status in a lobby room
 eurecaServer.exports.updateLobbyRoom = function(roomName) {
 	// for every client in the lobby, update their lobby room info
 	for (var id in lobbylist[roomName].clientInfo) { 
 		var remote = lobbylist[roomName].clientInfo[id].remote;
 		remote.loadPlayersLR(lobbylist[roomName].clientInfo); // Share clientinfo with all clients in the lobby
 	}
+}
+
+eurecaServer.exports.setClientTeam = function(roomName, id, team) {
+	clients[id].team = team;
+	eurecaServer.exports.updateLobbyRoom(roomName);
 }
 
 // function to add and update lobby information wtih connected player id
@@ -121,7 +127,7 @@ eurecaServer.exports.establishRoomLink = function(roomName, id) {
 eurecaServer.exports.destroyRoomLink = function(roomName, id) {
 	//console.log("Player: " + id + " disconnected to room " + roomName);
 	clients[id].lobbyID = ''; // update client lobby room status
-	clients[id].position = null;
+	clients[id].team = null;
 	clients[id].ready = false;
 	delete lobbylist[roomName].clientInfo[id];
 	lobbylist[roomName].playerCount--;
