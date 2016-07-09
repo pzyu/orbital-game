@@ -147,7 +147,7 @@ BasicGame.CharSelect.prototype = {
 				this.game.state.start("MainGame");
 			} else if (BasicGame.selectedChar != null && ref.multiplayer) {
 				// Go into multiplayer
-				BasicGame.eurecaServer.setClientTeam(BasicGame.selectedChar);
+				BasicGame.eurecaServer.setClientCharacter(BasicGame.myID, BasicGame.selectedChar);
 				this.game.state.start("Multiplayer");
 			}
 		});

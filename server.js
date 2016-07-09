@@ -123,7 +123,6 @@ eurecaServer.exports.setClientCharacter = function(id, character) {
 		clients[conn.id].char = result;
 		console.log(clients[conn.id].char);
 	});*/
-
 	clients[id].char = character;
 }
 

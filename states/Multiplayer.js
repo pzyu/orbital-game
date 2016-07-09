@@ -24,11 +24,13 @@ BasicGame.Multiplayer.prototype.init = function() {
 };
 
 BasicGame.Multiplayer.prototype.preload = function() {
+	// variables setting
 	var ref = this;
+
 	ref.createGame();
+	console.log("Game created!");
+
 	BasicGame.eurecaServer.handshake(BasicGame.roomID);
-
-
 
 
 	BasicGame.eurecaClient.exports.kill = function(id) {	
@@ -43,7 +45,6 @@ BasicGame.Multiplayer.prototype.preload = function() {
 	BasicGame.eurecaClient.exports.spawnEnemy = function(i, x, y, char) {
 		// If it's me
 		if (i == BasicGame.myID) return;
-
 		// Spawn enemy at location
 		var curX = x;
 		var curY = y;
@@ -160,7 +161,6 @@ BasicGame.Multiplayer.prototype.preloadGame = function() {
 }
 
 BasicGame.Multiplayer.prototype.createGame = function() {
-	console.log('create');
 	var ref = this;
 	var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
 	var txt = this.add.text(this.world.width - this.world.width/2, this.world.height - 100,  "Back to main menu", optionStyle);
@@ -169,7 +169,7 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 		ref.game.state.start("MainMenu", true);
 		//BasicGame.eurecaServer.destroyRoomLink(BasicGame.roomID, BasicGame.myID); // destroy connection
 		BasicGame.eurecaClient.disconnect(); // request server to disconnect client
-		BasicGame.disconnectClient(); // adjust client to reset connection variable
+		//BasicGame.disconnectClient(); // adjust client to reset connection variable
 		//console.log(BasicGame.eurecaClient);
 	});
 
@@ -274,6 +274,7 @@ BasicGame.Multiplayer.prototype.broadcast = function(msg, duration) {
 };
 
 BasicGame.Multiplayer.prototype.update = function() {
+
 	// Enable collision between player and layer
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
 	this.physics.arcade.collide(BasicGame.playerCG, BasicGame.playerCG);
