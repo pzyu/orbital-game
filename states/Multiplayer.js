@@ -48,7 +48,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		// Create game here
 		ref.createGame();
 		// Handshake with server to replicate other players
-		ref.eurecaServer.handshake();
+		ref.eurecaServer.handshake(BasicGame.roomID);
 		ref.ready = true;
 	}
 
