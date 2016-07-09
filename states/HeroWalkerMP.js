@@ -9,6 +9,7 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
 	this.jumpLimit = 1;
 	this.jumpStrength = -2000;
 	this.moveSpeed = 500;
+	this.defaultMoveSpeed = this.moveSpeed;
 	this.maxHealth = 100;
 	this.curHealth = this.maxHealth;
 
@@ -26,8 +27,8 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
     //BasicGame.colliderCG.add(this.attackCollider);
 
 	// Each hero will have an effect object which basically plays whatever effect they have
-	this.effect = new BasicGame.Effect(this.game, 100, 1000, 'bolt_effect_sprite', 0, 0.4, true);
-	this.hitAnim = "anim_2";
+	this.effect = new BasicGame.Effect(this.game, 'bolt', 0, 0.4, true);
+	this.hitAnim = "anim_1";
 
 	// Movement animations
 	this.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Anim_Walker_Idle_00', 0, 9), 16, true);
@@ -54,11 +55,6 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
 	this.shootAnim.onComplete.add(this.shootCallback, this);
 	this.ultiAnim.onComplete.add(this.shootCallback, this);
 
-    //this.bulletGroup = this.game.add.group();
-    //for (var i = 0; i < 20; i++) {
-    // 	var proj = new BasicGame.Projectile(this.game, 'bolt_effect_sprite', 1);
-    //	BasicGame.projectileCG.add(proj);
-    //}
     // Rocket
     this.rocket = this.game.add.weapon(4, 'walker_rocket');					// Takes in amount of bullet, and sprite key
     this.rocket.fireAngle = 0;												// Angle to be fired from
@@ -94,17 +90,26 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
     BasicGame.shieldCG.add(this.shield);
 
     // Backdash
-    this.muzzleFX = new BasicGame.Effect(this.game, -100, -100, 'muzzle_effect_sprite', 0, 1, true);
-    this.muzzleFX2 = new BasicGame.Effect(this.game, -100, -100, 'muzzle_effect_sprite', 0, 1, true);
+    this.muzzleFX = new BasicGame.Effect(this.game, 'muzzle', 0, 1, true);
+    this.muzzleFX2 = new BasicGame.Effect(this.game, 'muzzle', 0, 1, true);
     this.game.add.existing(this.muzzleFX);
     this.game.add.existing(this.muzzleFX2);
 
     // Explosion group
     this.explosionGroup = this.game.add.group(); 
     for (var i = 0; i < 10; i++) {
-    	var proj = new BasicGame.Effect(this.game, 1000, 1000, 'explosion_effect_sprite', 1, 0.8, false);
+    	var proj = new BasicGame.Effect(this.game, 'explosion', 1, 0.8, false);
     	this.explosionGroup.add(proj);
     }
+
+    // Add onKill listener
+    this.rocket.onKill.add(function(obj) {
+    	this.explosionGroup.getFirstExists(false).playUntracked('anim_2', obj.x, obj.y);
+	}, this);
+
+	this.nuke.onKill.add(function(obj) {
+    	this.explosionGroup.getFirstExists(false).playUntracked('anim_2', obj.x, obj.y);
+	}, this);
 }
 
 // Inherit HeroBase
@@ -157,7 +162,6 @@ BasicGame.HeroWalkerMP.prototype.attCallback = function(obj1, obj2) {
 BasicGame.HeroWalkerMP.prototype.bulletCallback = function(obj1, obj2) {
 	// If not colliding with yourself
 	if (obj2.ID != this.ID) {
- 		this.explosionGroup.getFirstExists(false).playUntracked('anim_2', obj1.x, obj1.y);
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
@@ -167,7 +171,6 @@ BasicGame.HeroWalkerMP.prototype.bulletCallback = function(obj1, obj2) {
 
 BasicGame.HeroWalkerMP.prototype.collideCallback = function(obj1, obj2) {
 	//console.log(this.explosionGroup.getFirstExists(false));
- 	this.explosionGroup.getFirstExists(false).playUntracked('anim_2', obj1.x, obj1.y);
 	obj1.kill();
 };
 

@@ -64,6 +64,10 @@ BasicGame.Boot.prototype = {
         // Destroyer assets
         this.load.image('walker_shield', 'images/sprites/heroes/walker_shield.png');
         this.load.image('walker_rocket', 'images/sprites/effects/rocket.png');
+        this.load.image('laser_blue', 'images/sprites/effects/laser_blue.png');
+        this.load.image('laser_red', 'images/sprites/effects/laser_red.png');
+        this.load.image('laser_green', 'images/sprites/effects/laser_green.png');
+        this.load.image('grenade', 'images/sprites/effects/grenade.png');
 
         // HUD
         this.load.image('skill', 'images/sprites/heroes/skill.png');
@@ -75,6 +79,9 @@ BasicGame.Boot.prototype = {
         this.load.atlas('bolt_effect_sprite', 'images/sprites/effects/bolt_spritesheet.png', 'images/sprites/effects/bolt_spritemap.json');
         this.load.atlas('muzzle_effect_sprite', 'images/sprites/effects/muzzle.png', 'images/sprites/effects/muzzle.json');
         this.load.atlas('explosion_effect_sprite', 'images/sprites/effects/explosion.png', 'images/sprites/effects/explosion.json');
+        this.load.atlas('blast_effect_sprite', 'images/sprites/effects/blast.png', 'images/sprites/effects/blast.json');
+        this.load.atlas('mite_sprite', 'images/sprites/effects/mite.png', 'images/sprites/effects/mite.json');
+        this.load.atlas('effects_sprite', 'images/sprites/effects/effects.png', 'images/sprites/effects/effects.json');
     },
 
     loadAudio: function() {
