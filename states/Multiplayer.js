@@ -27,10 +27,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 	// variables setting
 	var ref = this;
 
-	ref.createGame();
-	console.log("Game created!");
-
-	BasicGame.eurecaServer.handshake(BasicGame.roomID);
+	//BasicGame.eurecaServer.handshake(BasicGame.roomID);
 
 
 	BasicGame.eurecaClient.exports.kill = function(id) {	
@@ -43,8 +40,9 @@ BasicGame.Multiplayer.prototype.preload = function() {
 	}	
 
 	BasicGame.eurecaClient.exports.spawnEnemy = function(i, x, y, char) {
-		// If it's me
-		if (i == BasicGame.myID) return;
+		// If it's me or if someone hasn't chose a character yet
+		console.log(i, BasicGame.myID);
+		if (i == BasicGame.myID || char == null) return;
 		// Spawn enemy at location
 		var curX = x;
 		var curY = y;
@@ -80,6 +78,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		// Update state sends local remote input to every client 
 		var curPlayer = ref.playerList[id];
 		if (curPlayer) {
+			console.log('receiving');
 			// Update player's cursor with state
 			curPlayer.cursor = state;
 			//curPlayer.update();
@@ -160,6 +159,8 @@ BasicGame.Multiplayer.prototype.preloadGame = function() {
 	var test =  { font: '16pt myfont', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 400};
 	this.playerText = this.game.add.text(-100, -100, "Default", test);
 	this.textTimer = 0;
+
+	this.createGame();
 }
 
 BasicGame.Multiplayer.prototype.createGame = function() {
@@ -197,6 +198,7 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	if (BasicGame.selectedChar == "player_gunner") {
 		var player = new BasicGame.HeroGunnerMP(BasicGame.myID, this.game, 100, 1000);
 	}
+	console.log("Creating game");
 
 	this.playerList[BasicGame.myID] = player;
 	this.camera.follow(player);
@@ -256,6 +258,8 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 		player3,
 		player4
 	];
+
+	BasicGame.eurecaServer.handshake(BasicGame.roomID);
 };
 
 BasicGame.Multiplayer.prototype.broadcast = function(msg, duration) {
@@ -276,7 +280,7 @@ BasicGame.Multiplayer.prototype.broadcast = function(msg, duration) {
 };
 
 BasicGame.Multiplayer.prototype.update = function() {
-	console.log("TEST update");
+	//console.log("TEST update");
 	// Enable collision between player and layer
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
 	this.physics.arcade.collide(BasicGame.playerCG, BasicGame.playerCG);

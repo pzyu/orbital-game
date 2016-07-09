@@ -8,8 +8,8 @@ var BasicGame = {
   playerCG: null,
   selectedChar: null,
   musicPlayer: null,
-  eurecaServer: null,
-  eurecaClient: null,
+  //eurecaServer: null,
+  //eurecaClient: null,
   myID: null,
   roomID: null,
 
@@ -54,6 +54,5 @@ BasicGame.Main.prototype = {
     game.state.start('Boot');
   }
 };
-
 game.state.add('Main', BasicGame.Main);
 game.state.start('Main');

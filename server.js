@@ -261,8 +261,7 @@ eurecaServer.exports.handleKeys = function(keys, room) {
 eurecaServer.exports.compensate = function(keys, room) {
 	// Compensate difference by interpolation
 	var conn = this.connection;
-	var updatedClient = lobbylist[room].clientInfo[conn.id];
-
+	var updatedClient = lobbylist[room].clientInfo[conn.id]
 	// For each client, update last input
 	for (var c in lobbylist[room].clientInfo) {
 		// Update server side

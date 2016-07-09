@@ -169,7 +169,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 
 	// If input has changed
 	if (myInputChanged) {
-		if (this.ID == this.refMP.myID) {
+		if (this.ID == BasicGame.myID) {
 			this.myInput.x = this.x;
 			this.myInput.y = this.y;
 			BasicGame.eurecaServer.handleKeys(this.myInput, BasicGame.roomID);
@@ -179,7 +179,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 	// Every time step, update all clients of local position
 	if (this.game.time.now > this.stepTimer) {
 
-		if (this.ID == this.refMP.myID) {
+		if (this.ID == BasicGame.myID) {
 			this.stepTimer = this.game.time.now + this.timeStep;
 			this.myInput.x = this.x;
 			this.myInput.y = this.y;
