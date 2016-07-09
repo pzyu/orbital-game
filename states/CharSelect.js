@@ -111,7 +111,7 @@ BasicGame.CharSelect.prototype = {
 		// Add start game button
 		var optionStyle = {font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
 		if (ref.multiplayer) {
-			var joinTxt = "Join server";
+			var joinTxt = "Enter Game!";
 		} else {
 			var joinTxt = "Start Game";
 		}
@@ -128,9 +128,17 @@ BasicGame.CharSelect.prototype = {
 		this.startGame.events.onInputOut.add(BasicGame.onOut);
 
 		// Back button clicked
-		this.returnMenu.events.onInputUp.add(function() {
-			ref.game.state.start("MainMenu", true);
-		});
+		if (ref.multiplayer) {
+			this.returnMenu.events.onInputUp.add(function() {
+				BasicGame.eurecaServer.destroyRoomLink(ref.roomID, BasicGame.myID); // destroy connection
+				BasicGame.eurecaServer.updateLobbyRoom(ref.roomID); // update the rest of the clients after connection is destroyed
+				ref.game.state.start("LobbyMulti", true);
+			});
+		} else {
+			this.returnMenu.events.onInputUp.add(function() {
+				ref.game.state.start("MainMenu", true);
+			});
+		}
 
 		// Start game button clicked
 		this.startGame.events.onInputUp.add(function() {
@@ -139,6 +147,7 @@ BasicGame.CharSelect.prototype = {
 				this.game.state.start("MainGame");
 			} else if (BasicGame.selectedChar != null && ref.multiplayer) {
 				// Go into multiplayer
+				BasicGame.eurecaServer.setClientCharacter(BasicGame.myID, BasicGame.selectedChar);
 				this.game.state.start("Multiplayer");
 			}
 		});

@@ -18,6 +18,7 @@ var Eureca = require('eureca.io');
 // Create an instance of EurecaServer
 var eurecaServer = new Eureca.Server({allow:['setID', 
 	'getNick', 
+	'gameStart',
 	'updateLobby',
 	'loadPlayersLR',
 	'spawnEnemy', 
@@ -33,11 +34,14 @@ var connectedCount = 0;
 var lobbylist = {};
 
 // Initialize public lobby
-lobbylist['publicLobby1'] = {gameType:'Team Death Match', maxPlayers:4, status:'Open Host', password:'', clientInfo:{}, playerCount:0};
-lobbylist['publicLobby2'] = {gameType:'Team Death Match', maxPlayers:6, status:'Open Host', password:'', clientInfo:{}, playerCount:0};
-lobbylist['publicLobby3'] = {gameType:'Team Death Match', maxPlayers:8, status:'Open Host', password:'', clientInfo:{}, playerCount:0};
-lobbylist['publicLobby4'] = {gameType:'Team Death Match', maxPlayers:12, status:'Open Host', password:'', clientInfo:{}, playerCount:0};
-
+eurecaServer.exports.initializeLobby = function() {
+	// Initialize public lobby
+	lobbylist['publicLobby1'] = {gameType:'Team Deathmatch', maxPlayers:4, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
+	lobbylist['publicLobby2'] = {gameType:'Team Deathmatch', maxPlayers:6, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
+	lobbylist['publicLobby3'] = {gameType:'Team Deathmatch', maxPlayers:8, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
+	lobbylist['publicLobby4'] = {gameType:'Team Deathmatch', maxPlayers:12, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
+}
+eurecaServer.exports.initializeLobby();
 
 //var selectedChar = "test";
 
@@ -69,7 +73,6 @@ eurecaServer.onConnect(function(conn) {
 		console.log(clients[conn.id].char);
 	});*/
 	
-
 	// setID method in client side
 	remote.setID(conn.id);			
 
@@ -105,22 +108,79 @@ eurecaServer.exports.updateLobbyRoom = function(roomName) {
 	// for every client in the lobby, update their lobby room info
 	for (var id in lobbylist[roomName].clientInfo) { 
 		var remote = lobbylist[roomName].clientInfo[id].remote;
-		remote.loadPlayersLR(lobbylist[roomName].clientInfo); // Share clientinfo with all clients in the lobby
+		// Share clientinfo with all clients in the lobby
+		remote.loadPlayersLR(
+			lobbylist[roomName].clientInfo, 
+			lobbylist[roomName].gameType, 
+			lobbylist[roomName].maxPlayers, 
+			lobbylist[roomName].host
+		);
 	}
 }
 
+// function to set client ready status on the server and to update the other clients in the room
+eurecaServer.exports.setClientStatus = function(roomName, id) {
+	clients[id].ready = !clients[id].ready;
+	eurecaServer.exports.updateLobbyRoom(roomName);
+}
+
+// function to set client ready status on the server and to update the other clients in the room
+eurecaServer.exports.setClientCharacter = function(id, character) {
+
+	/* Separated for now. Affects multiplayer
+	// Set client's selected character
+	remote.getChar().onReady(function(result) {
+		clients[conn.id].char = result;
+		console.log(clients[conn.id].char);
+	});*/
+	clients[id].char = character;
+}
+
+// function to set client team value on the server and to update the other clients in the room
 eurecaServer.exports.setClientTeam = function(roomName, id, team) {
 	clients[id].team = team;
 	eurecaServer.exports.updateLobbyRoom(roomName);
 }
 
+// function used for server side host determinination and correction
+eurecaServer.exports.chooseHost = function(roomName) {
+	var room = lobbylist[roomName];
+	if (room.host == '') {
+		// no host yet
+		for (var user in room.clientInfo) {
+			lobbylist[roomName].host = user;
+		}
+	} else {
+		// correct room host
+		if (room.clientInfo[room.host] == null) {
+			// host id does not exist in room
+			lobbylist[roomName].host = '';
+			for (var user in room.clientInfo) {
+				lobbylist[roomName].host = user;
+			}
+		}
+	}
+}
+
+eurecaServer.exports.startGameTDM = function(roomName) {
+	lobbylist[roomName].status = ' On-going'; // Update Lobby Status
+	eurecaServer.exports.requestClientInfo(); // update all lobby clients
+	// for every client in the lobby, start the game
+	for (var id in lobbylist[roomName].clientInfo) { 
+		var remote = lobbylist[roomName].clientInfo[id].remote;
+		// initialize team deathmatch for all clients in lobby
+		remote.gameStart();
+	}
+}
+
 // function to add and update lobby information wtih connected player id
 // REF: Each obj in clientInfo is a clients[conn.id]
 eurecaServer.exports.establishRoomLink = function(roomName, id) {
-	console.log("Player: " + id + " connected to room " + roomName);
+	//console.log("Player: " + id + " connected to room " + roomName);
 	clients[id].lobbyID = roomName; // update client lobby room status
 	lobbylist[roomName].clientInfo[id] = clients[id]; // pass in the client object into clientInfo
 	lobbylist[roomName].playerCount++;
+	eurecaServer.exports.chooseHost(roomName);
 	eurecaServer.exports.requestClientInfo(); // update all lobby clients
 }
 
@@ -132,6 +192,7 @@ eurecaServer.exports.destroyRoomLink = function(roomName, id) {
 	clients[id].ready = false;
 	delete lobbylist[roomName].clientInfo[id];
 	lobbylist[roomName].playerCount--;
+	eurecaServer.exports.chooseHost(roomName);
 	eurecaServer.exports.requestClientInfo(); // update all lobby clients
 }
 
@@ -162,53 +223,54 @@ eurecaServer.exports.passwordCheck = function(name, pass) {
 	}
 }
 
-eurecaServer.exports.handshake = function() {
-	console.log('handshaking test');
-	for (var c in clients) {
-		var remote = clients[c].remote;
-		for (var cc in clients) {
+eurecaServer.exports.handshake = function(room) {
+	console.log('handshaking');
+	for (var c in lobbylist[room].clientInfo) {
+		var remote = lobbylist[room].clientInfo[c].remote;
+		var test = lobbylist[room].clientInfo[c];
+		for (var cc in lobbylist[room].clientInfo) {
 			// Get starting position for every client
 			var x = 0;
 			var y = 0;
-			if (clients[cc].lastState != null) {
-				x = clients[cc].lastState.x;
-				y = clients[cc].lastState.y;
+			if (lobbylist[room].clientInfo[cc].lastState != null) {
+				x = lobbylist[room].clientInfo[cc].lastState.x;
+				y = lobbylist[room].clientInfo[cc].lastState.y;
 			}
 			// Replicate enemy at position, along with selected character
-			remote.spawnEnemy(clients[cc].id, x, y, clients[cc].char);
+			remote.spawnEnemy(lobbylist[room].clientInfo[cc].id, x, y, lobbylist[room].clientInfo[cc].char);
 		}
 	}
 }
 
-eurecaServer.exports.handleKeys = function(keys) {
+eurecaServer.exports.handleKeys = function(keys, room) {
 	//console.log('handling');
 	var conn = this.connection;
-	var updatedClient = clients[conn.id];
+	var updatedClient = lobbylist[room].clientInfo[conn.id];
 
 	// For each client, update last input
-	for (var c in clients) {
+	for (var c in lobbylist[room].clientInfo) {
 		// Update server side
-		var remote = clients[c].remote;
+		var remote = lobbylist[room].clientInfo[c].remote;
 		remote.updateState(updatedClient.id, keys);
 
 		// Key track of last state for spawning new players
-		clients[c].lastState = keys;
+		lobbylist[room].clientInfo[c].lastState = keys;
 	}
 }
 
-eurecaServer.exports.compensate = function(keys) {
+eurecaServer.exports.compensate = function(keys, room) {
 	// Compensate difference by interpolation
 	var conn = this.connection;
-	var updatedClient = clients[conn.id];
+	var updatedClient = lobbylist[room].clientInfo[conn.id];
 
 	// For each client, update last input
-	for (var c in clients) {
+	for (var c in lobbylist[room].clientInfo) {
 		// Update server side
-		var remote = clients[c].remote;
+		var remote = lobbylist[room].clientInfo[c].remote;
 		remote.compensate(updatedClient.id, keys);
 
 		// Key track of last state for spawning new players
-		clients[c].lastState = keys;
+		lobbylist[room].clientInfo[c].lastState = keys;
 	}
 }
 

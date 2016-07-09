@@ -40,7 +40,13 @@ BasicGame.MainMenu.prototype = {
 			this.game.state.start('CharSelect', true, false, false);
 		});
 		this.addMenuOption('Multiplayer', function (target) {
-			this.game.state.start('CharSelect', true, false, true);
+			if (nicknameInput.value == '') {
+				// ask for nickname input
+				ref.add.text(ref.world.width/4 - 35, ref.world.height/2 + 50, "Enter a name to go multiplayer!", 
+					{font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "red"});
+			} else {
+				this.game.state.start('LobbyMulti', true, false, nicknameInput.value);
+			}
 		});
 		this.addMenuOption('Options', function (target) {
 			this.game.state.start('Options', true);
@@ -48,15 +54,17 @@ BasicGame.MainMenu.prototype = {
 		this.addMenuOption('Credits', function (target) {
 			this.game.state.start('Credits', true);
 		});
+		/*
 		this.addMenuOption('Lobby Test', function (target) {
-			if (nicknameInput.value == "") {
+			if (nicknameInput.value == '') {
 				// ask for nickname input
-				ref.add.text(ref.world.width/4 - 35, ref.world.height/2 + 50, "Enter a name before entering lobby!", 
+				ref.add.text(ref.world.width/4 - 35, ref.world.height/2 + 50, "Enter a name to go multiplayer!", 
 					{font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "red"});
 			} else {
 				this.game.state.start('LobbyMulti', true, false, nicknameInput.value);
 			}
 		});
+		*/
 
 		// for full API, go to : https://github.com/orange-games/phaser-input
 		var nicknameInput = game.add.inputField(this.world.width/3, this.world.height/2, {

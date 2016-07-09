@@ -1,9 +1,22 @@
 BasicGame.LobbyRoom = function (game) {
 	this.roomID = '';
-	this.PlayerText = [];
+	this.gameLeader = null;
+	this.allReady = false;
+	this.PlayerText = {};
 	this.headerTextDefault = {font: '25pt myfont', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
+	this.headerTextGreen = {font: '25pt myfont', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "#00FF00"};
 	this.subText = {font: '14pt myfont', align: 'center', stroke: 'rgba(0,10,0,0)', strokeThickness: 2, fill: "white"};
 	this.subTextCyan = {font: '14pt myfont', align: 'center', stroke: 'rgba(0,10,0,0)', strokeThickness: 2, fill: "cyan"}; 
+	this.subTextGreen = {font: '14pt myfont', align: 'center', stroke: 'rgba(0,10,0,0)', strokeThickness: 2, fill: "#00FF00"}; 
+
+	this.readyOnOver =  function (target) {
+		target.fill = "#00FF00";
+		target.stroke = "rgba(255,255,255,1)";
+	};
+	this.readyOnOut =  function (target) {
+		target.fill = "#00FF00";
+		target.stroke = "rgba(0,0,0,0)";
+	};
 };
 
 BasicGame.LobbyRoom.prototype = {
@@ -37,32 +50,132 @@ BasicGame.LobbyRoom.prototype = {
 			BasicGame.eurecaServer.updateLobbyRoom(ref.roomID); // update client side disconnect
 		}
 
+		BasicGame.eurecaClient.exports.gameStart = function() {
+			BasicGame.roomID = ref.roomID;
+			ref.game.state.start('CharSelect', true, false, true);
+		}
+
 		// function to load all players info obtained from server.js
-		BasicGame.eurecaClient.exports.loadPlayersLR = function(playerList) {
+		BasicGame.eurecaClient.exports.loadPlayersLR = function(playerList, gametype, maxplayers, roomHost) {
 			var t1Counter = 0;
 			var t2Counter = 0;
 			var plCounter = 0;
+			var readyCheck = true;
+			ref.gameLeader = roomHost;
 			ref.clearPlayerText();
 
-			for (var id in playerList) {
-				var player = playerList[id];
-				var displayNick = (player.nick.length > 16) ? player.nick.substring(0,12) + '...' : player.nick;
-				var nickColor = (BasicGame.myID == player.id) ? ref.subTextCyan : ref.subText;
+			if (gametype == 'Team Deathmatch') { // Team death math game settings
+				// Load player teams
+				for (var id in playerList) {
+					var player = playerList[id];
+					var displayNick = (player.nick.length > 16) ? player.nick.substring(0,12) + '...' : player.nick;
+					var nickColor = (BasicGame.myID == player.id) ? ref.subTextCyan : (player.ready ? ref.subTextGreen : ref.subText);
 
+					if (!player.ready) { 
+						readyCheck = false; // not everyone is ready
+					}
 
-				if (player.team == null) {
-					// current player has no team = player List
-					ref.PlayerText[ref.PlayerText.length] = ref.add.text(ref.world.width/6 * 4.5 + 10, 100 + (plCounter * 25),  displayNick, nickColor);
-					plCounter++;
-				} else if (player.team == 1) {
-					// current player belongs to team A
-					ref.PlayerText[ref.PlayerText.length] = ref.add.text(ref.world.width/6 + 10, 170 + (t1Counter * 25),  displayNick, nickColor);
-					t1Counter++;
-				} else if (player.team == 2) {
-					// current player belongs to team B
-					ref.PlayerText[ref.PlayerText.length] = ref.add.text(ref.world.width/2 + 10, 170 + (t2Counter * 25),  displayNick, nickColor);
-					t2Counter++;
+					// Print player nicknames on lobby
+					if (player.team == null) {
+						// current player has no team = player List
+						ref.PlayerText[id] = ref.add.text(ref.world.width/6 * 4.5 + 10, 100 + (plCounter * 25),  displayNick, nickColor);
+						plCounter++;
+					} else if (player.team == 1) {
+						// current player belongs to team A
+						ref.PlayerText[id] = ref.add.text(ref.world.width/6 + 5, 170 + (t1Counter * 25),  displayNick, nickColor);
+						t1Counter++;
+					} else if (player.team == 2) {
+						// current player belongs to team B
+						ref.PlayerText[id] = ref.add.text(ref.world.width/2 + 5, 170 + (t2Counter * 25),  displayNick, nickColor);
+						t2Counter++;
+					}
 				}
+
+				ref.allReady = readyCheck;
+
+				// load game info
+				ref.PlayerText["gameHostTxt"] = ref.add.text(ref.world.width/10, ref.world.height/7 * 5 - 35,  'Game Host : ' + playerList[ref.gameLeader].nick, ref.headerTextDefault);
+				ref.PlayerText["gameTypeTxt"] = ref.add.text(ref.world.width/10, ref.world.height/7 * 5,  'Game Mode : ' + gametype, ref.headerTextDefault);
+
+				// Add Headers and buttons
+				ref.PlayerText["headerTeamA"] = ref.add.text(ref.world.width/6, 120,  "Team A", ref.headerTextDefault);
+				ref.PlayerText["headerTeamB"] = ref.add.text(ref.world.width/2, 120,  "Team B", ref.headerTextDefault);
+				ref.PlayerText["headerPL"] = ref.add.text(ref.world.width/6 * 4.5, 50,  "Player List", ref.headerTextDefault);
+
+				// Header Team A
+				ref.PlayerText['headerTeamA'].inputEnabled = !playerList[BasicGame.myID].ready;
+				ref.PlayerText['headerTeamA'].events.onInputOver.add(BasicGame.onOver);
+				ref.PlayerText['headerTeamA'].events.onInputOut.add(BasicGame.onOut);
+				ref.PlayerText['headerTeamA'].events.onInputUp.add(function() {
+					BasicGame.eurecaServer.setClientTeam(ref.roomID, BasicGame.myID, 1);
+				});
+
+				// Header Team B
+				ref.PlayerText['headerTeamB'].inputEnabled = !playerList[BasicGame.myID].ready;
+				ref.PlayerText['headerTeamB'].events.onInputOver.add(BasicGame.onOver);
+				ref.PlayerText['headerTeamB'].events.onInputOut.add(BasicGame.onOut);
+				ref.PlayerText['headerTeamB'].events.onInputUp.add(function() {
+					BasicGame.eurecaServer.setClientTeam(ref.roomID, BasicGame.myID, 2);
+				});
+
+				// Header  Player List
+				ref.PlayerText['headerPL'].inputEnabled = !playerList[BasicGame.myID].ready;
+				ref.PlayerText['headerPL'].events.onInputOver.add(BasicGame.onOver);
+				ref.PlayerText['headerPL'].events.onInputOut.add(BasicGame.onOut);
+				ref.PlayerText['headerPL'].events.onInputUp.add(function() {
+					BasicGame.eurecaServer.setClientTeam(ref.roomID, BasicGame.myID, null);
+				});
+
+				// load ready button
+				if (playerList[BasicGame.myID].team != null) {
+					// player has selected a team, show option to let player ready
+					if (playerList[BasicGame.myID].ready) {
+						// Player has announced they are ready
+						ref.PlayerText["readyButton"] = ref.add.text(ref.world.width/10 * 7, ref.world.height/7 * 6,  'READY!', ref.headerTextGreen);
+						ref.PlayerText["readyButton"].events.onInputOver.add(ref.readyOnOver);
+						ref.PlayerText["readyButton"].events.onInputOut.add(ref.readyOnOut);
+
+						// Status message
+						if (ref.allReady) {
+							if (ref.gameLeader == BasicGame.myID) {
+								// you are the host, choose when to start game
+								ref.PlayerText["status"] = ref.add.text(ref.world.width/10 * 7 - 50, ref.world.height - 50,  'Start game when you are ready...', ref.subText);
+
+								// START GAME BUTTON
+								ref.PlayerText["startButton"] = ref.add.text(ref.world.width/10 * 8.5, ref.world.height/7 * 6,  'START', ref.headerTextGreen);
+								ref.PlayerText["startButton"].events.onInputOver.add(ref.readyOnOver);
+								ref.PlayerText["startButton"].events.onInputOut.add(ref.readyOnOut);
+								ref.PlayerText["startButton"].inputEnabled = true;
+								ref.PlayerText["startButton"].events.onInputUp.add(function() {
+									// START GAME
+									BasicGame.eurecaServer.startGameTDM(ref.roomID);
+								});
+							} else {
+								// waiting for host to start game
+								ref.PlayerText["status"] = ref.add.text(ref.world.width/10 * 7 - 50, ref.world.height - 50,  'Waiting for host to start game...', ref.subText);
+							}
+						} else {
+							// not all player has announced they are ready
+							ref.PlayerText["status"] = ref.add.text(ref.world.width/10 * 7 - 50, ref.world.height - 50,  'Waiting for all players to ready...', ref.subText);
+						}
+					} else {
+						// Player has not announced they are ready, give ready button
+						ref.PlayerText["readyButton"] = ref.add.text(ref.world.width/10 * 7, ref.world.height/7 * 6,  'READY!', ref.headerTextDefault);
+						ref.PlayerText["readyButton"].events.onInputOver.add(ref.readyOnOver);
+						ref.PlayerText["readyButton"].events.onInputOut.add(BasicGame.onOut);
+					}
+					ref.PlayerText["readyButton"].inputEnabled = true;
+					ref.PlayerText["readyButton"].events.onInputUp.add(function() {
+						// READY!
+						BasicGame.eurecaServer.setClientStatus(ref.roomID, BasicGame.myID);
+					});
+				} else {
+					// Player has not select a team, ask player to choose team
+					ref.PlayerText["readyButton"] = ref.add.text(ref.world.width/10 * 7, ref.world.height/7 * 6,  'Chose a team', ref.headerTextDefault);
+				}
+			} else {
+				// unknown game mode
+				// ADD NEW GAME MODE HERE!
 			}
 		};
 	},
@@ -72,15 +185,17 @@ BasicGame.LobbyRoom.prototype = {
 	},
 
 	update: function () {
-		// nothing at all
+		var ref = this;
 	},
 
 	clearPlayerText: function () {
 		var ref = this;
-		for (var i=0; i<ref.PlayerText.length; i++) {
-			ref.PlayerText[i].destroy();
+		for (var idx in ref.PlayerText) {
+			//console.log(idx);
+			//console.log(ref.PlayerText);
+			ref.PlayerText[idx].destroy();
 		}
-		ref.PlayerText = [];
+		ref.PlayerText = {};
 	},
 
 	loadRoom: function () {
@@ -93,11 +208,6 @@ BasicGame.LobbyRoom.prototype = {
 
 		// Add Lobby name
 		this.LobbyName = this.add.text(50, 30, this.roomID, {font: "40pt myfont", fill: 'white', align: 'right'});
-
-		// Add Headers
-		this.headerTeamA = this.add.text(this.world.width/6, 120,  "Team A", this.headerTextDefault);
-		this.headerTeamB = this.add.text(this.world.width/2, 120,  "Team B", this.headerTextDefault);
-		this.headerPL = this.add.text(this.world.width/6 * 4.5, 50,  "Player List", this.headerTextDefault);
 
 		// Add back button
 		this.returnMenu = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 100,  "Back to Main Menu", optionStyle);
@@ -115,44 +225,17 @@ BasicGame.LobbyRoom.prototype = {
 			ref.game.state.start("MainMenu", true);
 		});
 
-		// Add lobby button
+		// Add return lobby button
 		this.returnLobby = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 135,  "Back to Lobby", optionStyle);
 		this.returnLobby.inputEnabled = true;
 		this.returnLobby.events.onInputOver.add(BasicGame.onOver);
 		this.returnLobby.events.onInputOut.add(BasicGame.onOut);
 		
-		// Header buttons change team
-		this.headerTeamA.inputEnabled = true;
-		this.headerTeamB.inputEnabled = true;
-		this.headerPL.inputEnabled = true;
-		this.headerTeamA.events.onInputOver.add(BasicGame.onOver);
-		this.headerTeamB.events.onInputOver.add(BasicGame.onOver);
-		this.headerPL.events.onInputOver.add(BasicGame.onOver);
-		this.headerTeamA.events.onInputOut.add(BasicGame.onOut);
-		this.headerTeamB.events.onInputOut.add(BasicGame.onOut);
-		this.headerPL.events.onInputOut.add(BasicGame.onOut);
-
-		// lobby button clicked
+		// return lobby button clicked
 		this.returnLobby.events.onInputUp.add(function() {
 			BasicGame.eurecaServer.destroyRoomLink(ref.roomID, BasicGame.myID); // destroy connection
 			BasicGame.eurecaServer.updateLobbyRoom(ref.roomID); // update the rest of the clients after connection is destroyed
 			ref.game.state.start("LobbyMulti", true);
 		});
-
-		// Header Team A button click
-		this.headerTeamA.events.onInputUp.add(function() {
-			BasicGame.eurecaServer.setClientTeam(ref.roomID, BasicGame.myID, 1)
-		});
-
-		// Header Team B button click
-		this.headerTeamB.events.onInputUp.add(function() {
-			BasicGame.eurecaServer.setClientTeam(ref.roomID, BasicGame.myID, 2)
-		});
-
-		// Header Player List button click
-		this.headerPL.events.onInputUp.add(function() {
-			BasicGame.eurecaServer.setClientTeam(ref.roomID, BasicGame.myID, null)
-		});
-
 	},
 };

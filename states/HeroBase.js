@@ -172,7 +172,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 		if (this.ID == this.refMP.myID) {
 			this.myInput.x = this.x;
 			this.myInput.y = this.y;
-			this.refMP.eurecaServer.handleKeys(this.myInput);
+			BasicGame.eurecaServer.handleKeys(this.myInput, BasicGame.roomID);
 		}
 	}
 	
@@ -185,7 +185,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 			this.myInput.y = this.y;
 			this.myInput.hp = this.curHealth;
 
-			this.refMP.eurecaServer.compensate(this.myInput);
+			BasicGame.eurecaServer.compensate(this.myInput, BasicGame.roomID);
 		}
 	}
 

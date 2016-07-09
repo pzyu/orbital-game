@@ -205,6 +205,19 @@ BasicGame.LobbyMulti.prototype = {
 		this.joinLobby4.events.onInputUp.add(function() {
 			this.game.state.start('LobbyRoom', true, false, 'publicLobby4', '');
 		});
+
+
+		/* DEVELOPER FEATURE*/
+		this.resetServer = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 130,  "Server Reset", lobbyFixedText1);
+		this.resetServer.inputEnabled = true;
+		this.resetServer.events.onInputOver.add(BasicGame.onOver);
+		this.resetServer.events.onInputOut.add(BasicGame.onOut);
+		this.resetServer.events.onInputUp.add(function() {
+			BasicGame.eurecaServer.initializeLobby();
+			BasicGame.eurecaServer.requestClientInfo();
+		});
+		/* DELETE AFTER THX */
+
 	},
 
 	LoadLobby: function () {
