@@ -79,12 +79,14 @@ BasicGame.Effect = function (game, effectName, loopCount, scale, trackTarget) {
 		this.animations.add('anim_1', Phaser.Animation.generateFrameNames('summon (', 1, 18, ')'), 16, true);
 		this.animations.add('anim_2', Phaser.Animation.generateFrameNames('slime_splash (', 1, 13, ')'), 16, false);
 		this.animations.add('anim_3', Phaser.Animation.generateFrameNames('slimeball (', 1, 10, ')'), 16, true);
+		this.animations.add('anim_4', Phaser.Animation.generateFrameNames('slime_idle (', 1, 10, ')'), 16, true);
+		this.animations.add('anim_5', Phaser.Animation.generateFrameNames('slimeball_muzzle (', 1, 10, ')'), 16, false);
 	}
 
 	if (effectName == "ice") {
-		this.animations.add('anim_1', Phaser.Animation.generateFrameNames('energy (', 1, 13, ')'), 60, true);
-		this.animations.add('anim_2', Phaser.Animation.generateFrameNames('ice_poof (', 1, 11, ')'), 60, false);
-		this.animations.add('anim_3', Phaser.Animation.generateFrameNames('ice_summon (', 1, 26, ')'), 60, false);
+		this.animations.add('anim_1', Phaser.Animation.generateFrameNames('energy (', 1, 13, ')'), 16, true);
+		this.animations.add('anim_2', Phaser.Animation.generateFrameNames('ice_poof (', 1, 11, ')'), 16, false);
+		this.animations.add('anim_3', Phaser.Animation.generateFrameNames('ice_summon (', 1, 26, ')'), 16, false);
 	}
 
 	if (effectName == "smoke") {

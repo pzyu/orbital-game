@@ -97,7 +97,17 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y) {
     // Add onKill listener
     this.grenade.onKill.add(function(grenade) {
     	this.explosionGroup.getFirstExists(false).playUntracked('anim_1', grenade.x, grenade.y - 60);
+		this.skillD_1SFX.play();
 	}, this);
+
+	// Audio
+    var volume = 0.1;
+	this.skillASFX = this.game.add.audio('destroyer_skillA', volume);
+	this.skillBSFX = this.game.add.audio('destroyer_skillB', volume);
+	this.skillCSFX = this.game.add.audio('destroyer_skillC', volume);
+	this.skillDSFX = this.game.add.audio('destroyer_skillD', volume);
+	this.skillD_1SFX = this.game.add.audio('destroyer_skillD_1', volume);
+	this.skillESFX = this.game.add.audio('destroyer_skillE', volume);
 }
 
 // Inherit HeroBase
@@ -177,6 +187,7 @@ BasicGame.HeroDestroyerMP.prototype.handleSkillA = function() {
 			this.weapon.fireAngle = 180;
 			this.weapon.trackOffset.x = -80;
 		}
+		this.skillASFX.play();
     	this.weapon.fire();
 
 		this.isAttacking = true;
@@ -196,6 +207,8 @@ BasicGame.HeroDestroyerMP.prototype.handleSkillB = function() {
     	this.animations.play('anim_thrust');
     	this.animations.currentAnim.frame = 0;
 		this.attackCollider.activate();   
+
+		this.skillBSFX.play();
 
 		this.isAttacking = true;
 		this.skillBTimer = this.game.time.now + this.skillBCooldown; 
@@ -218,6 +231,9 @@ BasicGame.HeroDestroyerMP.prototype.handleSkillC = function() {
     	this.weapon.fire(null, this.x + this.facingRight * 100, this.y + 10);
     	this.weapon.fire(null, this.x + this.facingRight * 100, this.y + 12);
 
+
+		this.skillCSFX.play();
+
 		this.isAttacking = true;
 		this.skillCTimer = this.game.time.now + this.skillCCooldown; 
 	}
@@ -237,14 +253,13 @@ BasicGame.HeroDestroyerMP.prototype.handleSkillD = function() {
     	var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 500); 
     	tween.onStart.add(function() {
     		this.grenade.fire();
+			this.skillDSFX.play();
     	}, this);
 
-		// Passive
     	this.animations.play('anim_throw');
     	this.animations.currentAnim.frame = 0;
-		//this.isAttacking = true;
-		this.skillDTimer = this.game.time.now + this.skillDCooldown; 
 
+		this.skillDTimer = this.game.time.now + this.skillDCooldown;
 		this.isAttacking = true;
 	}
 };
@@ -262,6 +277,8 @@ BasicGame.HeroDestroyerMP.prototype.handleSkillE = function() {
 
 		var tween = this.game.add.tween(this).to({0: 0}, 400, Phaser.Easing.Linear.None, true, 200); 
     	tween.onStart.add(function() {
+
+			this.skillESFX.play();
 			this.blast.play('anim_1', this, -40, -170);
     		this.knockbackForce = 2000;
 			this.attackCollider.activate();   

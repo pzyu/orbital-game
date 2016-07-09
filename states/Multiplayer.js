@@ -72,6 +72,8 @@ BasicGame.Multiplayer.prototype.preload = function() {
 			curX = ref.spawnX;
 			curY = ref.spawnY;
 		}
+
+		ref.broadcast(i + " has joined the game!", 2);
 		console.log('Spawning', i, curX, curY, char);
 
 		// If doesn't already exist

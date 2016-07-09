@@ -70,6 +70,14 @@ BasicGame.HeroTrooperMP = function (id, game, x, y) {
     this.snipe.bullets.setAll('scale.x', 1);							
     this.snipe.bullets.setAll('scale.y', 1);
     this.snipe.setBulletBodyOffset(45, 10, 0, 0);
+
+	// Audio
+    var volume = 0.1;
+	this.skillASFX = this.game.add.audio('trooper_skillA', volume);
+	this.skillBSFX = this.game.add.audio('trooper_skillB', volume);
+	this.skillCSFX = this.game.add.audio('trooper_skillC', volume);
+	this.skillDSFX = this.game.add.audio('trooper_skillD', volume);	
+	this.skillESFX = this.game.add.audio('trooper_skillE', volume);
 };
 
 // Inherit HeroBase
@@ -146,6 +154,8 @@ BasicGame.HeroTrooperMP.prototype.handleSkillA = function() {
 		this.slashEffect.angle = 30;
     	this.slashEffect.play('anim_1', this, 50, 0);
 
+    	this.skillASFX.play();
+
     	// Play the animation
     	this.animations.play('anim_thrust');
     	this.animations.currentAnim.frame = 0;
@@ -161,6 +171,8 @@ BasicGame.HeroTrooperMP.prototype.handleSkillB = function() {
 		this.skillBTimer = this.game.time.now + this.skillBCooldown;
 		this.isAttacking = true;
 
+		this.skillBSFX.play();
+
 		this.applyBuff("BUFF_HASTE", 1600, 5000, 0);
 	}
 };
@@ -172,6 +184,8 @@ BasicGame.HeroTrooperMP.prototype.handleSkillC = function() {
     	this.animations.currentAnim.frame = 0;
 		this.isAttacking = true;
 		this.skillCTimer = this.game.time.now + this.skillCCooldown; 
+
+		this.skillCSFX.play();
 
 
     	var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 500, 0);
@@ -189,6 +203,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillD = function() {
 		// Passive
 		//this.isAttacking = true;
 		this.skillDTimer = this.game.time.now + this.skillDCooldown; 
+		this.skillDSFX.play();
 		console.log('backstab unlocked');
 	}
 }
@@ -205,7 +220,8 @@ BasicGame.HeroTrooperMP.prototype.handleSkillE = function() {
     		this.snipeEffect.play('anim_1', this, -20, 20);
     		this.animations.play('anim_ultimate1');
     		this.animations.currentAnim.frame = 0;
-    		tween.delay(1000);
+    		//tween.delay(1000);
+			this.skillESFX.play();
     	}, this);
     	tween.onComplete.add(function() {
     		this.snipeEffect.play('anim_2', this, 100, 30);

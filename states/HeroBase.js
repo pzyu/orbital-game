@@ -80,7 +80,9 @@ BasicGame.HeroBase = function (id, game, x, y, sprite) {
 	this.hitAnim;
 
 	// Buff effect
-	this.buffEffect = new BasicGame.Effect(this.game, 'slime', 50, 0.5, true);
+	this.buffEffect = new BasicGame.Effect(this.game, '', 50, 0.5, true);
+	this.buffEffect.animations.add('BUFF_SLOW', Phaser.Animation.generateFrameNames('summon (', 1, 18, ')'), 16, true);
+	this.buffEffect.animations.add('BUFF_HASTE', Phaser.Animation.generateFrameNames('bolt_sizzle (', 1, 10, ')'), 16, true);
 	this.game.add.existing(this.buffEffect);
 
 	// Keep track of jump anim
@@ -310,7 +312,7 @@ BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, de
 			this.moveSpeed = this.defaultMoveSpeed;
 		}, this);
 
-		this.buffEffect.playTimed('anim_1', this, 0, 0, duration);
+		this.buffEffect.playTimed(buffName, this, 0, 0, duration);
 	} 
 
 	if (buffName == "BUFF_INVIS") {

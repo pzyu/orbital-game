@@ -62,7 +62,7 @@ eurecaServer.onConnect(function(conn) {
 		clients[conn.id].nick = result;
 	});
 
-	/* Separated for now. Affects multiplayer
+	/*Separated for now. Affects multiplayer
 	// Set client's selected character
 	remote.getChar().onReady(function(result) {
 		clients[conn.id].char = result;

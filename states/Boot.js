@@ -68,6 +68,7 @@ BasicGame.Boot.prototype = {
         this.load.image('laser_red', 'images/sprites/effects/laser_red.png');
         this.load.image('laser_green', 'images/sprites/effects/laser_green.png');
         this.load.image('grenade', 'images/sprites/effects/grenade.png');
+        this.load.image('slimeball', 'images/sprites/effects/slimeball.png');
 
         // HUD
         this.load.image('skill', 'images/sprites/heroes/skill.png');
@@ -87,6 +88,33 @@ BasicGame.Boot.prototype = {
     loadAudio: function() {
         // Loading music
         this.load.audio('titleMusic', ['audio/title.mp3']);
+
+        // Hero SFX
+        this.load.audio('destroyer_skillA', 'audio/heroes/destroyer/default.ogg');
+        this.load.audio('destroyer_skillB', 'audio/heroes/destroyer/thrust.ogg');
+        this.load.audio('destroyer_skillC', 'audio/heroes/destroyer/shotgun.ogg');
+        this.load.audio('destroyer_skillD', 'audio/heroes/destroyer/grenade_throw.ogg');
+        this.load.audio('destroyer_skillD_1', 'audio/heroes/destroyer/grenade_explode.ogg');
+        this.load.audio('destroyer_skillE', 'audio/heroes/destroyer/ultimate.ogg');
+
+        this.load.audio('gunner_skillA', 'audio/heroes/gunner/default.ogg');
+        this.load.audio('gunner_skillB', 'audio/heroes/gunner/mite.ogg');
+        this.load.audio('gunner_skillC', 'audio/heroes/gunner/trap.ogg');
+        this.load.audio('gunner_skillD', 'audio/heroes/gunner/health.ogg');
+        this.load.audio('gunner_skillE', 'audio/heroes/gunner/ultimate.ogg');
+
+        this.load.audio('trooper_skillA', 'audio/heroes/trooper/default.ogg');
+        this.load.audio('trooper_skillB', 'audio/heroes/trooper/haste.ogg');
+        this.load.audio('trooper_skillC', 'audio/heroes/trooper/invis.ogg');
+        this.load.audio('trooper_skillD', 'audio/heroes/trooper/haste.ogg');
+        this.load.audio('trooper_skillE', 'audio/heroes/trooper/snipe.ogg');
+
+        this.load.audio('walker_skillA', 'audio/heroes/walker/default.ogg');
+        this.load.audio('walker_skillB', 'audio/heroes/walker/shield.ogg');
+        this.load.audio('walker_skillC', 'audio/heroes/walker/rocket.ogg');
+        this.load.audio('walker_skillD', 'audio/heroes/walker/knockback.ogg');
+        this.load.audio('walker_skillE', 'audio/heroes/walker/ultimate.ogg');
+
     },
 
     loadPlugins: function() {
