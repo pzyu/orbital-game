@@ -8,8 +8,8 @@ var BasicGame = {
   playerCG: null,
   selectedChar: null,
   musicPlayer: null,
-  //eurecaServer: null,
-  //eurecaClient: null,
+  eurecaServer: null,
+  eurecaClient: null,
   myID: null,
   roomID: null,
 

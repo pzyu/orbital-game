@@ -113,8 +113,8 @@ BasicGame.Boot.prototype = {
         this.load.audio('walker_skillB', 'audio/heroes/walker/shield.ogg');
         this.load.audio('walker_skillC', 'audio/heroes/walker/rocket.ogg');
         this.load.audio('walker_skillD', 'audio/heroes/walker/knockback.ogg');
-        this.load.audio('walker_skillE', 'audio/heroes/walker/ultimate.ogg');
-
+        this.load.audio('walker_skillE', 'audio/heroes/walker/rocket.ogg');
+        this.load.audio('walker_explosion', 'audio/heroes/walker/explosion.ogg');
     },
 
     loadPlugins: function() {

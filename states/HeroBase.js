@@ -60,6 +60,10 @@ BasicGame.HeroBase = function (id, game, x, y, sprite) {
 	this.skillDTimer = 0;
 	this.skillETimer = 0;
 
+	this.skillCooldown = 500;
+	this.skillTimer = 0;
+	this.skillsEnabled = true;
+
 	// Set invidual scale and collider
 	this.scaleX = 1;
 	this.scaleY = 1;
@@ -187,6 +191,11 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 
 			BasicGame.eurecaServer.compensate(this.myInput, BasicGame.roomID);
 		}
+	}
+
+	// Limit skill usage
+	if (this.game.time.now > this.skillTimer) {
+		this.skillsEnabled = true;
 	}
 
 	// Local client

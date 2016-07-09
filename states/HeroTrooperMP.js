@@ -146,7 +146,7 @@ BasicGame.HeroTrooperMP.prototype.collideCallback = function(obj1, obj2) {
 
 
 BasicGame.HeroTrooperMP.prototype.handleSkillA = function() {
-	if (this.cursor.skillA && this.game.time.now > this.skillATimer) {
+	if (this.cursor.skillA && this.game.time.now > this.skillATimer && this.skillsEnabled) {
 		var skillTween = this.game.add.tween(this.body.velocity);
 		skillTween.to({x: 1000 * this.facingRight}, 250, Phaser.Easing.Cubic.Out);
 		skillTween.start();
@@ -162,11 +162,13 @@ BasicGame.HeroTrooperMP.prototype.handleSkillA = function() {
 		this.isAttacking = true;
 		this.skillATimer = this.game.time.now + this.skillACooldown; 
 		this.attackCollider.activate(); 
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 };
 
 BasicGame.HeroTrooperMP.prototype.handleSkillB = function() {
-	if (this.cursor.skillB && this.game.time.now > this.skillBTimer) {
+	if (this.cursor.skillB && this.game.time.now > this.skillBTimer && this.skillsEnabled) {
 		this.animations.play('anim_haste');
 		this.skillBTimer = this.game.time.now + this.skillBCooldown;
 		this.isAttacking = true;
@@ -174,19 +176,14 @@ BasicGame.HeroTrooperMP.prototype.handleSkillB = function() {
 		this.skillBSFX.play();
 
 		this.applyBuff("BUFF_HASTE", 1600, 5000, 0);
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 };
 
 BasicGame.HeroTrooperMP.prototype.handleSkillC = function() {
-	if (this.cursor.skillC && this.game.time.now > this.skillCTimer) {
-    	// Play the animation
-    	this.animations.play('anim_stealth');
-    	this.animations.currentAnim.frame = 0;
-		this.isAttacking = true;
-		this.skillCTimer = this.game.time.now + this.skillCCooldown; 
-
+	if (this.cursor.skillC && this.game.time.now > this.skillCTimer && this.skillsEnabled) {
 		this.skillCSFX.play();
-
 
     	var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 500, 0);
     	tween.onStart.add(function() {
@@ -194,26 +191,34 @@ BasicGame.HeroTrooperMP.prototype.handleSkillC = function() {
     	}, this);
 
 		this.applyBuff("BUFF_INVIS", 0, 5000, 500);
+
+    	// Play the animation
+    	this.animations.play('anim_stealth');
+    	this.animations.currentAnim.frame = 0;
+		this.isAttacking = true;
+		this.skillCTimer = this.game.time.now + this.skillCCooldown; 
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
+
 	}
 };
 
 
 BasicGame.HeroTrooperMP.prototype.handleSkillD = function() {
-	if (this.cursor.skillD && this.game.time.now > this.skillDTimer) {
+	if (this.cursor.skillD && this.game.time.now > this.skillDTimer && this.skillsEnabled) {
 		// Passive
 		//this.isAttacking = true;
 		this.skillDTimer = this.game.time.now + this.skillDCooldown; 
 		this.skillDSFX.play();
 		console.log('backstab unlocked');
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 }
 
 
 BasicGame.HeroTrooperMP.prototype.handleSkillE = function() {
-	if (this.cursor.skillE && this.game.time.now > this.skillETimer) {
-    	// Play the animation
-		this.isAttacking = true;
-		this.skillETimer = this.game.time.now + this.skillECooldown; 
+	if (this.cursor.skillE && this.game.time.now > this.skillETimer && this.skillsEnabled) {
 
     	var tween = this.game.add.tween(this).to({0: 0}, 1000, Phaser.Easing.Linear.None, true, 200, 0);
     	tween.onStart.add(function() {
@@ -238,5 +243,11 @@ BasicGame.HeroTrooperMP.prototype.handleSkillE = function() {
     		}
     		this.snipe.fire();
     	}, this);
+    	
+    	// Play the animation
+		this.isAttacking = true;
+		this.skillETimer = this.game.time.now + this.skillECooldown; 
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 };

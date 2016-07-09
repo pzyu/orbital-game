@@ -78,7 +78,6 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		// Update state sends local remote input to every client 
 		var curPlayer = ref.playerList[id];
 		if (curPlayer) {
-			console.log('receiving');
 			// Update player's cursor with state
 			curPlayer.cursor = state;
 			//curPlayer.update();

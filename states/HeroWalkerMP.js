@@ -81,7 +81,7 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
 
     // Shield
     //this.shield = this.game.add.sprite(-100, -100, 'walker_shield');
-    this.shield = new BasicGame.Collider(this.game, this, 360, 800, 100, -40, 0, 0.25, 'walker_shield');
+    this.shield = new BasicGame.Collider(this.game, this, 390, 800, 150, -40, 0, 0.25, 'walker_shield');
     this.shield.alpha = 0;
     this.shield.anchor.setTo(0.5, 0.5);
     this.shieldActive = false;
@@ -110,6 +110,16 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
 	this.nuke.onKill.add(function(obj) {
     	this.explosionGroup.getFirstExists(false).playUntracked('anim_2', obj.x, obj.y);
 	}, this);
+
+
+	// Audio
+    var volume = 0.1;
+	this.skillASFX = this.game.add.audio('walker_skillA', volume);
+	this.skillBSFX = this.game.add.audio('walker_skillB', volume);
+	this.skillCSFX = this.game.add.audio('walker_skillC', volume);
+	this.skillDSFX = this.game.add.audio('walker_skillD', volume);	
+	this.skillESFX = this.game.add.audio('walker_skillE', volume);
+	this.skillExplSFX = this.game.add.audio('walker_explosion', volume);
 }
 
 // Inherit HeroBase
@@ -144,7 +154,7 @@ BasicGame.HeroWalkerMP.prototype.update = function() {
 	this.refMP.physics.arcade.overlap(this.nuke.bullets, BasicGame.playerCG, this.bulletCallback.bind(this));
 
 	//this.game.debug.body(this);
-	// this.game.debug.body(this.shield);
+	//this.game.debug.body(this.shield);
 	//this.rocket.debug(0, 0, true);
 };
 
@@ -166,16 +176,18 @@ BasicGame.HeroWalkerMP.prototype.bulletCallback = function(obj1, obj2) {
 		obj1.kill();
 		// Call get hit of other person
 		obj2.getHit();	
+		this.skillExplSFX.play();
 	}
 };
 
 BasicGame.HeroWalkerMP.prototype.collideCallback = function(obj1, obj2) {
 	//console.log(this.explosionGroup.getFirstExists(false));
 	obj1.kill();
+	this.skillExplSFX.play();
 };
 
 BasicGame.HeroWalkerMP.prototype.handleSkillA = function() {
-	if (this.cursor.skillA && this.game.time.now > this.skillATimer) {
+	if (this.cursor.skillA && this.game.time.now > this.skillATimer && this.skillsEnabled) {
 		this.muzzleFX.angle = 0;
 		this.muzzleFX2.angle = 0;
 
@@ -188,20 +200,22 @@ BasicGame.HeroWalkerMP.prototype.handleSkillA = function() {
 
     		// Activate collider
 			this.attackCollider.activate();   
+			this.skillASFX.play();
 		}, this);
 		
     	// Play the animation
     	this.animations.play('anim_melee');
 
-
 		this.isAttacking = true;
 		this.skillATimer = this.game.time.now + this.skillACooldown; 
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 };
 
 BasicGame.HeroWalkerMP.prototype.handleSkillB = function(){ 
 	// Shield
-	if (this.cursor.skillB && this.game.time.now > this.skillBTimer && !this.shieldActive) {
+	if (this.cursor.skillB && this.game.time.now > this.skillBTimer && !this.shieldActive && this.skillsEnabled) {
 		// Passive
 		//this.isAttacking = true;
 		this.skillBTimer = this.game.time.now + this.skillBCooldown; 
@@ -210,6 +224,7 @@ BasicGame.HeroWalkerMP.prototype.handleSkillB = function(){
 		tween.onStart.add(function() {
 			var tween = this.game.add.tween(this.shield).to({alpha: 1}, 250, Phaser.Easing.Linear.None, true, 0);
 			this.shieldActive = true;
+			this.skillBSFX.play();
 		}, this);
 		tween.onComplete.add(function() {
 			// Break shield here
@@ -220,6 +235,8 @@ BasicGame.HeroWalkerMP.prototype.handleSkillB = function(){
     	this.animations.play('anim_backdash');
     	this.animations.currentAnim.frame = 0;
     	this.isAttacking = true;
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 	// Allow players to deactivate shield after 500ms
 	else if (this.shieldActive && this.cursor.skillB && (this.skillBTimer - this.game.time.now) < this.shieldDuration - 500){
@@ -230,16 +247,16 @@ BasicGame.HeroWalkerMP.prototype.handleSkillB = function(){
 	// Update position of shield if active
 	if (this.shieldActive) {
 		this.body.velocity.x = 0;
-		this.body.width = 80;
+		//this.body.width = 100;
 		this.shield.activate();
 	} else {
-		this.body.width = 160;
+		//this.body.width = 160;
 		this.shield.deactivate();
 	}
 };
 
 BasicGame.HeroWalkerMP.prototype.handleSkillC = function() {
-	if (this.cursor.skillC && this.game.time.now > this.skillCTimer) {
+	if (this.cursor.skillC && this.game.time.now > this.skillCTimer && this.skillsEnabled) {
 		// Rocket
     	this.animations.play('anim_shoot');
     	this.animations.currentAnim.frame = 0;
@@ -259,6 +276,7 @@ BasicGame.HeroWalkerMP.prototype.handleSkillC = function() {
     	tween.onStart.add(function() {
     		this.rocket.trackOffset.x = 0;
     		this.rocket.fire();
+    		this.skillCSFX.play();
 
     		// Muzzle
     		this.muzzleFX.play('anim_2', this, 70, -25, 1);
@@ -271,6 +289,7 @@ BasicGame.HeroWalkerMP.prototype.handleSkillC = function() {
     			this.rocket.trackOffset.x = -100;
     		}
     		this.rocket.fire();
+    		this.skillCSFX.play();
 
     		// Muzzle
     		this.muzzleFX2.play('anim_2', this, 190, -25, 1);
@@ -279,11 +298,13 @@ BasicGame.HeroWalkerMP.prototype.handleSkillC = function() {
 
 		this.isAttacking = true;
 		this.skillCTimer = this.game.time.now + this.skillCCooldown; 
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 };
 
 BasicGame.HeroWalkerMP.prototype.handleSkillD = function() {
-	if (this.cursor.skillD && this.game.time.now > this.skillDTimer) {
+	if (this.cursor.skillD && this.game.time.now > this.skillDTimer && this.skillsEnabled) {
 		// Backdash
 		this.muzzleFX.angle = 0;
 		this.muzzleFX2.angle = 0;
@@ -297,6 +318,7 @@ BasicGame.HeroWalkerMP.prototype.handleSkillD = function() {
 
     		// Activate collider
 			this.attackCollider.activate();   
+    		this.skillDSFX.play();
 		}, this);
 
     	// Play the animation
@@ -304,11 +326,13 @@ BasicGame.HeroWalkerMP.prototype.handleSkillD = function() {
 
 		this.isAttacking = true;
 		this.skillDTimer = this.game.time.now + this.skillDCooldown; 
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 };
 
 BasicGame.HeroWalkerMP.prototype.handleSkillE = function() {
-	if (this.cursor.skillE && this.game.time.now > this.skillETimer) {
+	if (this.cursor.skillE && this.game.time.now > this.skillETimer && this.skillsEnabled) {
 		// Play the animation
     	this.animations.play('anim_ultimate');
     	this.animations.currentAnim.frame = 0;
@@ -360,6 +384,7 @@ BasicGame.HeroWalkerMP.prototype.handleSkillE = function() {
 
     			left = !left;
     		}
+    		this.skillESFX.play();
     	}, this);
 
     	tween.onComplete.add(function() {
@@ -368,5 +393,7 @@ BasicGame.HeroWalkerMP.prototype.handleSkillE = function() {
 
 		this.isAttacking = true;
 		this.skillETimer = this.game.time.now + this.skillECooldown; 
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 };

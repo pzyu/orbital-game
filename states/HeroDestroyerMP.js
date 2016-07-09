@@ -23,7 +23,7 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y) {
     this.attackCollider = new BasicGame.Collider(this.game, this, 80, 100, 80, 0, 2000, 1);
     this.game.add.existing(this.attackCollider);
     BasicGame.colliderCG.add(this.attackCollider);
-	this.knockbackForce = 1000;
+	this.knockbackForce = 1500;
 
     // Each hero will have an effect object which basically plays whatever effect they have
 	this.effect = new BasicGame.Effect(this.game, 'bolt', 0, 0.4, true);
@@ -147,6 +147,7 @@ BasicGame.HeroDestroyerMP.prototype.attCallback = function(obj1, obj2) {
 	if (obj2.ID != this.ID) {
 		// Kill collider
 		this.isAttacking = false;
+		this.attackCollider.x = this.attackCollider.y = -200;
 		this.attackCollider.deactivate();
 		// Call get hit of other person
 		obj2.getHit(this.knockbackForce * this.facingRight, this.knockbackForce);
@@ -174,7 +175,7 @@ BasicGame.HeroDestroyerMP.prototype.collideCallback = function(obj1, obj2) {
 };
 
 BasicGame.HeroDestroyerMP.prototype.handleSkillA = function() {
-	if (this.cursor.skillA && this.game.time.now > this.skillATimer) {
+	if (this.cursor.skillA && this.game.time.now > this.skillATimer && this.skillsEnabled) {
     	// Play the animation
     	this.animations.play('anim_shoot');
     	this.animations.currentAnim.frame = 0;
@@ -192,12 +193,14 @@ BasicGame.HeroDestroyerMP.prototype.handleSkillA = function() {
 
 		this.isAttacking = true;
 		this.skillATimer = this.game.time.now + this.skillACooldown; 
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 
 	}
 };
 
 BasicGame.HeroDestroyerMP.prototype.handleSkillB = function() {
-	if (this.cursor.skillB && this.game.time.now > this.skillBTimer) {
+	if (this.cursor.skillB && this.game.time.now > this.skillBTimer && this.skillsEnabled) {
 
     	var skillTween = this.game.add.tween(this.body.velocity);
 		skillTween.to({x: 1500 * this.facingRight}, 250, Phaser.Easing.Cubic.Out);
@@ -212,11 +215,13 @@ BasicGame.HeroDestroyerMP.prototype.handleSkillB = function() {
 
 		this.isAttacking = true;
 		this.skillBTimer = this.game.time.now + this.skillBCooldown; 
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 };
 
 BasicGame.HeroDestroyerMP.prototype.handleSkillC = function() {
-	if (this.cursor.skillC && this.game.time.now > this.skillCTimer) {
+	if (this.cursor.skillC && this.game.time.now > this.skillCTimer && this.skillsEnabled) {
     	// Play the animation
     	this.animations.play('anim_shoot');
     	this.animations.currentAnim.frame = 0;
@@ -236,12 +241,14 @@ BasicGame.HeroDestroyerMP.prototype.handleSkillC = function() {
 
 		this.isAttacking = true;
 		this.skillCTimer = this.game.time.now + this.skillCCooldown; 
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 };
 
 BasicGame.HeroDestroyerMP.prototype.handleSkillD = function() {
 	// Grenade
-	if (this.cursor.skillD && this.game.time.now > this.skillDTimer) {
+	if (this.cursor.skillD && this.game.time.now > this.skillDTimer && this.skillsEnabled) {
 		if (this.facingRight == 1) {
 			this.grenade.fireAngle = -30;
 			this.grenade.trackOffset.x = 80;	
@@ -261,12 +268,14 @@ BasicGame.HeroDestroyerMP.prototype.handleSkillD = function() {
 
 		this.skillDTimer = this.game.time.now + this.skillDCooldown;
 		this.isAttacking = true;
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 };
 
 
 BasicGame.HeroDestroyerMP.prototype.handleSkillE = function() {
-	if (this.cursor.skillE && this.game.time.now > this.skillETimer) {
+	if (this.cursor.skillE && this.game.time.now > this.skillETimer && this.skillsEnabled) {
 		this.body.velocity.x = 0;
     	// Play the animation
     	this.animations.play('anim_ultimate');
@@ -292,9 +301,9 @@ BasicGame.HeroDestroyerMP.prototype.handleSkillE = function() {
 			this.attackCollider.offX = 80;
     	}, this);
 
-
-
 		this.isAttacking = true;
 		this.skillETimer = this.game.time.now + this.skillECooldown; 
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 };

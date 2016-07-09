@@ -104,9 +104,9 @@ BasicGame.HeroGunnerMP = function (id, game, x, y) {
     this.pack = this.game.add.weapon(4, 'grenade');
     this.pack.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;				
     this.pack.bulletLifespan = 10000;
-    this.pack.bulletSpeed = 1000;											
+    this.pack.bulletSpeed = 1500;											
     this.pack.bulletGravity = new Phaser.Point(0, -2000);					
-    this.pack.trackSprite(this, 0, -50);										
+    this.pack.trackSprite(this, 0, -60);										
     this.pack.bullets.setAll('scale.x', 1);								
     this.pack.bullets.setAll('scale.y', 1);
     this.pack.bullets.setAll('body.maxVelocity.x', 1000);
@@ -250,7 +250,7 @@ BasicGame.HeroGunnerMP.prototype.collideCallback = function(obj1, obj2) {
 };
 
 BasicGame.HeroGunnerMP.prototype.handleSkillA = function() {
-	if (this.cursor.skillA && this.game.time.now > this.skillATimer) {
+	if (this.cursor.skillA && this.game.time.now > this.skillATimer && this.skillsEnabled) {
 		// Default ranged attack
 		if (this.facingRight == 1) {
 			this.weapon.fireAngle = 0;
@@ -274,11 +274,13 @@ BasicGame.HeroGunnerMP.prototype.handleSkillA = function() {
     	this.animations.currentAnim.frame = 0;
 		this.isAttacking = true;
 		this.skillATimer = this.game.time.now + this.skillACooldown; 
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 };
 
 BasicGame.HeroGunnerMP.prototype.handleSkillB = function() {
-	if (this.cursor.skillB && this.game.time.now > this.skillBTimer) {
+	if (this.cursor.skillB && this.game.time.now > this.skillBTimer && this.skillsEnabled) {
 		// Deploy mite
 		this.skillBSFX.play();
 
@@ -295,11 +297,13 @@ BasicGame.HeroGunnerMP.prototype.handleSkillB = function() {
 
 		this.isAttacking = true;
 		this.skillBTimer = this.game.time.now + this.skillBCooldown; 
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 };
 
 BasicGame.HeroGunnerMP.prototype.handleSkillC = function() {
-	if (this.cursor.skillC && this.game.time.now > this.skillCTimer) {
+	if (this.cursor.skillC && this.game.time.now > this.skillCTimer && this.skillsEnabled) {
 		// Trap
 		this.skillCSFX.play();
 
@@ -321,11 +325,13 @@ BasicGame.HeroGunnerMP.prototype.handleSkillC = function() {
     	this.animations.currentAnim.frame = 0;
 		this.isAttacking = true;
 		this.skillCTimer = this.game.time.now + this.skillCCooldown; 
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 };
 
 BasicGame.HeroGunnerMP.prototype.handleSkillD = function() {
-	if (this.cursor.skillD && this.game.time.now > this.skillDTimer) {
+	if (this.cursor.skillD && this.game.time.now > this.skillDTimer && this.skillsEnabled) {
 		// Health pack
 		this.skillDSFX.play();
 
@@ -350,11 +356,13 @@ BasicGame.HeroGunnerMP.prototype.handleSkillD = function() {
     	this.animations.currentAnim.frame = 0;
 		this.isAttacking = true;
 		this.skillDTimer = this.game.time.now + this.skillDCooldown; 
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 };
 
 BasicGame.HeroGunnerMP.prototype.handleSkillE = function(){ 
-	if (this.cursor.skillE && this.game.time.now > this.skillETimer) {
+	if (this.cursor.skillE && this.game.time.now > this.skillETimer && this.skillsEnabled) {
 		// Revive
     	this.ultEffect.playLooped('anim_1');
     	this.ultEffect2.playLooped('anim_1');
@@ -414,5 +422,7 @@ BasicGame.HeroGunnerMP.prototype.handleSkillE = function(){
     	this.animations.play('anim_ultimate');
 		this.isAttacking = true;
 		this.skillETimer = this.game.time.now + this.skillECooldown; 
+		this.skillsEnabled = false;
+		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 };
