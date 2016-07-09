@@ -1,7 +1,6 @@
 BasicGame.Multiplayer = function (game) {
 	this.playerList;					// Player list
 	this.playerListHUD;
-	this.myID = '';						// Client ID
 	this.selectedChar = '';				// Selected character
 
 	this.gravity = 5000;				// Gravity
@@ -25,34 +24,14 @@ BasicGame.Multiplayer.prototype.init = function() {
 };
 
 BasicGame.Multiplayer.prototype.preload = function() {
-	this.ready = false;
-	this.eurecaServer;
-	this.eurecaClient;
 	var ref = this;
+	ref.createGame();
+	BasicGame.eurecaServer.handshake(BasicGame.roomID);
 
-	this.eurecaClientSetup = function() {
-		// Setup client
-		this.eurecaClient = new Eureca.Client();
 
-		this.eurecaClient.ready(function(proxy) {
-			ref.eurecaServer = proxy;
-			ref.ready = true;
-		});
-	}
 
-	this.eurecaClientSetup();
 
-	this.eurecaClient.exports.setID = function(id) {
-		//create() is moved here to make sure nothing is created before uniq id assignation
-		ref.myID = id;
-		// Create game here
-		ref.createGame();
-		// Handshake with server to replicate other players
-		ref.eurecaServer.handshake(BasicGame.roomID);
-		ref.ready = true;
-	}
-
-	this.eurecaClient.exports.kill = function(id) {	
+	BasicGame.eurecaClient.exports.kill = function(id) {	
 		if (ref.playerList[id]) {
 			ref.playerList[id].kill();
 			ref.broadcast(id + " has left the game!", 2);
@@ -61,9 +40,9 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		}
 	}	
 
-	this.eurecaClient.exports.spawnEnemy = function(i, x, y, char) {
+	BasicGame.eurecaClient.exports.spawnEnemy = function(i, x, y, char) {
 		// If it's me
-		if (i == ref.myID) return;
+		if (i == BasicGame.myID) return;
 
 		// Spawn enemy at location
 		var curX = x;
@@ -94,7 +73,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		BasicGame.playerCG.sort('z', Phaser.Group.SORT_DESCENDING);
 	}
 
-	this.eurecaClient.exports.updateState = function(id, state) {
+	BasicGame.eurecaClient.exports.updateState = function(id, state) {
 		// Update state sends local remote input to every client 
 		var curPlayer = ref.playerList[id];
 		if (curPlayer) {
@@ -104,10 +83,10 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		}
 	};
 
-	this.eurecaClient.exports.compensate = function(id, state) {
+	BasicGame.eurecaClient.exports.compensate = function(id, state) {
 		// Compensate corrects server side position, does not touch local client
 		var curPlayer = ref.playerList[id];
-		if (curPlayer && ref.myID != id) {
+		if (curPlayer && BasicGame.myID != id) {
 			//console.log('compensating');
 			curPlayer.x = state.x;
 			curPlayer.y = state.y;
@@ -116,12 +95,12 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		}
 	};	
 
-	this.eurecaClient.exports.getChar = function() {
+	BasicGame.eurecaClient.exports.getChar = function() {
 		// Return player's selected character
 		return BasicGame.selectedChar;
 	};
 
-	this.eurecaClient.exports.getNick = function() {
+	BasicGame.eurecaClient.exports.getNick = function() {
 		// Return player's selected character
 		return "default nick";
 	};
@@ -188,8 +167,10 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	txt.inputEnabled = true;
 	txt.events.onInputUp.add(function() {
 		ref.game.state.start("MainMenu", true);
-		ref.eurecaClient.disconnect();
-		//console.log(this.eurecaClient);
+		//BasicGame.eurecaServer.destroyRoomLink(BasicGame.roomID, BasicGame.myID); // destroy connection
+		BasicGame.eurecaClient.disconnect(); // request server to disconnect client
+		BasicGame.disconnectClient(); // adjust client to reset connection variable
+		//console.log(BasicGame.eurecaClient);
 	});
 
 	// Assign global groups
@@ -203,19 +184,19 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	// Create client's hero
 	if (BasicGame.selectedChar == "player_trooper") {
 		//console.log(this.game.rnd.integerInRange(0, 3));
-		var player = new BasicGame.HeroTrooperMP(this.myID, this.game, 100, 1000);
+		var player = new BasicGame.HeroTrooperMP(BasicGame.myID, this.game, 100, 1000);
 	}
 	if (BasicGame.selectedChar == "player_walker") {
-		var player = new BasicGame.HeroWalkerMP(this.myID, this.game, 100, 1000);
+		var player = new BasicGame.HeroWalkerMP(BasicGame.myID, this.game, 100, 1000);
 	}
 	if (BasicGame.selectedChar == "player_destroyer") {
-		var player = new BasicGame.HeroDestroyerMP(this.myID, this.game, 100, 1000);
+		var player = new BasicGame.HeroDestroyerMP(BasicGame.myID, this.game, 100, 1000);
 	}
 	if (BasicGame.selectedChar == "player_gunner") {
-		var player = new BasicGame.HeroGunnerMP(this.myID, this.game, 100, 1000);
+		var player = new BasicGame.HeroGunnerMP(BasicGame.myID, this.game, 100, 1000);
 	}
 
-	this.playerList[this.myID] = player;
+	this.playerList[BasicGame.myID] = player;
 	this.camera.follow(player);
 
 	this.player = player;
@@ -293,7 +274,6 @@ BasicGame.Multiplayer.prototype.broadcast = function(msg, duration) {
 };
 
 BasicGame.Multiplayer.prototype.update = function() {
-	if (!this.ready) return;
 	// Enable collision between player and layer
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
 	this.physics.arcade.collide(BasicGame.playerCG, BasicGame.playerCG);
@@ -352,8 +332,8 @@ BasicGame.Multiplayer.prototype.chat = function() {
 		var ref = this;
 		var tween = this.game.add.tween(this).to({0: 0}, 2000, Phaser.Easing.Linear.None, true, 0);
 		tween.onStart.add(function() {
-			ref.playerText.x = ref.playerList[ref.myID].x + 20;
-			ref.playerText.y = ref.playerList[ref.myID].y - 50;
+			ref.playerText.x = ref.playerList[BasicGame.myID].x + 20;
+			ref.playerText.y = ref.playerList[BasicGame.myID].y - 50;
 			ref.playerText.setText(ref.chatBox.value);
 			ref.chatBox.resetText();
 
@@ -385,7 +365,7 @@ BasicGame.Multiplayer.prototype.shieldCallBack = function(obj1, obj2) {
 };
 
 BasicGame.Multiplayer.prototype.getID = function() {
-	return this.myID;
+	return BasicGame.myID;
 };
 
 BasicGame.Multiplayer.prototype.getChar = function() {

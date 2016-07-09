@@ -173,9 +173,6 @@ BasicGame.LobbyRoom.prototype = {
 					// Player has not select a team, ask player to choose team
 					ref.PlayerText["readyButton"] = ref.add.text(ref.world.width/10 * 7, ref.world.height/7 * 6,  'Chose a team', ref.headerTextDefault);
 				}
-
-console.log(ref.PlayerText);
-
 			} else {
 				// unknown game mode
 				// ADD NEW GAME MODE HERE!

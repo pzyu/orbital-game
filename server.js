@@ -63,14 +63,6 @@ eurecaServer.onConnect(function(conn) {
 		clients[conn.id].nick = result;
 	});
 
-	/* Separated for now. Affects multiplayer
-	// Set client's selected character
-	remote.getChar().onReady(function(result) {
-		clients[conn.id].char = result;
-		console.log(clients[conn.id].char);
-	});*/
-	
-
 	// setID method in client side
 	remote.setID(conn.id);			
 
@@ -122,6 +114,18 @@ eurecaServer.exports.setClientStatus = function(roomName, id) {
 	eurecaServer.exports.updateLobbyRoom(roomName);
 }
 
+// function to set client ready status on the server and to update the other clients in the room
+eurecaServer.exports.setClientCharacter = function(id, character) {
+
+	/* Separated for now. Affects multiplayer
+	// Set client's selected character
+	remote.getChar().onReady(function(result) {
+		clients[conn.id].char = result;
+		console.log(clients[conn.id].char);
+	});*/
+
+	clients[id].char = character;
+}
 
 // function to set client team value on the server and to update the other clients in the room
 eurecaServer.exports.setClientTeam = function(roomName, id, team) {
@@ -150,7 +154,7 @@ eurecaServer.exports.chooseHost = function(roomName) {
 }
 
 eurecaServer.exports.startGameTDM = function(roomName) {
-	lobbylist[roomName].status = 'Ongoing Game'; // Update Lobby Status
+	lobbylist[roomName].status = ' On-going'; // Update Lobby Status
 	eurecaServer.exports.requestClientInfo(); // update all lobby clients
 	// for every client in the lobby, start the game
 	for (var id in lobbylist[roomName].clientInfo) { 
@@ -210,20 +214,12 @@ eurecaServer.exports.passwordCheck = function(name, pass) {
 	}
 }
 
-<<<<<<< HEAD
 eurecaServer.exports.handshake = function(room) {
 	console.log('handshaking');
 	for (var c in lobbylist[room].clientInfo) {
 		var remote = lobbylist[room].clientInfo[c].remote;
 		var test = lobbylist[room].clientInfo[c];
 		for (var cc in lobbylist[room].clientInfo) {
-=======
-eurecaServer.exports.handshake = function() {
-	console.log('handshaking test');
-	for (var c in clients) {
-		var remote = clients[c].remote;
-		for (var cc in clients) {
->>>>>>> 9ccbf132c819dfcb9c500b6112bc129b4a2abf4b
 			// Get starting position for every client
 			var x = 0;
 			var y = 0;
