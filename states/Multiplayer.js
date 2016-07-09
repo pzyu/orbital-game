@@ -274,7 +274,7 @@ BasicGame.Multiplayer.prototype.broadcast = function(msg, duration) {
 };
 
 BasicGame.Multiplayer.prototype.update = function() {
-
+	console.log("TEST update");
 	// Enable collision between player and layer
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
 	this.physics.arcade.collide(BasicGame.playerCG, BasicGame.playerCG);

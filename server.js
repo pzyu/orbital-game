@@ -34,11 +34,14 @@ var connectedCount = 0;
 var lobbylist = {};
 
 // Initialize public lobby
-lobbylist['publicLobby1'] = {gameType:'Team Deathmatch', maxPlayers:4, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
-lobbylist['publicLobby2'] = {gameType:'Team Deathmatch', maxPlayers:6, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
-lobbylist['publicLobby3'] = {gameType:'Team Deathmatch', maxPlayers:8, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
-lobbylist['publicLobby4'] = {gameType:'Team Deathmatch', maxPlayers:12, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
-
+eurecaServer.exports.initializeLobby = function() {
+	// Initialize public lobby
+	lobbylist['publicLobby1'] = {gameType:'Team Deathmatch', maxPlayers:4, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
+	lobbylist['publicLobby2'] = {gameType:'Team Deathmatch', maxPlayers:6, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
+	lobbylist['publicLobby3'] = {gameType:'Team Deathmatch', maxPlayers:8, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
+	lobbylist['publicLobby4'] = {gameType:'Team Deathmatch', maxPlayers:12, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
+}
+eurecaServer.exports.initializeLobby();
 
 //var selectedChar = "test";
 
