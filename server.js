@@ -21,7 +21,7 @@ var eurecaServer = new Eureca.Server({allow:['setID',
 	'gameStart',
 	'updateLobby',
 	'loadPlayersLR',
-	'spawnEnemy', 
+	'spawnOtherPlayers', 
 	'kill', 
 	'updateState', 
 	'getChar', 
@@ -56,23 +56,16 @@ eurecaServer.onConnect(function(conn) {
 		id:conn.id, 
 		remote:remote, 
 		lobbyID:'',
+		nick:'',
 		team: null,
 		ready:false
 	};
-	//clients[conn.id] = {id:conn.id, remote:remote, char:selectedChar};
-	
+
 	// Set client's nickname
 	remote.getNick().onReady(function(result) {
 		clients[conn.id].nick = result;
 	});
 
-	/*Separated for now. Affects multiplayer
-	// Set client's selected character
-	remote.getChar().onReady(function(result) {
-		clients[conn.id].char = result;
-		console.log(clients[conn.id].char);
-	});*/
-	
 	// setID method in client side
 	remote.setID(conn.id);			
 
@@ -190,10 +183,29 @@ eurecaServer.exports.destroyRoomLink = function(roomName, id) {
 	clients[id].lobbyID = ''; // update client lobby room status
 	clients[id].team = null;
 	clients[id].ready = false;
-	delete lobbylist[roomName].clientInfo[id];
-	lobbylist[roomName].playerCount--;
+	if (lobbylist[roomName].clientInfo[id] != null) {
+		delete lobbylist[roomName].clientInfo[id];
+		lobbylist[roomName].playerCount--;
+	}
+	eurecaServer.exports.resetLobbyRoom(roomName);
 	eurecaServer.exports.chooseHost(roomName);
 	eurecaServer.exports.requestClientInfo(); // update all lobby clients
+}
+
+// function to reset lobby rooms
+eurecaServer.exports.resetLobbyRoom = function(roomName) {
+	if (lobbylist[roomName].playerCount <= 0) {
+		// lobby room has no one inside anymore.
+		if (roomName == 'publicLobby1' || roomName == 'publicLobby2' || roomName == 'publicLobby3' || roomName == 'publicLobby4') {
+			// emptied room is a public lobby
+			lobbylist[roomName].status = 'Open Host';
+			lobbylist[roomName].clientInfo = {};
+			lobbylist[roomName].playerCount = 0;
+			lobbylist[roomName].host = '';
+		} else {
+			delete lobbylist[roomName];
+		}
+	}
 }
 
 // function to update public lobby status
@@ -237,7 +249,14 @@ eurecaServer.exports.handshake = function(room) {
 				y = lobbylist[room].clientInfo[cc].lastState.y;
 			}
 			// Replicate enemy at position, along with selected character
-			remote.spawnEnemy(lobbylist[room].clientInfo[cc].id, x, y, lobbylist[room].clientInfo[cc].char);
+			remote.spawnOtherPlayers(
+				lobbylist[room].clientInfo[cc].id, 
+				x, 
+				y, 
+				lobbylist[room].clientInfo[cc].char,
+				lobbylist[room].clientInfo[cc].nick,
+				lobbylist[room].clientInfo[cc].team
+			);
 		}
 	}
 }

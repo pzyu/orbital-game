@@ -35,6 +35,7 @@ BasicGame.LobbyMulti.prototype = {
 
 		// add player nick
 		this.playerNick = nickname;
+		BasicGame.myNick = nickname;
 	},
 
 	preload: function() {

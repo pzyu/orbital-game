@@ -27,21 +27,18 @@ BasicGame.Multiplayer.prototype.preload = function() {
 	// variables setting
 	var ref = this;
 
-	//BasicGame.eurecaServer.handshake(BasicGame.roomID);
-
-
 	BasicGame.eurecaClient.exports.kill = function(id) {	
-		if (ref.playerList[id]) {
-			ref.playerList[id].kill();
-			ref.broadcast(id + " has left the game!", 2);
-			console.log('killing ', id, ref.playerList[id], Object.keys(ref.playerList).length);
+		if (ref.playerList[id][0]) {
+			ref.playerList[id][0].kill();
+			ref.broadcast(ref.playerList[id][0] + " has left the game!", 2);
+			console.log('killing ', id, ref.playerList[id][0], Object.keys(ref.playerList).length);
 			delete ref.playerList[id];
 		}
 	}	
 
-	BasicGame.eurecaClient.exports.spawnEnemy = function(i, x, y, char) {
+	BasicGame.eurecaClient.exports.spawnOtherPlayers = function(i, x, y, char, nick, team) {
 		// If it's me or if someone hasn't chose a character yet
-		console.log(i, BasicGame.myID);
+		//console.log(i, BasicGame.myID);
 		if (i == BasicGame.myID || char == null) return;
 		// Spawn enemy at location
 		var curX = x;
@@ -51,8 +48,8 @@ BasicGame.Multiplayer.prototype.preload = function() {
 			curY = ref.spawnY;
 		}
 
-		ref.broadcast(i + " has joined the game!", 2);
-		console.log('Spawning', i, curX, curY, char);
+		ref.broadcast(nick + " has joined the game!", 2);
+		console.log('Spawning', i, curX, curY, char, nick, team);
 
 		// If doesn't already exist
 		if (ref.playerList[i] == null) {
@@ -68,7 +65,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 			if (char == "player_gunner") {
 				var player = new BasicGame.HeroGunnerMP(i, ref.game, curX, curY);
 			}
-			ref.playerList[i] = player;
+			ref.playerList[i] = [player, nick, team];
 		}
 		// Every time you add a player, sort the group so local client is always on top
 		BasicGame.playerCG.sort('z', Phaser.Group.SORT_DESCENDING);
@@ -76,7 +73,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 
 	BasicGame.eurecaClient.exports.updateState = function(id, state) {
 		// Update state sends local remote input to every client 
-		var curPlayer = ref.playerList[id];
+		var curPlayer = ref.playerList[id][0];
 		if (curPlayer) {
 			// Update player's cursor with state
 			curPlayer.cursor = state;
@@ -86,7 +83,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 
 	BasicGame.eurecaClient.exports.compensate = function(id, state) {
 		// Compensate corrects server side position, does not touch local client
-		var curPlayer = ref.playerList[id];
+		var curPlayer = ref.playerList[id][0];
 		if (curPlayer && BasicGame.myID != id) {
 			//console.log('compensating');
 			curPlayer.x = state.x;
@@ -99,11 +96,6 @@ BasicGame.Multiplayer.prototype.preload = function() {
 	BasicGame.eurecaClient.exports.getChar = function() {
 		// Return player's selected character
 		return BasicGame.selectedChar;
-	};
-
-	BasicGame.eurecaClient.exports.getNick = function() {
-		// Return player's selected character
-		return "default nick";
 	};
 
 	this.preloadGame();
@@ -159,7 +151,7 @@ BasicGame.Multiplayer.prototype.preloadGame = function() {
 	this.playerText = this.game.add.text(-100, -100, "Default", test);
 	this.textTimer = 0;
 
-	this.createGame();
+	this.createGame(); // preload complete, start to create game
 }
 
 BasicGame.Multiplayer.prototype.createGame = function() {
@@ -169,9 +161,8 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	txt.inputEnabled = true;
 	txt.events.onInputUp.add(function() {
 		ref.game.state.start("MainMenu", true);
-		//BasicGame.eurecaServer.destroyRoomLink(BasicGame.roomID, BasicGame.myID); // destroy connection
 		BasicGame.eurecaClient.disconnect(); // request server to disconnect client
-		//BasicGame.disconnectClient(); // adjust client to reset connection variable
+		BasicGame.disconnectClient(); // adjust client to reset connection variable
 		//console.log(BasicGame.eurecaClient);
 	});
 
@@ -199,7 +190,7 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	}
 	console.log("Creating game");
 
-	this.playerList[BasicGame.myID] = player;
+	this.playerList[BasicGame.myID] = [player, BasicGame.myNick, BasicGame.myTeam];
 	this.camera.follow(player);
 
 	this.player = player;
@@ -239,25 +230,7 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.message.fixedToCamera = true;
 	this.message.anchor.setTo(0.5, 0.5);
 
-
-	var style2 = { font: '20pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 800, align: 'center'};
-	var player1 = this.game.add.text(50, 20, '', style2);
-	var player2 = this.game.add.text(50, 60, '', style2);
-	var player3 = this.game.add.text(50, 100, '', style2);
-	var player4 = this.game.add.text(50, 140, '', style2);
-
-	player1.fixedToCamera = true;
-	player2.fixedToCamera = true;
-	player3.fixedToCamera = true;
-	player4.fixedToCamera = true;
-
-	this.playerListHUD = [
-		player1,
-		player2,
-		player3,
-		player4
-	];
-
+	// create all other clients
 	BasicGame.eurecaServer.handshake(BasicGame.roomID);
 };
 
@@ -316,19 +289,24 @@ BasicGame.Multiplayer.prototype.handleHUD = function() {
 }
 
 BasicGame.Multiplayer.prototype.showPlayerList = function() {
-	//console.log(this.playerList);
 	var count = 0;
+	var ref = this;
+	var style2 = { font: '10pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 800, align: 'center'};
+
+	BasicGame.Multiplayer.prototype.resetPlayerListHUD(); // reset playerlist
 	for (var player in this.playerList) {
-		this.playerListHUD[count].setText(player + " - " + this.playerList[player].curHealth);
-
+		this.playerListHUD[count] = ref.game.add.text(25, 20 + (count * 15), this.playerList[player][1] + " - " + this.playerList[player][0].curHealth, style2);
+		this.playerListHUD[count].fixedToCamera = true;
 		count++;
-		//console.log(count);
 	}
+}
 
-	for (var cur = count; cur < this.playerListHUD.length; cur++) {
-		//console.log(cur);
-		this.playerListHUD[cur].setText('');
+// function for clearing playerListHUD text
+BasicGame.Multiplayer.prototype.resetPlayerListHUD = function() {
+	for (var item in this.playerListHUD) {
+		this.playerListHUD[item].destroy();
 	}
+	this.playerListHUD = {};
 }
 
 BasicGame.Multiplayer.prototype.chat = function() {
@@ -338,8 +316,8 @@ BasicGame.Multiplayer.prototype.chat = function() {
 		var ref = this;
 		var tween = this.game.add.tween(this).to({0: 0}, 2000, Phaser.Easing.Linear.None, true, 0);
 		tween.onStart.add(function() {
-			ref.playerText.x = ref.playerList[BasicGame.myID].x + 20;
-			ref.playerText.y = ref.playerList[BasicGame.myID].y - 50;
+			ref.playerText.x = ref.playerList[BasicGame.myID][0].x + 20;
+			ref.playerText.y = ref.playerList[BasicGame.myID][0].y - 50;
 			ref.playerText.setText(ref.chatBox.value);
 			ref.chatBox.resetText();
 

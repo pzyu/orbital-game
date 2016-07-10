@@ -107,6 +107,7 @@ BasicGame.LobbyRoom.prototype = {
 				ref.PlayerText['headerTeamA'].events.onInputOver.add(BasicGame.onOver);
 				ref.PlayerText['headerTeamA'].events.onInputOut.add(BasicGame.onOut);
 				ref.PlayerText['headerTeamA'].events.onInputUp.add(function() {
+					BasicGame.myTeam = 1;
 					BasicGame.eurecaServer.setClientTeam(ref.roomID, BasicGame.myID, 1);
 				});
 
@@ -115,6 +116,7 @@ BasicGame.LobbyRoom.prototype = {
 				ref.PlayerText['headerTeamB'].events.onInputOver.add(BasicGame.onOver);
 				ref.PlayerText['headerTeamB'].events.onInputOut.add(BasicGame.onOut);
 				ref.PlayerText['headerTeamB'].events.onInputUp.add(function() {
+					BasicGame.myTeam = 2;
 					BasicGame.eurecaServer.setClientTeam(ref.roomID, BasicGame.myID, 2);
 				});
 
@@ -123,6 +125,7 @@ BasicGame.LobbyRoom.prototype = {
 				ref.PlayerText['headerPL'].events.onInputOver.add(BasicGame.onOver);
 				ref.PlayerText['headerPL'].events.onInputOut.add(BasicGame.onOut);
 				ref.PlayerText['headerPL'].events.onInputUp.add(function() {
+					BasicGame.myTeam = null;
 					BasicGame.eurecaServer.setClientTeam(ref.roomID, BasicGame.myID, null);
 				});
 

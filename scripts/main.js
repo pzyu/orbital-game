@@ -12,6 +12,8 @@ var BasicGame = {
   eurecaClient: null,
   myID: null,
   roomID: null,
+  myNick: null,
+  myTeam: null,
 
   // On over style
   onOver: function (target) {
