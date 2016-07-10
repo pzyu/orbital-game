@@ -241,7 +241,7 @@ BasicGame.HeroGunnerMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit();	
+		obj2.getHit(10, 0, 0);	
 	}
 };
 

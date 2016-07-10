@@ -241,7 +241,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
     }
 };
 
-BasicGame.HeroBase.prototype.getHit = function(knockbackX, knockbackY) {
+BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY) {
 	this.effect.play(this.hitAnim, this, 0, 0);
 
 	// Can only get hit if not dead
@@ -258,7 +258,7 @@ BasicGame.HeroBase.prototype.getHit = function(knockbackX, knockbackY) {
 
 		this.body.velocity.x += knockbackX;
 		this.body.velocity.y -= knockbackY;
-		this.curHealth -= 10;
+		this.curHealth -= damage;
 
 		// If dead, respawn
 		if (this.curHealth <= 0) {

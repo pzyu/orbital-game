@@ -150,7 +150,7 @@ BasicGame.HeroDestroyerMP.prototype.attCallback = function(obj1, obj2) {
 		this.attackCollider.x = this.attackCollider.y = -200;
 		this.attackCollider.deactivate();
 		// Call get hit of other person
-		obj2.getHit(this.knockbackForce * this.facingRight, this.knockbackForce);
+		obj2.getHit(15, this.knockbackForce * this.facingRight, this.knockbackForce);
 	}
 };
 
@@ -161,7 +161,7 @@ BasicGame.HeroDestroyerMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit();	
+		obj2.getHit(8, 0, 0);	
 	}
 };
 
