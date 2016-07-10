@@ -1,6 +1,7 @@
 BasicGame.LobbyMulti = function (game) {
 	this,playerNick = '';
 	this.lobbyList;
+	this.devCheck = false; // developer feature. Delete when not needed
 
 	// labels initialization
 	this.L1GameTxt;
@@ -27,7 +28,7 @@ BasicGame.LobbyMulti = function (game) {
 };
 
 BasicGame.LobbyMulti.prototype = {
-	init: function(nickname) {
+	init: function(nickname, dev) {
 		// Add background in
 		this.background = this.add.sprite(0, 0, 'menu_background');
 		this.background.height = this.game.height;
@@ -36,6 +37,8 @@ BasicGame.LobbyMulti.prototype = {
 		// add player nick
 		this.playerNick = nickname;
 		BasicGame.myNick = nickname;
+
+		this.devCheck = dev; // developer feature. Delete when not needed
 	},
 
 	preload: function() {
@@ -52,6 +55,7 @@ BasicGame.LobbyMulti.prototype = {
 		}
 		if (BasicGame.eurecaClient == null && BasicGame.eurecaServer == null) {
 			this.eurecaClientSetup(); // establish connection to eureca server
+
 		} else {
 			// connection is already establish. Load info
 			ref.LoadLobby(); // load lobby information
@@ -63,6 +67,9 @@ BasicGame.LobbyMulti.prototype = {
 			Future additions : Fail message to entering lobby!
 			 */
 		}
+
+		/* END OF DEV FEATURE */
+
 		this.preloadLobby(); // preload lobby
 
 		/* server.js communication functions */
@@ -222,6 +229,18 @@ BasicGame.LobbyMulti.prototype = {
 	},
 
 	LoadLobby: function () {
+		/* DEVELOPER FEATURE */
+		var ref = this;
+		BasicGame.eurecaClient.exports.gameStart = function() {
+			ref.game.state.start('CharSelect', true, false, true);
+		}
+		if (this.devCheck) {
+			console.log("devtest");
+			BasicGame.roomID = 'publicLobby1';
+			BasicGame.eurecaServer.devShortCutLobby('publicLobby1', BasicGame.myID);
+		}
+
+
 		BasicGame.eurecaServer.requestClientInfo();
 	}
 }

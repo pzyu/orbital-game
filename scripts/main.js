@@ -31,6 +31,9 @@ var BasicGame = {
     BasicGame.eurecaServer = null;
     BasicGame.eurecaClient = null;
     BasicGame.myID = null;
+    BasicGame.roomID = null;
+    BasicGame.myNick = null;
+    BasicGame.myTeam = null;
   }
 
 };     

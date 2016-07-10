@@ -292,5 +292,13 @@ eurecaServer.exports.compensate = function(keys, room) {
 	}
 }
 
+eurecaServer.exports.devShortCutLobby = function(roomName, id) {
+	clients[id].lobbyID = roomName; // update client lobby room status
+	lobbylist[roomName].clientInfo[id] = clients[id]; // pass in the client object into clientInfo
+	lobbylist[roomName].playerCount++;
+	lobbylist[roomName].status = 'Dev Testing'; // Update Lobby Status
+	clients[id].remote.gameStart();
+}
+
 // Either listen to host port or 8000 if testing locally
 server.listen(process.env.PORT || 8000);

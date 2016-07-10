@@ -45,7 +45,7 @@ BasicGame.MainMenu.prototype = {
 				ref.add.text(ref.world.width/4 - 35, ref.world.height/2 + 50, "Enter a name to go multiplayer!", 
 					{font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "red"});
 			} else {
-				this.game.state.start('LobbyMulti', true, false, nicknameInput.value);
+				this.game.state.start('LobbyMulti', true, false, nicknameInput.value, false);
 			}
 		});
 		this.addMenuOption('Options', function (target) {
@@ -53,6 +53,9 @@ BasicGame.MainMenu.prototype = {
 		});
 		this.addMenuOption('Credits', function (target) {
 			this.game.state.start('Credits', true);
+		});
+		this.addMenuOption('Dev Test', function (target) {
+			this.game.state.start('LobbyMulti', true, false, 'moon tester', true);
 		});
 		/*
 		this.addMenuOption('Lobby Test', function (target) {
