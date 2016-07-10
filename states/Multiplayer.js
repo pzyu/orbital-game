@@ -36,6 +36,12 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		}
 	}	
 
+	BasicGame.eurecaClient.exports.kickToMenu = function() {
+		ref.game.state.start("MainMenu", true);
+		BasicGame.eurecaClient.disconnect(); // request server to disconnect client
+		BasicGame.disconnectClient(); // adjust client to reset connection variable
+	}
+
 	BasicGame.eurecaClient.exports.spawnOtherPlayers = function(i, x, y, char, nick, team) {
 		// If it's me or if someone hasn't chose a character yet
 		//console.log(i, BasicGame.myID);
@@ -160,10 +166,7 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	var txt = this.add.text(this.world.width - this.world.width/2, this.world.height - 100,  "Back to main menu", optionStyle);
 	txt.inputEnabled = true;
 	txt.events.onInputUp.add(function() {
-		ref.game.state.start("MainMenu", true);
-		BasicGame.eurecaClient.disconnect(); // request server to disconnect client
-		BasicGame.disconnectClient(); // adjust client to reset connection variable
-		//console.log(BasicGame.eurecaClient);
+		BasicGame.eurecaClient.exports.kickToMenu();
 	});
 
 	// Assign global groups

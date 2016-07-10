@@ -21,6 +21,7 @@ var eurecaServer = new Eureca.Server({allow:['setID',
 	'gameStart',
 	'updateLobby',
 	'loadPlayersLR',
+	'kickToMenu',
 	'spawnOtherPlayers', 
 	'kill', 
 	'updateState', 
@@ -36,6 +37,16 @@ var lobbylist = {};
 // Initialize public lobby
 eurecaServer.exports.initializeLobby = function() {
 	// Initialize public lobby
+	for (var lobby in lobbylist) {
+		if (lobbylist[lobby].playerCount != 0) {
+			for (var player in lobbylist[lobby].clientInfo) {
+				// kick to lobby
+				lobbylist[lobby].clientInfo[player].remote.kickToMenu();
+			}
+		}
+	}
+	delete lobbylist;
+	lobbylist = {};
 	lobbylist['publicLobby1'] = {gameType:'Team Deathmatch', maxPlayers:4, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
 	lobbylist['publicLobby2'] = {gameType:'Team Deathmatch', maxPlayers:6, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
 	lobbylist['publicLobby3'] = {gameType:'Team Deathmatch', maxPlayers:8, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
