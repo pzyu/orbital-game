@@ -81,14 +81,14 @@ BasicGame.HeroWalkerMP = function (id, game, x, y, team, nick) {
     // Ultimate
     this.nuke = this.game.add.weapon(4, 'walker_rocket');
     this.nuke.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;		
-    this.nuke.bulletLifespan = 1000;
-    this.nuke.bulletSpeed = 3000;											// Speed of bullet
+    this.nuke.bulletLifespan = 5000;
+    this.nuke.bulletSpeed = 1200;											// Speed of bullet
     this.nuke.bulletGravity = new Phaser.Point(0, -2000);					// Must be offset with world's gravity
     this.nuke.trackSprite(this, 0, -80);									// Follow this sprite, offset X and offset Y
     this.nuke.bullets.setAll('scale.x', 0.6);								// Set scale of all bullets
     this.nuke.bullets.setAll('scale.y', 0.6);
-    this.nuke.bullets.setAll('body.maxVelocity.y', 1000);
-    this.nuke.bullets.setAll('body.maxVelocity.x', 1000);
+    this.nuke.bullets.setAll('body.maxVelocity.y', 1500);
+    this.nuke.bullets.setAll('body.maxVelocity.x', 900);
     this.nuke.setBulletBodyOffset(50, 40, 10, 10);
     this.nuke.bulletRotateToVelocity = true;
 
@@ -260,7 +260,7 @@ BasicGame.HeroWalkerMP.prototype.handleSkillB = function(){
 
 	// Update position of shield if active
 	if (this.shieldActive) {
-		this.body.velocity.x = 0;
+		//this.body.velocity.x = 0;
 		//this.body.width = 100;
 		this.shield.activate();
 	} else {

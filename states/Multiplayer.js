@@ -1,6 +1,7 @@
 BasicGame.Multiplayer = function (game) {
 	this.playerList;					// Player list
 	this.playerListHUD;
+	this.logo;
 	this.selectedChar = '';				// Selected character
 	this.team = '';
 
@@ -19,6 +20,15 @@ BasicGame.Multiplayer = function (game) {
 		{x: 3200, y: 1000},				// Team 2 spawn
 		{x: 2500,  y: 500}
 	];
+
+	this.teamScores = [
+		0, 
+		0,
+		0
+	];
+
+	this.teamAHUD;
+	this.teamBHUD;
 };
 
 BasicGame.Multiplayer.prototype.init = function() {
@@ -249,6 +259,14 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.message.fixedToCamera = true;
 	this.message.anchor.setTo(0.5, 0.5);
 
+	this.logo = this.game.add.image(240, 10, 'score');
+	this.teamAHUD = this.game.add.text(BasicGame.gameWidth/2 - 90, 50, 'TeamA', { font: '16pt myfont', align: 'right', fill: 'white'});
+	this.teamBHUD = this.game.add.text(BasicGame.gameWidth/2 + 50, 50, 'TeamB', { font: '16pt myfont', align: 'left', fill: 'white'});
+
+	this.logo.fixedToCamera = true;
+	this.teamAHUD.fixedToCamera = true;
+	this.teamBHUD.fixedToCamera = true;
+
 	// create all other clients
 	BasicGame.eurecaServer.handshake(BasicGame.roomID);
 
@@ -315,6 +333,17 @@ BasicGame.Multiplayer.prototype.handleHUD = function() {
 
 	this.cropRectD.height = 66 * (this.player.getSkillE() + 1);
 	this.skillD.crop(this.cropRectD);
+
+	// Update every 500ms so won't be that taxing
+	if (this.game.time.now > this.textTimer) {
+		this.textTimer = this.game.time.now + 500;
+		var ref = this;
+		BasicGame.eurecaServer.getTeamScore(BasicGame.roomID, 1).onReady(function(result) {
+			ref.teamScores = result;
+		}, this);
+		this.teamAHUD.setText(this.teamScores[1]);
+		this.teamBHUD.setText(this.teamScores[2]);
+	}
 }
 
 BasicGame.Multiplayer.prototype.showPlayerList = function() {
