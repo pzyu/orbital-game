@@ -2,6 +2,7 @@ BasicGame.Multiplayer = function (game) {
 	this.playerList;					// Player list
 	this.playerListHUD;
 	this.selectedChar = '';				// Selected character
+	this.team = '';
 
 	this.gravity = 5000;				// Gravity
 	this.spawnX = 1000;					// Starting spawn
@@ -13,10 +14,10 @@ BasicGame.Multiplayer = function (game) {
 	this.delta = 5;						// Delta for smoothing
 
 	this.spawnPoints = [				// Array of spawn points, set in each hero class
-		{x: 500,  y: 500},
-		{x: 1000,  y: 500},
-		{x: 2500,  y: 500},
-		{x: 3000, y: 500}
+		{x: 1000,  y: 250},
+		{x: 250,  y: 1000},				// Team 1 spawn
+		{x: 3200, y: 1000},				// Team 2 spawn
+		{x: 2500,  y: 500}
 	];
 };
 
@@ -60,16 +61,16 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		// If doesn't already exist
 		if (ref.playerList[i] == null) {
 			if (char == "player_trooper") {
-				var player = new BasicGame.HeroTrooperMP(i, ref.game, curX, curY);
+				var player = new BasicGame.HeroTrooperMP(i, ref.game, curX, curY, team);
 			} 
 			if (char == "player_walker") {
-				var player = new BasicGame.HeroWalkerMP(i, ref.game, curX, curY);
+				var player = new BasicGame.HeroWalkerMP(i, ref.game, curX, curY, team);
 			}
 			if (char == "player_destroyer") {
-				var player = new BasicGame.HeroDestroyerMP(i, ref.game, curX, curY);
+				var player = new BasicGame.HeroDestroyerMP(i, ref.game, curX, curY, team);
 			}
 			if (char == "player_gunner") {
-				var player = new BasicGame.HeroGunnerMP(i, ref.game, curX, curY);
+				var player = new BasicGame.HeroGunnerMP(i, ref.game, curX, curY, team);
 			}
 			ref.playerList[i] = [player, nick, team];
 		}
@@ -132,7 +133,7 @@ BasicGame.Multiplayer.prototype.preloadGame = function() {
 	this.mapLayer = layer;
 
 	map.setCollisionBetween(0, 60, true, layer);	// Set collision layers between json tile representation
-	map.setCollisionBetween(63, 99, true, layer);	
+	map.setCollisionBetween(63, 80, true, layer);	
 	map.setCollisionBetween(329, 341, true, layer);	
 
 	this.physics.arcade.TILE_BIAS = 60;				// The higher the tile bias, the more unlikely it is the player will fall through
@@ -180,16 +181,16 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	// Create client's hero
 	if (BasicGame.selectedChar == "player_trooper") {
 		//console.log(this.game.rnd.integerInRange(0, 3));
-		var player = new BasicGame.HeroTrooperMP(BasicGame.myID, this.game, 100, 1000);
+		var player = new BasicGame.HeroTrooperMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam);
 	}
 	if (BasicGame.selectedChar == "player_walker") {
-		var player = new BasicGame.HeroWalkerMP(BasicGame.myID, this.game, 100, 1000);
+		var player = new BasicGame.HeroWalkerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam);
 	}
 	if (BasicGame.selectedChar == "player_destroyer") {
-		var player = new BasicGame.HeroDestroyerMP(BasicGame.myID, this.game, 100, 1000);
+		var player = new BasicGame.HeroDestroyerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam);
 	}
 	if (BasicGame.selectedChar == "player_gunner") {
-		var player = new BasicGame.HeroGunnerMP(BasicGame.myID, this.game, 100, 1000);
+		var player = new BasicGame.HeroGunnerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam);
 	}
 	console.log("Creating game");
 
@@ -197,6 +198,19 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.camera.follow(player);
 
 	this.player = player;
+
+	// Add collider for spawns
+	this.teamA = this.game.add.sprite(80, 950, '');
+	this.game.physics.arcade.enableBody(this.teamA);
+	this.teamA.body.setSize(500, 300, 0, 0);
+	this.teamA.body.allowGravity = false;
+	this.game.add.existing(this.teamA);
+
+	this.teamB = this.game.add.sprite(2900, 950, '');
+	this.game.physics.arcade.enableBody(this.teamB);
+	this.teamB.body.setSize(500, 300, 0, 0);
+	this.teamB.body.allowGravity = false;
+	this.game.add.existing(this.teamB);
 
 	// HUD
 	this.skillA = this.game.add.image(50, this.game.height - 20, 'skill');
@@ -235,6 +249,10 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 
 	// create all other clients
 	BasicGame.eurecaServer.handshake(BasicGame.roomID);
+
+	console.log("my team: " + BasicGame.myTeam);
+
+
 };
 
 BasicGame.Multiplayer.prototype.broadcast = function(msg, duration) {
@@ -258,17 +276,23 @@ BasicGame.Multiplayer.prototype.update = function() {
 	//console.log("TEST update");
 	// Enable collision between player and layer
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
-	this.physics.arcade.collide(BasicGame.playerCG, BasicGame.playerCG);
+	//this.physics.arcade.collide(BasicGame.playerCG, BasicGame.playerCG);
 	this.physics.arcade.collide(BasicGame.playerCG, BasicGame.shieldCG);
 
-	this.physics.arcade.collide(BasicGame.projectileCG, layer, this.projectileCallback);
-	this.physics.arcade.collide(BasicGame.projectileCG, BasicGame.shieldCG, this.shieldCallBack);
+	//this.physics.arcade.collide(BasicGame.projectileCG, layer, this.projectileCallback);
+	//this.physics.arcade.collide(BasicGame.projectileCG, BasicGame.shieldCG, this.shieldCallBack);
 	// Overlap
 	//this.physics.arcade.overlap(BasicGame.projectileCG, BasicGame.playerCG, this.colliderCallback);
 	//this.physics.arcade.overlap(BasicGame.colliderCG, BasicGame.playerCG, this.colliderCallback);
 
+	// Team colliders
+	this.physics.arcade.overlap(this.teamA, BasicGame.playerCG, this.baseCallback.bind(this));	
+	this.physics.arcade.overlap(this.teamB, BasicGame.playerCG, this.baseCallback.bind(this));	
+
 	this.handleHUD();
 	this.showPlayerList();
+	//this.game.debug.body(this.teamA);
+	//this.game.debug.body(this.teamB);
 	//this.chat();
 };
 
@@ -332,6 +356,15 @@ BasicGame.Multiplayer.prototype.chat = function() {
 	}
 }
 
+BasicGame.Multiplayer.prototype.baseCallback= function(obj1, obj2) {
+	if ((obj1 == this.teamA && obj2.myTeam == 1) || (obj1 == this.teamB && obj2.myTeam == 2)) {
+		if (obj2.curHealth < obj2.maxHealth && !obj2.isDead) {
+			obj2.curHealth++;
+		}
+	}
+
+};
+
 BasicGame.Multiplayer.prototype.projectileCallback= function(obj1, obj2) {
 	obj1.onCollide();
 };
@@ -344,7 +377,7 @@ BasicGame.Multiplayer.prototype.bulletCallback= function(obj1, obj2) {
 BasicGame.Multiplayer.prototype.colliderCallback= function(obj1, obj2) {
 	//console.log(obj1.__proto__);
 	//if (obj1.__proto__ != Phaser.Sprite) {}
-	obj1.onCollide(obj2);
+	//obj1.onCollide(obj2);
 };
 
 BasicGame.Multiplayer.prototype.shieldCallBack = function(obj1, obj2) {

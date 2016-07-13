@@ -1,6 +1,6 @@
 'use strict';
-BasicGame.HeroWalkerMP = function (id, game, x, y) {
-	BasicGame.HeroBase.call(this, id, game, x, y, 'player_walker');
+BasicGame.HeroWalkerMP = function (id, game, x, y, team) {
+	BasicGame.HeroBase.call(this, id, game, x, y, 'player_walker', team);
 
 	// Collider size
 	this.body.setSize(160, 200, 44, 24);
@@ -58,7 +58,8 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
     // Rocket
     this.rocket = this.game.add.weapon(4, 'walker_rocket');					// Takes in amount of bullet, and sprite key
     this.rocket.fireAngle = 0;												// Angle to be fired from
-    this.rocket.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;			// Kill when out of bounds
+    this.rocket.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;		
+    this.rocket.bulletLifespan = 1000;
     this.rocket.bulletSpeed = 1000;											// Speed of bullet
     this.rocket.bulletGravity = new Phaser.Point(0, -this.refMP.gravity);	// Must be offset with world's gravity
     this.rocket.trackSprite(this, 0, -20);									// Follow this sprite, offset X and offset Y
@@ -68,8 +69,9 @@ BasicGame.HeroWalkerMP = function (id, game, x, y) {
 
     // Ultimate
     this.nuke = this.game.add.weapon(4, 'walker_rocket');
-    this.nuke.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;				// Kill when out of bounds
-    this.nuke.bulletSpeed = 2000;											// Speed of bullet
+    this.nuke.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;		
+    this.nuke.bulletLifespan = 1000;
+    this.nuke.bulletSpeed = 3000;											// Speed of bullet
     this.nuke.bulletGravity = new Phaser.Point(0, -2000);					// Must be offset with world's gravity
     this.nuke.trackSprite(this, 0, -80);									// Follow this sprite, offset X and offset Y
     this.nuke.bullets.setAll('scale.x', 0.6);								// Set scale of all bullets
@@ -160,7 +162,8 @@ BasicGame.HeroWalkerMP.prototype.update = function() {
 
 BasicGame.HeroWalkerMP.prototype.attCallback = function(obj1, obj2) {
 	// If not colliding with yourself
-	if (obj2.ID != this.ID) {
+	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
+		console.log(this.myTeam, obj2.myTeam);
 		// Kill collider
 		this.isAttacking = false;
 		this.attackCollider.deactivate();
@@ -171,7 +174,7 @@ BasicGame.HeroWalkerMP.prototype.attCallback = function(obj1, obj2) {
 
 BasicGame.HeroWalkerMP.prototype.bulletCallback = function(obj1, obj2) {
 	// If not colliding with yourself
-	if (obj2.ID != this.ID) {
+	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person

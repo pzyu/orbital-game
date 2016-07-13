@@ -1,6 +1,6 @@
 'use strict';
-BasicGame.HeroTrooperMP = function (id, game, x, y) {
-	BasicGame.HeroBase.call(this, id, game, x, y, 'player_trooper');
+BasicGame.HeroTrooperMP = function (id, game, x, y, team) {
+	BasicGame.HeroBase.call(this, id, game, x, y, 'player_trooper', team);
 
 	// Collider size
 	this.body.setSize(70, 140, 40, 10);
@@ -11,7 +11,7 @@ BasicGame.HeroTrooperMP = function (id, game, x, y) {
 	this.defaultMoveSpeed = this.moveSpeed;
 	this.maxHealth = 100;
 	this.curHealth = this.maxHealth;
-	this.knockbackForce = 500;
+	this.knockbackForce = 1000;
 
     // Skill cooldowns in milliseconds
     this.skillACooldown = 500;
@@ -19,6 +19,10 @@ BasicGame.HeroTrooperMP = function (id, game, x, y) {
 	this.skillCCooldown = 2000;
 	this.skillDCooldown = 2000;	
 	this.skillECooldown = 1000;
+
+	// Damage
+	this.skillADamage = 10;
+	this.skillEDamage = 20;
 
 	// Attack collider
     this.attackCollider = new BasicGame.Collider(this.game, this, 80, 100, 40, 0, 2000, 1);
@@ -93,7 +97,7 @@ BasicGame.HeroTrooperMP.prototype.update = function() {
 		this.handleSkillD();
 		this.handleSkillE();
 	}
-	//this.game.debug.body(this.attackCollider);
+	this.game.debug.body(this.attackCollider);
 	// this.game.debug.bodyInfo(this, 32, 200);
 
 	// Collide with map
@@ -110,37 +114,34 @@ BasicGame.HeroTrooperMP.prototype.update = function() {
 };
 
 BasicGame.HeroTrooperMP.prototype.attCallback = function(obj1, obj2) {
-	// If not colliding with yourself
-	if (obj2.ID != this.ID) {
+	// If not colliding with yourself and not on the same team
+	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
 		// Kill collider
-		this.isAttacking = false;
-		this.attackCollider.x = this.attackCollider.y = -100;
 		this.attackCollider.deactivate();
+		this.isAttacking = false;
 
 		if (this.facingRight == obj2.facingRight) {
 			// Backstab
 			console.log("backstab");
-			obj2.getHit(20, this.knockbackForce * 3 * this.facingRight, this.knockbackForce * 2);
+			obj2.getHit(this.skillADamage * 2, this.knockbackForce * 2 * this.facingRight, this.knockbackForce * 2, this.ID);
 		} else {			// Call get hit of other person
-			obj2.getHit(10, this.knockbackForce * this.facingRight, this.knockbackForce);
+			obj2.getHit(this.skillADamage, this.knockbackForce * this.facingRight, this.knockbackForce, this.ID);
 		}
 	}
 };
 
 BasicGame.HeroTrooperMP.prototype.bulletCallback = function(obj1, obj2) {
-	// If not colliding with yourself
-	if (obj2.ID != this.ID) {
- 		//this.explosionGroup.getFirstExists(false).playUntracked('anim_2', obj1.x, obj1.y);
+	// If not colliding with yourself and not on the same team
+	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(10, 0, 0);	
+		obj2.getHit(this.skillEDamage, 0, 0, this.ID);	
 	}
 };
 
 BasicGame.HeroTrooperMP.prototype.collideCallback = function(obj1, obj2) {
 	//console.log(this.explosionGroup.getFirstExists(false));
- 	//this.explosionGroup.getFirstExists(false).playUntracked('anim_2', obj1.x, obj1.y);
 	obj1.kill();
 };
 
@@ -150,6 +151,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillA = function() {
 		var skillTween = this.game.add.tween(this.body.velocity);
 		skillTween.to({x: 1000 * this.facingRight}, 250, Phaser.Easing.Cubic.Out);
 		skillTween.start();
+		this.attackCollider.activate(); 
 
 		this.slashEffect.angle = 30;
     	this.slashEffect.play('anim_1', this, 50, 0);
@@ -161,7 +163,6 @@ BasicGame.HeroTrooperMP.prototype.handleSkillA = function() {
     	this.animations.currentAnim.frame = 0;
 		this.isAttacking = true;
 		this.skillATimer = this.game.time.now + this.skillACooldown; 
-		this.attackCollider.activate(); 
 		this.skillsEnabled = false;
 		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
@@ -248,6 +249,6 @@ BasicGame.HeroTrooperMP.prototype.handleSkillE = function() {
 		this.isAttacking = true;
 		this.skillETimer = this.game.time.now + this.skillECooldown; 
 		this.skillsEnabled = false;
-		this.skillTimer = this.game.time.now + this.skillCooldown;
+		this.skillTimer = this.game.time.now + 1500;
 	}
 };

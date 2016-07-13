@@ -41,6 +41,7 @@ BasicGame.Collider.prototype.activate = function() {
 };
 
 BasicGame.Collider.prototype.deactivate = function() {
+	this.x = this.y = -100;
 	this.isActive = false;
 };
 

@@ -1,7 +1,10 @@
 'use strict';
-BasicGame.HeroBase = function (id, game, x, y, sprite) {
+BasicGame.HeroBase = function (id, game, x, y, sprite, team) {
+	// Takes in ID, game reference, x, y, sprite key, and team
 	Phaser.Sprite.call(this, game, x, y, sprite, 0);
 	this.ID = id;
+	this.myTeam = team;
+	this.lastHitBy = "";
 	
 	this.cursor = {
 		left: false,
@@ -127,9 +130,13 @@ BasicGame.HeroBase.prototype.spawn = function() {
 		tween.onComplete.add(function(){
 			// If not dead
 			if (this.isDead && !this.isRevived) {
-				var index = this.game.rnd.integerInRange(0, this.refMP.spawnPoints.length - 1);
-				this.x = this.refMP.spawnPoints[index].x;
-				this.y = this.refMP.spawnPoints[index].y;
+				console.log('spawning ')
+				if (this.myTeam == null) {
+					this.myTeam = 1;
+				}
+				// Spawn points based on team index
+				this.x = this.refMP.spawnPoints[this.myTeam].x;
+				this.y = this.refMP.spawnPoints[this.myTeam].y;
 				this.curHealth = this.maxHealth;
 				this.animations.play('anim_idle');
 				this.isDead = false;
@@ -140,9 +147,12 @@ BasicGame.HeroBase.prototype.spawn = function() {
 			}
 		}, this);
 	} else {
-		var index = this.game.rnd.integerInRange(0, this.refMP.spawnPoints.length - 1);
-		this.x = this.refMP.spawnPoints[index].x;
-		this.y = this.refMP.spawnPoints[index].y;
+		//var index = this.game.rnd.integerInRange(0, this.refMP.spawnPoints.length - 1);
+		if (this.myTeam == null) {
+			this.myTeam = 1;
+		}
+		this.x = this.refMP.spawnPoints[this.myTeam].x;
+		this.y = this.refMP.spawnPoints[this.myTeam].y;
 	}
 
 };
@@ -241,7 +251,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
     }
 };
 
-BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY) {
+BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, id) {
 	this.effect.play(this.hitAnim, this, 0, 0);
 
 	// Can only get hit if not dead
@@ -266,7 +276,7 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY) {
 			this.isDead = true;
 			console.log("Dead");
 			this.spawn();
-			this.refMP.broadcast(this.ID + " has been killed!", 2);
+			this.refMP.broadcast(this.ID + " has been killed by " + id + "!", 2);
 		}
 	}
 };
