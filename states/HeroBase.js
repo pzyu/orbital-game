@@ -1,8 +1,9 @@
 'use strict';
-BasicGame.HeroBase = function (id, game, x, y, sprite, team) {
+BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	// Takes in ID, game reference, x, y, sprite key, and team
 	Phaser.Sprite.call(this, game, x, y, sprite, 0);
 	this.ID = id;
+	this.nick = nick;
 	this.myTeam = team;
 	this.lastHitBy = "";
 	
@@ -291,10 +292,12 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 
 			// credit kill to killerID
 			BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
-			killerInfo.heroExp += 100;
+			killerInfo.heroExp += 10000;
 			if (killerInfo.heroExp >= 100) {
 				var levelGain = Math.floor(killerInfo.heroExp / 100);
-				killerInfo.heroLevel += levelGain;
+				for (var i=0; i<levelGain; i++) {
+					onLevelUp(killerInfo);
+				}
 				killerInfo.heroExp = killerInfo.heroExp % 100;
 			}
 
@@ -302,7 +305,7 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 			this.spawn();
 
 			// broadcast kill feed
-			this.refMP.broadcast(this.ID + " has been killed by " + killerInfo.ID, 2);
+			this.refMP.broadcast(this.nick + " has been killed by " + killerInfo.nick, 2);
 		}
 	}
 };
@@ -374,3 +377,12 @@ BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, de
 		invis.chain(invisEnd);
 	}
 };
+
+// on level up event, update stats
+function onLevelUp(targetPlayer) {
+	targetPlayer.heroLevel ++;
+	// Hero attributes
+	targetPlayer.moveSpeed = targetPlayer.moveSpeed + targetPlayer.movSpeed;
+	targetPlayer.defaultMoveSpeed = targetPlayer.moveSpeed;
+	targetPlayer.maxHealth = targetPlayer.maxHealth + targetPlayer.constituition;
+}

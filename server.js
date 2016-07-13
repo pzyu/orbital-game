@@ -253,7 +253,7 @@ eurecaServer.exports.handshake = function(room) {
 			var x = 0;
 			var y = 0;
 			var lvl = 1;
-			var exp - 0;
+			var exp = 0;
 			if (lobbylist[room].clientInfo[cc].lastState != null) {
 				x = lobbylist[room].clientInfo[cc].lastState.x;
 				y = lobbylist[room].clientInfo[cc].lastState.y;

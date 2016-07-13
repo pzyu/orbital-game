@@ -1,6 +1,6 @@
 'use strict';
-BasicGame.HeroDestroyerMP = function (id, game, x, y, team) {
-	BasicGame.HeroBase.call(this, id, game, x, y, 'player_destroyer', team);
+BasicGame.HeroDestroyerMP = function (id, game, x, y, team, nick) {
+	BasicGame.HeroBase.call(this, id, game, x, y, 'player_destroyer', team, nick);
 
 	// Collider size
 	this.body.setSize(110, 220, 110, 20);

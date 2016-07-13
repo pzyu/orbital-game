@@ -1,6 +1,6 @@
 'use strict';
-BasicGame.HeroWalkerMP = function (id, game, x, y, team) {
-	BasicGame.HeroBase.call(this, id, game, x, y, 'player_walker', team);
+BasicGame.HeroWalkerMP = function (id, game, x, y, team, nick) {
+	BasicGame.HeroBase.call(this, id, game, x, y, 'player_walker', team, nick);
 
 	// Collider size
 	this.body.setSize(160, 200, 44, 24);
