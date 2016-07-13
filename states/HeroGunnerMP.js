@@ -1,6 +1,6 @@
 'use strict';
-BasicGame.HeroGunnerMP = function (id, game, x, y) {
-	BasicGame.HeroBase.call(this, id, game, x, y, 'player_gunner');
+BasicGame.HeroGunnerMP = function (id, game, x, y, team) {
+	BasicGame.HeroBase.call(this, id, game, x, y, 'player_gunner', team);
 
 	// Collider size
 	this.body.setSize(180, 120, 60, 54);
@@ -57,7 +57,8 @@ BasicGame.HeroGunnerMP = function (id, game, x, y) {
 	this.weapon = this.game.add.weapon(5, 'slimeball');	
     this.weapon.fireAngle = 0;												
     this.weapon.fireRate = 0;					
-    this.weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;			
+    this.weapon.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;		
+    this.weapon.bulletLifespan = 500;	
     this.weapon.bulletSpeed = 1200;											
     this.weapon.bulletGravity = new Phaser.Point(0, -this.refMP.gravity);	
     this.weapon.trackSprite(this, 0, -50);			
@@ -207,7 +208,7 @@ BasicGame.HeroGunnerMP.prototype.update = function() {
 };
 
 BasicGame.HeroGunnerMP.prototype.healthPackCallback = function(obj1, obj2) {
-	if (obj2.curHealth < obj2.maxHealth && !obj2.isDead) {
+	if (obj2.curHealth < obj2.maxHealth && !obj2.isDead && this.myTeam == obj2.myTeam) {
 		obj2.curHealth += this.healthAmt;
 		obj1.kill();
 	}
@@ -215,7 +216,7 @@ BasicGame.HeroGunnerMP.prototype.healthPackCallback = function(obj1, obj2) {
 
 BasicGame.HeroGunnerMP.prototype.trapCallback = function(obj1, obj2) {
 	// If not colliding with yourself
-	if (obj2.ID != this.ID) {
+	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
 		obj2.applyBuff("BUFF_SLOW", 300, 5000, 0);
 		obj1.kill();
 	}
@@ -223,8 +224,8 @@ BasicGame.HeroGunnerMP.prototype.trapCallback = function(obj1, obj2) {
 
 
 BasicGame.HeroGunnerMP.prototype.reviveCallback = function(obj1, obj2) {
-	// If not colliding with yourself
-	if (obj2.ID != this.ID) {
+	// If not colliding with yourself && same team
+	if (obj2.ID != this.ID && this.myTeam == obj2.myTeam) {
 		// If can revive and target is dead
 		if (this.canRevive && obj2.isDead) {
 			obj2.curHealth = obj2.maxHealth;
@@ -237,7 +238,7 @@ BasicGame.HeroGunnerMP.prototype.reviveCallback = function(obj1, obj2) {
 
 BasicGame.HeroGunnerMP.prototype.bulletCallback = function(obj1, obj2) {
 	// If not colliding with yourself
-	if (obj2.ID != this.ID) {
+	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person

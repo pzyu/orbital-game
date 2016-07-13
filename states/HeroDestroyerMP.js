@@ -1,6 +1,6 @@
 'use strict';
-BasicGame.HeroDestroyerMP = function (id, game, x, y) {
-	BasicGame.HeroBase.call(this, id, game, x, y, 'player_destroyer');
+BasicGame.HeroDestroyerMP = function (id, game, x, y, team) {
+	BasicGame.HeroBase.call(this, id, game, x, y, 'player_destroyer', team);
 
 	// Collider size
 	this.body.setSize(110, 220, 110, 20);
@@ -85,7 +85,8 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y) {
 	this.weapon = this.game.add.weapon(10, 'laser_blue');				
     this.weapon.fireAngle = 0;												
     this.weapon.fireRate = 0;					
-    this.weapon.bulletKillType = Phaser.Weapon.KILL_WORLD_BOUNDS;			
+    this.weapon.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;
+    this.weapon.bulletLifespan = 500;			
     this.weapon.bulletSpeed = 1500;											
     this.weapon.bulletGravity = new Phaser.Point(0, -this.refMP.gravity);	
     this.weapon.trackSprite(this, 0, 10);									
@@ -155,7 +156,7 @@ BasicGame.HeroDestroyerMP.prototype.update = function() {
 
 BasicGame.HeroDestroyerMP.prototype.attCallback = function(obj1, obj2) {
 	// If not colliding with yourself
-	if (obj2.ID != this.ID) {
+	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
 		// Kill collider
 		this.isAttacking = false;
 		this.attackCollider.x = this.attackCollider.y = -200;
@@ -167,7 +168,7 @@ BasicGame.HeroDestroyerMP.prototype.attCallback = function(obj1, obj2) {
 
 BasicGame.HeroDestroyerMP.prototype.bulletCallback = function(obj1, obj2) {
 	// If not colliding with yourself
-	if (obj2.ID != this.ID) {
+	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
  		//this.explosionGroup.getFirstExists(false).playUntracked('anim_2', obj1.x, obj1.y);
 		// Kill the projectile
 		obj1.kill();
