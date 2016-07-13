@@ -210,6 +210,8 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 			this.myInput.x = this.x;
 			this.myInput.y = this.y;
 			this.myInput.hp = this.curHealth;
+			this.myInput.lvl = this.heroLevel;
+			this.myInput.exp = this.heroExp;
 
 			BasicGame.eurecaServer.compensate(this.myInput, BasicGame.roomID);
 		}
@@ -263,7 +265,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
     }
 };
 
-BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, killerID) {
+BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, killerInfo) {
 	this.effect.play(this.hitAnim, this, 0, 0);
 
 	// Can only get hit if not dead
@@ -285,10 +287,22 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 		// If dead, respawn
 		if (this.curHealth <= 0) {
 			this.curHealth = 0;
-			this.isDead = true;
+			this.isDead = true; // kill confirmed
+
+			// credit kill to killerID
+			BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
+			killerInfo.heroExp += 100;
+			if (killerInfo.heroExp >= 100) {
+				var levelGain = Math.floor(killerInfo.heroExp / 100);
+				killerInfo.heroLevel += levelGain;
+				killerInfo.heroExp = killerInfo.heroExp % 100;
+			}
+
 			console.log("Dead");
 			this.spawn();
-			this.refMP.broadcast(this.ID + " has been killed by " + killerID, 2);
+
+			// broadcast kill feed
+			this.refMP.broadcast(this.ID + " has been killed by " + killerInfo.ID, 2);
 		}
 	}
 };

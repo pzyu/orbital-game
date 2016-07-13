@@ -10,17 +10,17 @@ BasicGame.HeroGunnerMP = function (id, game, x, y, team) {
 	this.heroExp = 0;
 	this.heroToNextLevel = 100;
 
-	// Hero Stats (Attacker class - Destroyer)
-	this.constituition = 7; // multiplier for hp
-	this.attack = 10; // multiplayer for attack damage
+	// Hero Stats (Support Class - Gunner)
+	this.constituition = 5; // multiplier for hp
+	this.attack = 3; // multiplayer for attack damage
 	this.atkSpeed = 7; // multiplier for attack speed
-	this.movSpeed = 5; // multiplier for movement speed
+	this.movSpeed = 7; // multiplier for movement speed
 
 	// Hero attributes
 	this.jumpStrength = -1500;
-	this.moveSpeed = 800 + (this.movSpeed * this.heroLevel);
+	this.moveSpeed = 600 + (this.movSpeed * this.heroLevel);
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 100 + (this.constituition * this.heroLevel); // base hp of 50
+	this.maxHealth = 40 + (this.constituition * this.heroLevel); // base hp of 40
 	this.curHealth = this.maxHealth;
 	this.healthAmt = 10;
 	
@@ -253,7 +253,7 @@ BasicGame.HeroGunnerMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(10, 0, 0, BasicGame.myID);	
+		obj2.getHit(10, 0, 0, this);	
 	}
 };
 

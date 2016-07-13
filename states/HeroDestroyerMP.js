@@ -12,8 +12,8 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y, team) {
 
 	// Hero Stats (Attacker class - Destroyer)
 	this.constituition = 7; // multiplier for hp
-	this.attack = 10; // multiplayer for attack damage
-	this.atkSpeed = 7; // multiplier for attack speed
+	this.attack = 5; // multiplayer for attack damage
+	this.atkSpeed = 5; // multiplier for attack speed
 	this.movSpeed = 5; // multiplier for movement speed
 
 	// Hero attributes
@@ -24,7 +24,7 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y, team) {
 	this.curHealth = this.maxHealth;
 
 	// Skill cooldowns in milliseconds (Min Cool Down time)
-    this.skillACooldown = 500;
+    this.skillACooldown = 800  - (this.heroLevel * this.atkSpeed);
 	this.skillBCooldown = 2000;
 	this.skillCCooldown = 2000;
 	this.skillDCooldown = 2000;	
@@ -162,7 +162,7 @@ BasicGame.HeroDestroyerMP.prototype.attCallback = function(obj1, obj2) {
 		this.attackCollider.x = this.attackCollider.y = -200;
 		this.attackCollider.deactivate();
 		// Call get hit of other person
-		obj2.getHit(15 + (this.attack * this.heroLevel), this.knockbackForce * this.facingRight, this.knockbackForce, BasicGame.myID);
+		obj2.getHit(15 + (this.attack * this.heroLevel), this.knockbackForce * this.facingRight, this.knockbackForce, this);
 	}
 };
 
@@ -173,7 +173,7 @@ BasicGame.HeroDestroyerMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(8 + Math.round(this.attack * this.heroLevel * 0.7), 0, 0, BasicGame.myID);	
+		obj2.getHit(8 + Math.round(this.attack * this.heroLevel * 0.7), 0, 0, this);	
 	}
 };
 
@@ -204,7 +204,7 @@ BasicGame.HeroDestroyerMP.prototype.handleSkillA = function() {
     	this.weapon.fire();
 
 		this.isAttacking = true;
-		this.skillATimer = this.game.time.now + this.skillACooldown - (this.heroLevel * this.atkSpeed); 
+		this.skillATimer = this.game.time.now + this.skillACooldown; 
 		this.skillsEnabled = false;
 		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}

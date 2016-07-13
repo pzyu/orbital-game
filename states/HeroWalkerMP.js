@@ -10,18 +10,18 @@ BasicGame.HeroWalkerMP = function (id, game, x, y, team) {
 	this.heroExp = 0;
 	this.heroToNextLevel = 100;
 
-	// Hero Stats (Attacker class - Destroyer)
-	this.constituition = 7; // multiplier for hp
+	// Hero Stats (Tank class - Walker)
+	this.constituition = 10; // multiplier for hp
 	this.attack = 10; // multiplayer for attack damage
-	this.atkSpeed = 7; // multiplier for attack speed
-	this.movSpeed = 5; // multiplier for movement speed
-	
+	this.atkSpeed = 4; // multiplier for attack speed
+	this.movSpeed = 3; // multiplier for movement speed
+
 	// Hero attributes
 	this.jumpLimit = 1;
 	this.jumpStrength = -2000;
-	this.moveSpeed = 500 + (this.movSpeed * this.heroLevel);
+	this.moveSpeed = 550 + (this.movSpeed * this.heroLevel);
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 100 + (this.constituition * this.heroLevel); // base hp of 50
+	this.maxHealth = 50 + (this.constituition * this.heroLevel); // base hp of 50
 	this.curHealth = this.maxHealth;
 
 	// Skill cooldowns in milliseconds
@@ -179,7 +179,7 @@ BasicGame.HeroWalkerMP.prototype.attCallback = function(obj1, obj2) {
 		this.isAttacking = false;
 		this.attackCollider.deactivate();
 		// Call get hit of other person
-		obj2.getHit(20, this.knockbackForce * this.facingRight, this.knockbackForce, BasicGame.myID);
+		obj2.getHit(20, this.knockbackForce * this.facingRight, this.knockbackForce, this);
 	}
 };
 
@@ -189,7 +189,7 @@ BasicGame.HeroWalkerMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(30, 0, 0, BasicGame.myID);	
+		obj2.getHit(30, 0, 0, this);	
 		this.skillExplSFX.play();
 	}
 };

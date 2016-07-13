@@ -96,6 +96,8 @@ BasicGame.Multiplayer.prototype.preload = function() {
 			curPlayer.x = state.x;
 			curPlayer.y = state.y;
 			curPlayer.curHealth = state.hp;
+			curPlayer.heroLevel = state.lvl;
+			curPlayer.heroExp = state.exp;
 			//curPlayer.interpolateTo(state.x, state.y, 1000);
 		}
 	};	

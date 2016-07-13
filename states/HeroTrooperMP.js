@@ -10,17 +10,17 @@ BasicGame.HeroTrooperMP = function (id, game, x, y, team) {
 	this.heroExp = 0;
 	this.heroToNextLevel = 100;
 
-	// Hero Stats (Attacker class - Destroyer)
-	this.constituition = 7; // multiplier for hp
-	this.attack = 10; // multiplayer for attack damage
-	this.atkSpeed = 7; // multiplier for attack speed
-	this.movSpeed = 5; // multiplier for movement speed
-	
+	// Hero Stats (Assasin Class - Trooper)
+	this.constituition = 4; // multiplier for hp
+	this.attack = 7; // multiplayer for attack damage
+	this.atkSpeed = 10; // multiplier for attack speed
+	this.movSpeed = 10; // multiplier for movement speed
+
 	// Hero attributes
 	this.jumpStrength = -1500;
-	this.moveSpeed = 1000 + (this.movSpeed * this.heroLevel);
+	this.moveSpeed = 800 + (this.movSpeed * this.heroLevel);
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 100 + (this.constituition * this.heroLevel); // base hp of 50
+	this.maxHealth = 45 + (this.constituition * this.heroLevel); // base hp of 45
 	this.curHealth = this.maxHealth;
 	this.knockbackForce = 1000;
 
@@ -134,15 +134,9 @@ BasicGame.HeroTrooperMP.prototype.attCallback = function(obj1, obj2) {
 		if (this.facingRight == obj2.facingRight) {
 			// Backstab
 			console.log("backstab");
-<<<<<<< HEAD
-			obj2.getHit(20, this.knockbackForce * 3 * this.facingRight, this.knockbackForce * 2, BasicGame.myID);
+			obj2.getHit(this.skillADamage * 2, this.knockbackForce * 2 * this.facingRight, this.knockbackForce * 2, this);
 		} else {			// Call get hit of other person
-			obj2.getHit(10, this.knockbackForce * this.facingRight, this.knockbackForce, BasicGame.myID);
-=======
-			obj2.getHit(this.skillADamage * 2, this.knockbackForce * 2 * this.facingRight, this.knockbackForce * 2, this.ID);
-		} else {			// Call get hit of other person
-			obj2.getHit(this.skillADamage, this.knockbackForce * this.facingRight, this.knockbackForce, this.ID);
->>>>>>> 3ac7145e05dc8466a0edf3e973f60821ff056a50
+			obj2.getHit(this.skillADamage, this.knockbackForce * this.facingRight, this.knockbackForce, this);
 		}
 	}
 };
@@ -153,11 +147,7 @@ BasicGame.HeroTrooperMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-<<<<<<< HEAD
-		obj2.getHit(10, 0, 0, BasicGame.myID);	
-=======
-		obj2.getHit(this.skillEDamage, 0, 0, this.ID);	
->>>>>>> 3ac7145e05dc8466a0edf3e973f60821ff056a50
+		obj2.getHit(this.skillEDamage, 0, 0, this);	
 	}
 };
 

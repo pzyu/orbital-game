@@ -131,8 +131,6 @@ eurecaServer.exports.setClientStatus = function(roomName, id) {
 // function to set client ready status on the server and to update the other clients in the room
 eurecaServer.exports.setClientCharacter = function(id, character) {
 	clients[id].char = character;
-	clients[id].heroLevel = 1;
-	clients[id].exp = 0;
 }
 
 // function to set client team value on the server and to update the other clients in the room
@@ -254,9 +252,13 @@ eurecaServer.exports.handshake = function(room) {
 			// Get starting position for every client
 			var x = 0;
 			var y = 0;
+			var lvl = 1;
+			var exp - 0;
 			if (lobbylist[room].clientInfo[cc].lastState != null) {
 				x = lobbylist[room].clientInfo[cc].lastState.x;
 				y = lobbylist[room].clientInfo[cc].lastState.y;
+				lvl = lobbylist[room].clientInfo[cc].lastState.lvl;
+				exp = lobbylist[room].clientInfo[cc].lastState.exp;
 			}
 			// Replicate enemy at position, along with selected character
 			remote.spawnOtherPlayers(
@@ -271,15 +273,7 @@ eurecaServer.exports.handshake = function(room) {
 	}
 }
 
-eurecaServer.exports.playerKillTDM = function(playerID, teamID, roomID) {
-	// Credit Exp and update levels to playerID on kill
-	clients[playerID].exp += 100;
-	if (clients[playerID].exp > 100) {
-		var levelGain = Math.floor(clients[playerID].exp / 100);
-		clients[playerID].heroLevel += levelGain;
-		clients[playerID].exp = clients[playerID].exp % 100;
-	}
-
+eurecaServer.exports.playerKillTDM = function(teamID, roomID) {
 	// Credit team score
 	lobbylist[roomID].game.TeamScore[teamID] = (lobbylist[roomID].game.TeamScore[teamID] == null) ? 1 : lobbylist[roomID].game.TeamScore[teamID]++;
 	// add win condition here!
