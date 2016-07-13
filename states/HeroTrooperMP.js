@@ -120,9 +120,9 @@ BasicGame.HeroTrooperMP.prototype.attCallback = function(obj1, obj2) {
 		if (this.facingRight == obj2.facingRight) {
 			// Backstab
 			console.log("backstab");
-			obj2.getHit(20, this.knockbackForce * 3 * this.facingRight, this.knockbackForce * 2);
+			obj2.getHit(20, this.knockbackForce * 3 * this.facingRight, this.knockbackForce * 2, BasicGame.myID);
 		} else {			// Call get hit of other person
-			obj2.getHit(10, this.knockbackForce * this.facingRight, this.knockbackForce);
+			obj2.getHit(10, this.knockbackForce * this.facingRight, this.knockbackForce, BasicGame.myID);
 		}
 	}
 };
@@ -134,7 +134,7 @@ BasicGame.HeroTrooperMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(10, 0, 0);	
+		obj2.getHit(10, 0, 0, BasicGame.myID);	
 	}
 };
 

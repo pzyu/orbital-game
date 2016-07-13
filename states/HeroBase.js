@@ -48,6 +48,18 @@ BasicGame.HeroBase = function (id, game, x, y, sprite) {
 	this.isRevived = false; 		// Check if has been revived
 	this.isBuffed = false;
 	
+	// Hero Levels
+	this.heroLevel = 1;
+	this.heroExp = 0;
+	this.heroToNextLevel = 100;
+
+	// Hero Stats
+	this.constituition = 0;
+	this.attack = 0;
+	this.atkSpeed = 0;
+	this.movSpeed = 0;
+
+
 	// Skills
 	this.skillACooldown = 1000;
 	this.skillBCooldown = 1000;
@@ -241,7 +253,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
     }
 };
 
-BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY) {
+BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, killerID) {
 	this.effect.play(this.hitAnim, this, 0, 0);
 
 	// Can only get hit if not dead
@@ -266,7 +278,7 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY) {
 			this.isDead = true;
 			console.log("Dead");
 			this.spawn();
-			this.refMP.broadcast(this.ID + " has been killed!", 2);
+			this.refMP.broadcast(this.ID + " has been killed by " + killerID, 2);
 		}
 	}
 };
@@ -282,6 +294,8 @@ BasicGame.HeroBase.prototype.getSkillB = function() {
 BasicGame.HeroBase.prototype.getSkillC = function() {
 	return this.game.math.clamp((this.game.time.now - this.skillCTimer) / this.skillCCooldown, -1, 0);
 };
+
+
 
 BasicGame.HeroBase.prototype.getSkillD = function() {
 	return this.game.math.clamp((this.game.time.now - this.skillDTimer) / this.skillDCooldown, -1, 0);

@@ -30,8 +30,8 @@ BasicGame.Multiplayer.prototype.preload = function() {
 	BasicGame.eurecaClient.exports.kill = function(id) {	
 		if (ref.playerList[id][0]) {
 			ref.playerList[id][0].kill();
-			ref.broadcast(ref.playerList[id][0] + " has left the game!", 2);
-			console.log('killing ', id, ref.playerList[id][0], Object.keys(ref.playerList).length);
+			ref.broadcast(ref.playerList[id][1] + " has left the game!", 2);
+			console.log('killing ', id, ref.playerList[id][1], Object.keys(ref.playerList).length);
 			delete ref.playerList[id];
 		}
 	}	

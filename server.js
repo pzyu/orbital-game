@@ -130,14 +130,9 @@ eurecaServer.exports.setClientStatus = function(roomName, id) {
 
 // function to set client ready status on the server and to update the other clients in the room
 eurecaServer.exports.setClientCharacter = function(id, character) {
-
-	/* Separated for now. Affects multiplayer
-	// Set client's selected character
-	remote.getChar().onReady(function(result) {
-		clients[conn.id].char = result;
-		console.log(clients[conn.id].char);
-	});*/
 	clients[id].char = character;
+	clients[id].heroLevel = 1;
+	clients[id].exp = 0;
 }
 
 // function to set client team value on the server and to update the other clients in the room
@@ -194,6 +189,9 @@ eurecaServer.exports.destroyRoomLink = function(roomName, id) {
 	clients[id].lobbyID = ''; // update client lobby room status
 	clients[id].team = null;
 	clients[id].ready = false;
+	clients[id].char = null;
+	clients[id].heroLevel = null;
+	clients[id].exp = null;
 	if (lobbylist[roomName].clientInfo[id] != null) {
 		delete lobbylist[roomName].clientInfo[id];
 		lobbylist[roomName].playerCount--;
@@ -271,6 +269,17 @@ eurecaServer.exports.handshake = function(room) {
 		}
 	}
 }
+
+eurecaServer.exports.playerKillTDM = function(playerID, teamID) {
+	// Credit Exp and update levels to playerID on kill
+	clients[playerID].exp += 100;
+	if (clients[playerID].exp > 100) {
+		var levelGain = Math.floor(clients[playerID].exp / 100);
+		clients[playerID].heroLevel += levelGain;
+		clients[playerID].exp = clients[playerID].exp % 100;
+	}
+}
+
 
 eurecaServer.exports.handleKeys = function(keys, room) {
 	//console.log('handling');

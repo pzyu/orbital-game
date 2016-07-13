@@ -5,14 +5,25 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y) {
 	// Collider size
 	this.body.setSize(110, 220, 110, 20);
 
+	// Hero Levels
+	this.heroLevel = 1;
+	this.heroExp = 0;
+	this.heroToNextLevel = 100;
+
+	// Hero Stats (Attacker class - Destroyer)
+	this.constituition = 7; // multiplier for hp
+	this.attack = 10;
+	this.atkSpeed = 7;
+	this.movSpeed = 5;
+
 	// Hero attributes
 	this.jumpStrength = -1500;
-	this.moveSpeed = 800;
+	this.moveSpeed = 600 + (this.movSpeed * this.heroLevel);
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 100;
+	this.maxHealth = 50 + (this.constituition * this.heroLevel); // base hp of 50
 	this.curHealth = this.maxHealth;
-	
-	// Skill cooldowns in milliseconds
+
+	// Skill cooldowns in milliseconds (Min Cool Down time)
     this.skillACooldown = 500;
 	this.skillBCooldown = 2000;
 	this.skillCCooldown = 2000;
@@ -150,7 +161,7 @@ BasicGame.HeroDestroyerMP.prototype.attCallback = function(obj1, obj2) {
 		this.attackCollider.x = this.attackCollider.y = -200;
 		this.attackCollider.deactivate();
 		// Call get hit of other person
-		obj2.getHit(15, this.knockbackForce * this.facingRight, this.knockbackForce);
+		obj2.getHit(15 + (this.attack * this.heroLevel), this.knockbackForce * this.facingRight, this.knockbackForce, BasicGame.myID);
 	}
 };
 
@@ -161,7 +172,7 @@ BasicGame.HeroDestroyerMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(8, 0, 0);	
+		obj2.getHit(8 + Math.round(this.attack * this.heroLevel * 0.7), 0, 0, BasicGame.myID);	
 	}
 };
 
@@ -192,10 +203,9 @@ BasicGame.HeroDestroyerMP.prototype.handleSkillA = function() {
     	this.weapon.fire();
 
 		this.isAttacking = true;
-		this.skillATimer = this.game.time.now + this.skillACooldown; 
+		this.skillATimer = this.game.time.now + this.skillACooldown - (this.heroLevel * this.atkSpeed); 
 		this.skillsEnabled = false;
 		this.skillTimer = this.game.time.now + this.skillCooldown;
-
 	}
 };
 

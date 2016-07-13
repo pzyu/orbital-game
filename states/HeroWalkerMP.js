@@ -165,7 +165,7 @@ BasicGame.HeroWalkerMP.prototype.attCallback = function(obj1, obj2) {
 		this.isAttacking = false;
 		this.attackCollider.deactivate();
 		// Call get hit of other person
-		obj2.getHit(20, this.knockbackForce * this.facingRight, this.knockbackForce);
+		obj2.getHit(20, this.knockbackForce * this.facingRight, this.knockbackForce, BasicGame.myID);
 	}
 };
 
@@ -175,7 +175,7 @@ BasicGame.HeroWalkerMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(30, 0, 0);	
+		obj2.getHit(30, 0, 0, BasicGame.myID);	
 		this.skillExplSFX.play();
 	}
 };
