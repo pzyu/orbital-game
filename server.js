@@ -163,7 +163,7 @@ eurecaServer.exports.chooseHost = function(roomName) {
 
 eurecaServer.exports.startGameTDM = function(roomName) {
 	lobbylist[roomName].status = ' On-going'; // Update Lobby Status
-	lobbylist[roomName].game = {ScoreGoal: lobbylist[roomName].maxPlayers * 5, Team1: 0, Team2: 0};
+	lobbylist[roomName].game = {ScoreGoal: lobbylist[roomName].maxPlayers * 5, TeamScore: []};
 	eurecaServer.exports.requestClientInfo(); // update all lobby clients
 	// for every client in the lobby, start the game
 	for (var id in lobbylist[roomName].clientInfo) { 
@@ -271,7 +271,7 @@ eurecaServer.exports.handshake = function(room) {
 	}
 }
 
-eurecaServer.exports.playerKillTDM = function(playerID, teamID) {
+eurecaServer.exports.playerKillTDM = function(playerID, teamID, roomID) {
 	// Credit Exp and update levels to playerID on kill
 	clients[playerID].exp += 100;
 	if (clients[playerID].exp > 100) {
@@ -279,6 +279,10 @@ eurecaServer.exports.playerKillTDM = function(playerID, teamID) {
 		clients[playerID].heroLevel += levelGain;
 		clients[playerID].exp = clients[playerID].exp % 100;
 	}
+
+	// Credit team score
+	lobbylist[roomID].game.TeamScore[teamID] = (lobbylist[roomID].game.TeamScore[teamID] == null) ? 1 : lobbylist[roomID].game.TeamScore[teamID]++;
+	// add win condition here!
 }
 
 
