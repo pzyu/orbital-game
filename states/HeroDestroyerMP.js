@@ -12,9 +12,9 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y, team) {
 
 	// Hero Stats (Attacker class - Destroyer)
 	this.constituition = 7; // multiplier for hp
-	this.attack = 10;
-	this.atkSpeed = 7;
-	this.movSpeed = 5;
+	this.attack = 10; // multiplayer for attack damage
+	this.atkSpeed = 7; // multiplier for attack speed
+	this.movSpeed = 5; // multiplier for movement speed
 
 	// Hero attributes
 	this.jumpStrength = -1500;

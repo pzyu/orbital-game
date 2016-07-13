@@ -5,12 +5,23 @@ BasicGame.HeroWalkerMP = function (id, game, x, y, team) {
 	// Collider size
 	this.body.setSize(160, 200, 44, 24);
 
+	// Hero Levels
+	this.heroLevel = 1;
+	this.heroExp = 0;
+	this.heroToNextLevel = 100;
+
+	// Hero Stats (Attacker class - Destroyer)
+	this.constituition = 7; // multiplier for hp
+	this.attack = 10; // multiplayer for attack damage
+	this.atkSpeed = 7; // multiplier for attack speed
+	this.movSpeed = 5; // multiplier for movement speed
+	
 	// Hero attributes
 	this.jumpLimit = 1;
 	this.jumpStrength = -2000;
-	this.moveSpeed = 500;
+	this.moveSpeed = 500 + (this.movSpeed * this.heroLevel);
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 100;
+	this.maxHealth = 100 + (this.constituition * this.heroLevel); // base hp of 50
 	this.curHealth = this.maxHealth;
 
 	// Skill cooldowns in milliseconds
