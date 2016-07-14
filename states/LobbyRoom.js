@@ -174,7 +174,7 @@ BasicGame.LobbyRoom.prototype = {
 					});
 				} else {
 					// Player has not select a team, ask player to choose team
-					ref.PlayerText["readyButton"] = ref.add.text(ref.world.width/10 * 7, ref.world.height/7 * 6,  'Chose a team', ref.headerTextDefault);
+					ref.PlayerText["readyButton"] = ref.add.text(ref.world.width/10 * 7, ref.world.height/7 * 6,  'Choose a team', ref.headerTextDefault);
 				}
 			} else {
 				// unknown game mode

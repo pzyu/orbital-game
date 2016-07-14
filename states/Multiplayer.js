@@ -27,6 +27,13 @@ BasicGame.Multiplayer = function (game) {
 		0
 	];
 
+	this.magicSpawnPoints = [			// Array of magic circle spawn points
+		{x: 490,  y: 635},
+		{x: 1750,  y: 700},
+		{x: 1750, y: 1260},
+		{x: 3010,  y: 640}
+	];
+
 	this.teamAHUD;
 	this.teamBHUD;
 };
@@ -115,6 +122,15 @@ BasicGame.Multiplayer.prototype.preload = function() {
 	BasicGame.eurecaClient.exports.getChar = function() {
 		// Return player's selected character
 		return BasicGame.selectedChar;
+	};
+
+	BasicGame.eurecaClient.exports.setIndex = function(index) {
+		// Return player's selected character
+		if (ref.magicCircle != null) {
+			ref.magicCircle.position = ref.magicSpawnPoints[index];
+			console.log('index: ' + index);
+			console.log('setting to: ' + ref.magicCircle.position.x + ' ' + ref.magicCircle.position.y);
+		}
 	};
 
 	this.preloadGame();
@@ -267,6 +283,13 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.teamAHUD.fixedToCamera = true;
 	this.teamBHUD.fixedToCamera = true;
 
+	this.magicCircle = this.game.add.sprite(-500, -500, 'magicCircle');
+	this.magicCircle.anchor.setTo(0.5, 0.5);
+	this.game.physics.arcade.enableBody(this.magicCircle);
+	this.magicCircle.body.setSize(400, 100, 0, -50);
+	this.magicCircle.body.allowGravity = false;
+	this.game.add.existing(this.magicCircle);
+
 	// create all other clients
 	BasicGame.eurecaServer.handshake(BasicGame.roomID);
 
@@ -294,17 +317,9 @@ BasicGame.Multiplayer.prototype.broadcast = function(msg, duration) {
 
 BasicGame.Multiplayer.prototype.update = function() {
 	//console.log("TEST update");
-	// Enable collision between player and layer
+	// Enable collision between player and layer and shield
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
-	//this.physics.arcade.collide(BasicGame.playerCG, BasicGame.playerCG);
 	this.physics.arcade.collide(BasicGame.playerCG, BasicGame.shieldCG);
-
-	//this.physics.arcade.collide(BasicGame.projectileCG, layer, this.projectileCallback);
-	//this.physics.arcade.collide(BasicGame.projectileCG, BasicGame.shieldCG, this.shieldCallBack);
-	// Overlap
-	//this.physics.arcade.overlap(BasicGame.projectileCG, BasicGame.playerCG, this.colliderCallback);
-	//this.physics.arcade.overlap(BasicGame.colliderCG, BasicGame.playerCG, this.colliderCallback);
-
 	// Team colliders
 	this.physics.arcade.overlap(this.teamA, BasicGame.playerCG, this.baseCallback.bind(this));	
 	this.physics.arcade.overlap(this.teamB, BasicGame.playerCG, this.baseCallback.bind(this));	
@@ -314,6 +329,17 @@ BasicGame.Multiplayer.prototype.update = function() {
 	//this.game.debug.body(this.teamA);
 	//this.game.debug.body(this.teamB);
 	//this.chat();
+	this.game.debug.spriteInfo(this.magicCircle, 0, 100);
+	this.game.debug.body(this.magicCircle, 0, 200);
+	this.physics.arcade.overlap(BasicGame.playerCG, this.magicCircle, this.magicCircleCallback.bind(this));
+
+	// if (this.game.input.mousePointer.isDown)
+ //    {
+ //        //  400 is the speed it will move towards the mouse
+ //        this.game.physics.arcade.moveToPointer(this.magicCircle, 2000);
+ //    } else {
+ //        this.magicCircle.body.velocity.setTo(0, 0);
+ //    }
 };
 
 BasicGame.Multiplayer.prototype.handleHUD = function() {
@@ -394,7 +420,10 @@ BasicGame.Multiplayer.prototype.baseCallback= function(obj1, obj2) {
 			obj2.curHealth++;
 		}
 	}
+};
 
+BasicGame.Multiplayer.prototype.magicCircleCallback= function(obj1, obj2) {
+	console.log(obj2.nick + " is in circle");
 };
 
 BasicGame.Multiplayer.prototype.projectileCallback= function(obj1, obj2) {
