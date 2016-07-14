@@ -169,7 +169,6 @@ BasicGame.HeroTrooperMP.prototype.collideCallback = function(obj1, obj2) {
 
 BasicGame.HeroTrooperMP.prototype.handleSkillA = function() {
 	if (this.cursor.skillA && this.game.time.now > this.skillATimer && this.skillsEnabled) {
-		console.log(this.skillACooldown);
 		var skillTween = this.game.add.tween(this.body.velocity);
 		skillTween.to({x: 400 * this.facingRight}, 250, Phaser.Easing.Cubic.Out);
 		skillTween.start();
