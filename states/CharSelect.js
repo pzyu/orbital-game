@@ -1,5 +1,5 @@
 BasicGame.CharSelect = function (game) {
-	this.offset = 200;
+	this.offset = 250;
 	this.charCount = 0;
 	this.startGame = null;
 	this.gray = null;
@@ -53,13 +53,14 @@ BasicGame.CharSelect.prototype = {
 
 	addCharacter: function(spriteName) {
 		// This way looks nicer but is more expensive and takes longer to load
-		var char = this.add.sprite(this.offset * this.charCount, 0, spriteName);
+		var char = this.add.sprite(30 + this.offset * this.charCount, 0, spriteName);
 		//console.log(spriteName + " " + char.height + " " + char.width);
 
 		// To get the correct prefix for each character
 		var animName = "";
 		if (spriteName == 'player_destroyer') {
 			animName = "Anim_Destroyer_";
+			char.y += 10;
 		}
 		if (spriteName == 'player_trooper') {
 			animName = "Anim_Trooper_";
@@ -115,8 +116,7 @@ BasicGame.CharSelect.prototype = {
 		} else {
 			var joinTxt = "Start Game";
 		}
-		this.add.text(300, 300, "Arrow keys for controls, \nA,S,D,F for skills", optionStyle);
-		this.add.text(150, 400, "Please only select the big blue robot to play first\n as I am restructing the characters",  { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "red"});
+		this.add.text(400, 300, "Arrow keys for controls, \nA,S,D,F for skills", optionStyle);
 
 		this.returnMenu = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 100,  "Back", optionStyle);
 		this.startGame = this.add.text(this.world.width - this.world.width/3.5, this.world.height - 100,  joinTxt, optionStyle);

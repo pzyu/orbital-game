@@ -179,6 +179,8 @@ BasicGame.HeroWalkerMP.prototype.update = function() {
 	this.inCircle = false;
 	this.refMP.physics.arcade.overlap(this, this.refMP.magicCircle, this.magicCircleCallback.bind(this));
 
+	this.getChildAt(0).setText(this.nick + " " + this.heroLevel);
+	this.getChildAt(0).scale.x = this.facingRight;
 	//this.game.debug.body(this);
 	//this.game.debug.body(this.shield);
 	//this.rocket.debug(0, 0, true);

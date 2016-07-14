@@ -91,9 +91,10 @@ BasicGame.Multiplayer.prototype.preload = function() {
 				var player = new BasicGame.HeroGunnerMP(i, ref.game, curX, curY, team, nick);
 			}
 			ref.playerList[i] = [player, nick, team];
-			if (team == BasicGame.myTeam) {
+			// Uncomment for team only
+			//if (team == BasicGame.myTeam) {
 				ref.addPlayerName(i);
-			}
+			//}
 		}
 		// Every time you add a player, sort the group so local client is always on top
 		BasicGame.playerCG.sort('z', Phaser.Group.SORT_DESCENDING);
@@ -253,10 +254,10 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.game.add.existing(this.teamB);
 
 	// HUD
-	this.skillA = this.game.add.image(50, this.game.height - 20, 'skill');
-	this.skillB = this.game.add.image(100, this.game.height - 20, 'skill');
-	this.skillC = this.game.add.image(150, this.game.height - 20, 'skill');
-	this.skillD = this.game.add.image(200, this.game.height - 20, 'skill');
+	this.skillA = this.game.add.image(433, this.game.height - 20, 'skill');
+	this.skillB = this.game.add.image(478, this.game.height - 20, 'skill');
+	this.skillC = this.game.add.image(805, this.game.height - 20, 'skill');
+	this.skillD = this.game.add.image(850, this.game.height - 20, 'skill');
 
 	this.skillA.fixedToCamera = true;
 	this.skillB.fixedToCamera = true;

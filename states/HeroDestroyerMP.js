@@ -162,6 +162,8 @@ BasicGame.HeroDestroyerMP.prototype.update = function() {
 	this.inCircle = false;
 	this.refMP.physics.arcade.overlap(this, this.refMP.magicCircle, this.magicCircleCallback.bind(this));
 
+	this.getChildAt(0).setText(this.nick + " " + this.heroLevel);
+	this.getChildAt(0).scale.x = this.facingRight;
 	//this.game.debug.body(this.attackCollider);
 	//this.weapon.debug(0, 0, true);
 	//this.grenade.debug(0, 100, true);
