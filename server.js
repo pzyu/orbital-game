@@ -305,14 +305,39 @@ eurecaServer.exports.playerKillTDM = function(teamID, roomID) {
 	} else {
 		lobbylist[roomID].game.TeamScore[teamID]++;
 	}
-	//lobbylist[roomID].game.TeamScore[teamID] = (lobbylist[roomID].game.TeamScore[teamID] == null) ? 1 : lobbylist[roomID].game.TeamScore[teamID]++;
+
 	// add win condition here!
+	if (lobbylist[roomID].game.TeamScore[teamID] >= lobbylist[roomID].game.ScoreGoal) {
+		eurecaServer.exports.winGame(roomID); // win game
+	}
 }
 
-eurecaServer.exports.getTeamScore = function(roomID) {
-	//console.log(lobbylist[roomID].game.TeamScore[teamID]);
-	//return (lobbylist[roomID].game.TeamScore[teamID] == null) ? -99 : lobbylist[roomID].game.TeamScore[teamID];
-	return lobbylist[roomID].game.TeamScore;
+eurecaServer.exports.getTeamScore = function(roomID, teamID) {
+	var team;
+	var teamChk = false;
+	for (var id in lobbylist[roomID].clientInfo) {
+		if (team == null) {
+			team = lobbylist[roomID].clientInfo[id].team;
+		} else {
+			if (team != lobbylist[roomID].clientInfo[id].team) {
+				teamChk = true;
+			}
+		}
+	}
+
+	if (teamChk == true) {
+		// more than 1 team exist
+		return lobbylist[roomID].game.TeamScore; // return team score
+	} else {
+		// only 1 team exist, give auto win
+		eurecaServer.exports.winGame(roomID); // win game
+	}
+}
+
+eurecaServer.exports.winGame = function(roomID) {
+	for (var id in lobbylist[room].clientInfo) {
+		lobbylist[room].clientInfo[id].remote.kickToMenu(); // kick every player in lobby
+	}
 }
 
 eurecaServer.exports.handleKeys = function(keys, room) {

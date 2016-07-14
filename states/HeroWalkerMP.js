@@ -8,7 +8,7 @@ BasicGame.HeroWalkerMP = function (id, game, x, y, team, nick) {
 	// Hero Levels
 	this.heroLevel = 1;
 	this.heroExp = 0;
-	this.heroToNextLevel = 100;
+	this.heroToNextLevel = 80;
 
 	// Hero Stats (Tank class - Walker)
 	this.constituition = 10; // multiplier for hp

@@ -6,9 +6,9 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y, team, nick) {
 	this.body.setSize(110, 220, 110, 20);
 
 	// Hero Levels
-	this.heroLevel = 0;
+	this.heroLevel = 1;
 	this.heroExp = 0;
-	this.heroToNextLevel = 100;
+	this.heroToNextLevel = 80;
 
 	// Hero Stats (Attacker class - Destroyer)
 	this.constituition = 7; // multiplier for hp
@@ -147,7 +147,7 @@ BasicGame.HeroDestroyerMP.prototype.update = function() {
 	// Collide with other players
 	this.refMP.physics.arcade.overlap(this.attackCollider, BasicGame.playerCG, this.attCallback.bind(this));
 	this.refMP.physics.arcade.overlap(this.weapon.bullets, BasicGame.playerCG, this.bulletCallback.bind(this));
-	this.refMP.physics.arcade.overlap(this.grenade.bullets, BasicGame.playerCG, this.bulletCallback.bind(this));
+	this.refMP.physics.arcade.overlap(this.grenade.bullets, BasicGame.playerCG, this.grenadeCallback.bind(this));
 
 	// Collide with shield
 	this.refMP.physics.arcade.collide(this.weapon.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
@@ -183,6 +183,17 @@ BasicGame.HeroDestroyerMP.prototype.bulletCallback = function(obj1, obj2) {
 		obj1.kill();
 		// Call get hit of other person
 		obj2.getHit(Math.round(this.attack * this.heroLevel * 0.7), 0, 0, this);	
+	}
+};
+
+BasicGame.HeroDestroyerMP.prototype.grenadeCallback = function(obj1, obj2) {
+	// If not colliding with yourself
+	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
+ 		//this.explosionGroup.getFirstExists(false).playUntracked('anim_2', obj1.x, obj1.y);
+		// Kill the projectile
+		obj1.kill();
+		// Call get hit of other person
+		obj2.getHit(this.attack * this.heroLevel * 1.5, 0, 0, this);	
 	}
 };
 
