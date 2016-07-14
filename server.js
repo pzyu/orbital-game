@@ -169,7 +169,7 @@ eurecaServer.exports.startGameTDM = function(roomName) {
 			var remote = lobbylist[roomName].clientInfo[id].remote;
 			remote.setIndex( Math.floor(Math.random() * 4));
 		}
-	}, 10000);
+	}, 60000);
 	eurecaServer.exports.requestClientInfo(); // update all lobby clients
 	// for every client in the lobby, start the game
 	for (var id in lobbylist[roomName].clientInfo) { 

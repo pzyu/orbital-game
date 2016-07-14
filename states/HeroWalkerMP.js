@@ -30,7 +30,7 @@ BasicGame.HeroWalkerMP = function (id, game, x, y, team, nick) {
 
 	// Skill cooldowns in milliseconds
     this.skillACooldown = 1500; // normal attack - punch (Default 1.5s)
-	this.skillBCooldown = 2000; // shield (Default 2s)
+	this.skillBCooldown = 6000; // shield (Default 2s)
 	this.skillCCooldown = 8000; // rocket (Default 4.5s)
 	this.skillDCooldown = 3000; // backdash (Default 3s)
 	this.skillECooldown = 15000; // Ulti - missile barrage (Default 15s)
