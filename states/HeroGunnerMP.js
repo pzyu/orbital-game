@@ -257,7 +257,7 @@ BasicGame.HeroGunnerMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(5 + (this.heroLevel * this.attack, 0, 0, this);	
+		obj2.getHit(5 + (this.heroLevel * this.attack), 0, 0, this);	
 	}
 };
 

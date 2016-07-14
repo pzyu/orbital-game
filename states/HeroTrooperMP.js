@@ -15,9 +15,9 @@ BasicGame.HeroTrooperMP = function (id, game, x, y, team, nick) {
 	this.attack = 7; // multiplayer for attack damage
 	this.atkSpeed = 10; // multiplier for attack speed
 	this.movSpeed = 10; // multiplier for movement speed
-	this.skillBLvl = 0;
+	this.skillBLvl = -200;
 	this.skillCLvl = -200;
-	this.skillDLvl = -200;
+	this.skillDLvl = 0;
 	this.skillELvl = -400;
 
 	// Base Hero attributes
@@ -30,9 +30,9 @@ BasicGame.HeroTrooperMP = function (id, game, x, y, team, nick) {
 
     // Skill cooldowns in milliseconds
     this.skillACooldown = 800; // normal attack - dagger (Default 0.8s)
-	this.skillBCooldown = 5000; // backstab (Default auto)
-	this.skillCCooldown = 15000; // haste (Default 15s)
-	this.skillDCooldown = 20000; // invis (Default 20s)
+	this.skillBCooldown = 15000; // haste (Default 15s)
+	this.skillCCooldown = 20000; // invis (Default 20s)
+	this.skillDCooldown = 5000; // backstab (Passive)
 	this.skillECooldown = 25000; // Ulti - snipe (Default 25s)
 
 	// Attack collider
@@ -187,7 +187,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillB = function() {
 
 		this.skillBSFX.play();
 
-		this.applyBuff("BUFF_HASTE", 3000 + (this.heroLevel * 100), this.moveSpeed, 0);
+		this.applyBuff("BUFF_HASTE", this.moveSpeed * 1.8, 5000 + (this.heroLevel * 100), 0);
 		this.skillsEnabled = false;
 		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}

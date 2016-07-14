@@ -385,7 +385,7 @@ BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, de
 
 // on level up event, update stats
 function onLevelUp(targetPlayer) {
-	if (heroLevel < 25) { //Level Limit
+	if (targetPlayer.heroLevel < 25) { //Level Limit
 		targetPlayer.heroLevel ++;
 		// Hero attributes
 		targetPlayer.moveSpeed = targetPlayer.moveSpeed + targetPlayer.movSpeed; // update movement speed
@@ -396,9 +396,9 @@ function onLevelUp(targetPlayer) {
 
 		// Update Cooldown
 		targetPlayer.skillACooldown -= 2 * targetPlayer.atkSpeed; // attack speed
-		targetPlayer.skillBCooldown -= skillBLvl;
-		targetPlayer.skillCCooldown -= skillCLvl;
-		targetPlayer.skillDCooldown -= skillDLvl;
-		targetPlayer.skillECooldown -= skillELvl;
+		targetPlayer.skillBCooldown -= targetPlayer.skillBLvl;
+		targetPlayer.skillCCooldown -= targetPlayer.skillCLvl;
+		targetPlayer.skillDCooldown -= targetPlayer.skillDLvl;
+		targetPlayer.skillECooldown -= targetPlayer.skillELvl;
 	}
 }
