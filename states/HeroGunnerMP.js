@@ -15,21 +15,25 @@ BasicGame.HeroGunnerMP = function (id, game, x, y, team, nick) {
 	this.attack = 3; // multiplayer for attack damage
 	this.atkSpeed = 7; // multiplier for attack speed
 	this.movSpeed = 7; // multiplier for movement speed
+	this.skillBLvl = -100;
+	this.skillCLvl = -100;
+	this.skillDLvl = -800;
+	this.skillELvl = -400;
 
-	// Hero attributes
+	// Base Hero attributes
 	this.jumpStrength = -1500;
-	this.moveSpeed = 600 + (this.movSpeed * this.heroLevel);
+	this.moveSpeed = 600;
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 40 + (this.constituition * this.heroLevel); // base hp of 40
+	this.maxHealth = 40;
 	this.curHealth = this.maxHealth;
 	this.healthAmt = 10;
 	
 	// Skill cooldowns in milliseconds
-    this.skillACooldown = 1000;
-	this.skillBCooldown = 1000;
-	this.skillCCooldown = 1000;
-	this.skillDCooldown = 2000;	
-	this.skillECooldown = 2000;
+    this.skillACooldown = 1000; // normal attack - shoot bullet (Default 1s)
+	this.skillBCooldown = 5000; // mite (Default 5s)
+	this.skillCCooldown = 4500; // trap (Default 4.5s)
+	this.skillDCooldown = 30000; // health pack (Default 30s)
+	this.skillECooldown = 30000; // Ulti - revive (Default 40s)
 
 	// Revive collider
     this.attackCollider = new BasicGame.Collider(this.game, this, 250, 100, 150, 20, 1000, 1);
@@ -220,7 +224,7 @@ BasicGame.HeroGunnerMP.prototype.update = function() {
 
 BasicGame.HeroGunnerMP.prototype.healthPackCallback = function(obj1, obj2) {
 	if (obj2.curHealth < obj2.maxHealth && !obj2.isDead && this.myTeam == obj2.myTeam) {
-		obj2.curHealth += this.healthAmt;
+		obj2.curHealth += (this.healthAmt * this.heroLevel);
 		obj1.kill();
 	}
 };
@@ -228,7 +232,7 @@ BasicGame.HeroGunnerMP.prototype.healthPackCallback = function(obj1, obj2) {
 BasicGame.HeroGunnerMP.prototype.trapCallback = function(obj1, obj2) {
 	// If not colliding with yourself
 	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
-		obj2.applyBuff("BUFF_SLOW", 300, 5000, 0);
+		obj2.applyBuff("BUFF_SLOW", 300 + (this.heroLevel * 10), 5000 + (this.heroLevel * 100), 0);
 		obj1.kill();
 	}
 };
@@ -253,7 +257,7 @@ BasicGame.HeroGunnerMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(10, 0, 0, this);	
+		obj2.getHit(5 + (this.heroLevel * this.attack, 0, 0, this);	
 	}
 };
 

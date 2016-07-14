@@ -15,25 +15,25 @@ BasicGame.HeroTrooperMP = function (id, game, x, y, team, nick) {
 	this.attack = 7; // multiplayer for attack damage
 	this.atkSpeed = 10; // multiplier for attack speed
 	this.movSpeed = 10; // multiplier for movement speed
+	this.skillBLvl = 0;
+	this.skillCLvl = -200;
+	this.skillDLvl = -200;
+	this.skillELvl = -400;
 
-	// Hero attributes
+	// Base Hero attributes
 	this.jumpStrength = -1500;
-	this.moveSpeed = 800 + (this.movSpeed * this.heroLevel);
+	this.moveSpeed = 800;
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 45 + (this.constituition * this.heroLevel); // base hp of 45
+	this.maxHealth = 45;
 	this.curHealth = this.maxHealth;
 	this.knockbackForce = 1000;
 
     // Skill cooldowns in milliseconds
-    this.skillACooldown = 500;
-	this.skillBCooldown = 2000;
-	this.skillCCooldown = 2000;
-	this.skillDCooldown = 2000;	
-	this.skillECooldown = 1000;
-
-	// Damage
-	this.skillADamage = 10;
-	this.skillEDamage = 20;
+    this.skillACooldown = 800; // normal attack - dagger (Default 0.8s)
+	this.skillBCooldown = 5000; // backstab (Default auto)
+	this.skillCCooldown = 15000; // haste (Default 15s)
+	this.skillDCooldown = 20000; // invis (Default 20s)
+	this.skillECooldown = 25000; // Ulti - snipe (Default 25s)
 
 	// Attack collider
     this.attackCollider = new BasicGame.Collider(this.game, this, 80, 100, 40, 0, 2000, 1);
@@ -134,9 +134,9 @@ BasicGame.HeroTrooperMP.prototype.attCallback = function(obj1, obj2) {
 		if (this.facingRight == obj2.facingRight) {
 			// Backstab
 			console.log("backstab");
-			obj2.getHit(this.skillADamage * 2, this.knockbackForce * 2 * this.facingRight, this.knockbackForce * 2, this);
+			obj2.getHit(Math.round(5 + (this.attack * this.heroLevel) * 1.8), this.knockbackForce * this.facingRight, this.knockbackForce, this);
 		} else {			// Call get hit of other person
-			obj2.getHit(this.skillADamage, this.knockbackForce * this.facingRight, this.knockbackForce, this);
+			obj2.getHit(5 + (this.attack * this.heroLevel), this.knockbackForce * this.facingRight, this.knockbackForce, this);
 		}
 	}
 };
@@ -147,7 +147,7 @@ BasicGame.HeroTrooperMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(this.skillEDamage, 0, 0, this);	
+		obj2.getHit((this.attack * this.heroLevel) * 2.5, 50 * this.facingRight, 30, this);	
 	}
 };
 
@@ -160,7 +160,7 @@ BasicGame.HeroTrooperMP.prototype.collideCallback = function(obj1, obj2) {
 BasicGame.HeroTrooperMP.prototype.handleSkillA = function() {
 	if (this.cursor.skillA && this.game.time.now > this.skillATimer && this.skillsEnabled) {
 		var skillTween = this.game.add.tween(this.body.velocity);
-		skillTween.to({x: 1000 * this.facingRight}, 250, Phaser.Easing.Cubic.Out);
+		skillTween.to({x: 400 * this.facingRight}, 250, Phaser.Easing.Cubic.Out);
 		skillTween.start();
 		this.attackCollider.activate(); 
 
@@ -187,7 +187,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillB = function() {
 
 		this.skillBSFX.play();
 
-		this.applyBuff("BUFF_HASTE", 1600, 5000, 0);
+		this.applyBuff("BUFF_HASTE", 3000 + (this.heroLevel * 100), this.moveSpeed, 0);
 		this.skillsEnabled = false;
 		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
@@ -202,7 +202,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillC = function() {
     		this.smokeEffect.playUntracked('anim_4', this.x - 20 * this.facingRight, this.y - 10);
     	}, this);
 
-		this.applyBuff("BUFF_INVIS", 0, 5000, 500);
+		this.applyBuff("BUFF_INVIS", 0, 5000 + (this.heroLevel * 200), 500);
 
     	// Play the animation
     	this.animations.play('anim_stealth');

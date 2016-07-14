@@ -292,7 +292,7 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 
 			// credit kill to killerID
 			BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
-			killerInfo.heroExp += 10000;
+			killerInfo.heroExp += 100;
 			if (killerInfo.heroExp >= 100) {
 				var levelGain = Math.floor(killerInfo.heroExp / 100);
 				for (var i=0; i<levelGain; i++) {
@@ -380,9 +380,20 @@ BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, de
 
 // on level up event, update stats
 function onLevelUp(targetPlayer) {
-	targetPlayer.heroLevel ++;
-	// Hero attributes
-	targetPlayer.moveSpeed = targetPlayer.moveSpeed + targetPlayer.movSpeed;
-	targetPlayer.defaultMoveSpeed = targetPlayer.moveSpeed;
-	targetPlayer.maxHealth = targetPlayer.maxHealth + targetPlayer.constituition;
+	if (heroLevel < 25) { //Level Limit
+		targetPlayer.heroLevel ++;
+		// Hero attributes
+		targetPlayer.moveSpeed = targetPlayer.moveSpeed + targetPlayer.movSpeed; // update movement speed
+		targetPlayer.defaultMoveSpeed = targetPlayer.moveSpeed;
+		targetPlayer.maxHealth = targetPlayer.maxHealth + targetPlayer.constituition; // update max hp
+		 // update atk speed with a limiter tied to it (Best Atk speed = 0.2s per hit)
+		targetPlayer.skillACooldown = (targetPlayer.skillACooldown - (targetPlayer.atkSpeed * 2) <= 200) ? 200 : targetPlayer.skillACooldown - (targetPlayer.atkSpeed * 2);
+
+		// Update Cooldown
+		targetPlayer.skillACooldown -= 2 * targetPlayer.atkSpeed; // attack speed
+		targetPlayer.skillBCooldown -= skillBLvl;
+		targetPlayer.skillCCooldown -= skillCLvl;
+		targetPlayer.skillDCooldown -= skillDLvl;
+		targetPlayer.skillECooldown -= skillELvl;
+	}
 }

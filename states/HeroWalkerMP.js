@@ -15,21 +15,25 @@ BasicGame.HeroWalkerMP = function (id, game, x, y, team, nick) {
 	this.attack = 10; // multiplayer for attack damage
 	this.atkSpeed = 4; // multiplier for attack speed
 	this.movSpeed = 3; // multiplier for movement speed
+	this.skillBLvl = -20;
+	this.skillCLvl = -100;
+	this.skillDLvl = -20;
+	this.skillELvl = -200;
 
 	// Hero attributes
 	this.jumpLimit = 1;
 	this.jumpStrength = -2000;
-	this.moveSpeed = 550 + (this.movSpeed * this.heroLevel);
+	this.moveSpeed = 550;
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 50 + (this.constituition * this.heroLevel); // base hp of 50
+	this.maxHealth = 50;
 	this.curHealth = this.maxHealth;
 
 	// Skill cooldowns in milliseconds
-    this.skillACooldown = 1000;
-	this.skillBCooldown = 6000;
-	this.skillCCooldown = 2000;
-	this.skillDCooldown = 2000;	
-	this.skillECooldown = 2000;
+    this.skillACooldown = 1500; // normal attack - punch (Default 1.5s)
+	this.skillBCooldown = 2000; // shield (Default 2s)
+	this.skillCCooldown = 8000; // rocket (Default 4.5s)
+	this.skillDCooldown = 3000; // backdash (Default 3s)
+	this.skillECooldown = 15000; // Ulti - missile barrage (Default 15s)
 
 	// Attack collider
     this.attackCollider = new BasicGame.Collider(this.game, this, 100, 120, 120, -50, 1200, 1);
@@ -179,7 +183,7 @@ BasicGame.HeroWalkerMP.prototype.attCallback = function(obj1, obj2) {
 		this.isAttacking = false;
 		this.attackCollider.deactivate();
 		// Call get hit of other person
-		obj2.getHit(20, this.knockbackForce * this.facingRight, this.knockbackForce, this);
+		obj2.getHit(12 + (this.heroLevel * this.attack), this.knockbackForce * this.facingRight, this.knockbackForce, this);
 	}
 };
 
@@ -189,7 +193,7 @@ BasicGame.HeroWalkerMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(30, 0, 0, this);	
+		obj2.getHit(5 + (this.heroLevel * this.attack), 0, 0, this);	
 		this.skillExplSFX.play();
 	}
 };
