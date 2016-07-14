@@ -8,7 +8,7 @@ BasicGame.HeroGunnerMP = function (id, game, x, y, team, nick) {
 	// Hero Levels
 	this.heroLevel = 1;
 	this.heroExp = 0;
-	this.heroToNextLevel = 100;
+	this.heroToNextLevel = 80;
 
 	// Hero Stats (Support Class - Gunner)
 	this.constituition = 5; // multiplier for hp

@@ -136,7 +136,7 @@ BasicGame.HeroBase.prototype.constructor = BasicGame.HeroBase;
 BasicGame.HeroBase.prototype.spawn = function() {
 	if (this.isDead) {
 		this.body.velocity.x = this.body.velocity.y = 0;
-		var tween = this.game.add.tween(this).to({0: 0}, 5000, Phaser.Easing.Linear.None, true, 0, 0);
+		var tween = this.game.add.tween(this).to({0: 0}, 15000, Phaser.Easing.Linear.None, true, 0, 0);
 		tween.onStart.add(function(){
 			this.animations.play('anim_dead');
 		}, this);
@@ -296,15 +296,7 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 				// credit kill to killerID
 				BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
 			}
-		
-			killerInfo.heroExp += 100;
-			if (killerInfo.heroExp >= 100) {
-				var levelGain = Math.floor(killerInfo.heroExp / 100);
-				for (var i=0; i<levelGain; i++) {
-					onLevelUp(killerInfo);
-				}
-				killerInfo.heroExp = killerInfo.heroExp % 100;
-			}
+			creditExp(killerInfo, 100);
 
 			console.log("Dead");
 			this.spawn();
@@ -383,6 +375,14 @@ BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, de
 	}
 };
 
+// function to handle exp
+function creditExp(targetPlayer, exp) {
+	targetPlayer.heroExp += exp;
+	while (targetPlayer.heroExp >= targetPlayer.heroToNextLevel) {
+		onLevelUp(targetPlayer); // perform levelup on target player
+	}
+};
+
 // on level up event, update stats
 function onLevelUp(targetPlayer) {
 	if (targetPlayer.heroLevel < 25) { //Level Limit
@@ -400,5 +400,10 @@ function onLevelUp(targetPlayer) {
 		targetPlayer.skillCCooldown -= targetPlayer.skillCLvl;
 		targetPlayer.skillDCooldown -= targetPlayer.skillDLvl;
 		targetPlayer.skillECooldown -= targetPlayer.skillELvl;
+
+		// post levelup calculation
+		targetPlayer.heroExp -= targetPlayer.heroToNextLevel; // update remaining exp
+		targetPlayer.heroToNextLevel = targetPlayer.heroLevel * 80 // calculate next levelup requirement
 	}
-}
+};
+

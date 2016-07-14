@@ -8,7 +8,7 @@ BasicGame.HeroTrooperMP = function (id, game, x, y, team, nick) {
 	// Hero Levels
 	this.heroLevel = 1;
 	this.heroExp = 0;
-	this.heroToNextLevel = 100;
+	this.heroToNextLevel = 80;
 
 	// Hero Stats (Assasin Class - Trooper)
 	this.constituition = 4; // multiplier for hp
@@ -26,7 +26,7 @@ BasicGame.HeroTrooperMP = function (id, game, x, y, team, nick) {
 	this.defaultMoveSpeed = this.moveSpeed;
 	this.maxHealth = 45;
 	this.curHealth = this.maxHealth;
-	this.knockbackForce = 1000;
+	this.knockbackForce = 600;
 
     // Skill cooldowns in milliseconds
     this.skillACooldown = 800; // normal attack - dagger (Default 0.8s)
@@ -134,7 +134,7 @@ BasicGame.HeroTrooperMP.prototype.attCallback = function(obj1, obj2) {
 		if (this.facingRight == obj2.facingRight) {
 			// Backstab
 			console.log("backstab");
-			obj2.getHit(Math.round(5 + (this.attack * this.heroLevel) * 1.8), this.knockbackForce * this.facingRight, this.knockbackForce, this);
+			obj2.getHit(Math.round(this.attack * this.heroLevel * 1.8), this.knockbackForce * this.facingRight, this.knockbackForce, this);
 		} else {			// Call get hit of other person
 			obj2.getHit(5 + (this.attack * this.heroLevel), this.knockbackForce * this.facingRight, this.knockbackForce, this);
 		}
@@ -147,7 +147,7 @@ BasicGame.HeroTrooperMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit((this.attack * this.heroLevel) * 2.5, 50 * this.facingRight, 30, this);	
+		obj2.getHit(Math.round(this.attack * this.heroLevel * 2.5), 50 * this.facingRight, 30, this);	
 	}
 };
 
