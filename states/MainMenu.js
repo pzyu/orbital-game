@@ -24,8 +24,8 @@ BasicGame.MainMenu.prototype = {
 		this.title.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5);
 		this.title.anchor.set(0, 0.5);
 
-		this.add.text(50, 200, "There will be bugs because every commit is updated here \nI should probably get around to separating branches but I'm lazy" + 
-								"\nStart Game won't work for now \nAll other robots but the blue one are still being restructed",  
+		this.add.text(50, 200, "There will be bugs because every commit is updated here" + 
+								"\nStart Game won't work for now",  
 					 { font: '20pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"});
 
 

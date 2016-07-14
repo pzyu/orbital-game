@@ -128,6 +128,10 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	this.timeStep = this.refMP.timeStep;
 	this.delta = this.refMP.delta;
 
+	var text = this.game.add.text(0, -this.height/2 - 10, this.nick + " " + this.heroLevel, { font: '12pt myfont', align: 'left', fill: "white", align: 'center'});
+	text.anchor.setTo(0.5, 0);
+	this.addChild(text);
+
 	this.spawn();
 }
 
@@ -321,8 +325,6 @@ BasicGame.HeroBase.prototype.getSkillB = function() {
 BasicGame.HeroBase.prototype.getSkillC = function() {
 	return this.game.math.clamp((this.game.time.now - this.skillCTimer) / this.skillCCooldown, -1, 0);
 };
-
-
 
 BasicGame.HeroBase.prototype.getSkillD = function() {
 	return this.game.math.clamp((this.game.time.now - this.skillDTimer) / this.skillDCooldown, -1, 0);

@@ -225,6 +225,8 @@ BasicGame.HeroGunnerMP.prototype.update = function() {
 	this.inCircle = false;
 	this.refMP.physics.arcade.overlap(this, this.refMP.magicCircle, this.magicCircleCallback.bind(this));
 
+	this.getChildAt(0).setText(this.nick + " " + this.heroLevel);
+	this.getChildAt(0).scale.x = this.facingRight;
 	//this.weapon.debug(0, 0, true);
 	//this.trap.debug(0, 100, true);
 	//this.mite.debug(0, 200, true);
