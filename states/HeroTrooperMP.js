@@ -22,9 +22,9 @@ BasicGame.HeroTrooperMP = function (id, game, x, y, team, nick) {
 
 	// Base Hero attributes
 	this.jumpStrength = -1500;
-	this.moveSpeed = 800;
+	this.moveSpeed = 720;
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 45;
+	this.maxHealth = 450;
 	this.curHealth = this.maxHealth;
 	this.knockbackForce = 600;
 
@@ -34,6 +34,7 @@ BasicGame.HeroTrooperMP = function (id, game, x, y, team, nick) {
 	this.skillCCooldown = 20000; // invis (Default 20s)
 	this.skillDCooldown = 5000; // backstab (Passive)
 	this.skillECooldown = 25000; // Ulti - snipe (Default 25s)
+	this.defaultAS = this.skillACooldown;
 
 	// Attack collider
     this.attackCollider = new BasicGame.Collider(this.game, this, 80, 100, 40, 0, 2000, 1);
@@ -143,9 +144,9 @@ BasicGame.HeroTrooperMP.prototype.attCallback = function(obj1, obj2) {
 		if (this.facingRight == obj2.facingRight) {
 			// Backstab
 			console.log("backstab");
-			obj2.getHit(Math.round(this.attack * this.heroLevel * 1.8), this.knockbackForce * this.facingRight, this.knockbackForce, this);
+			obj2.getHit(50 + this.attack * this.heroLevel * 1.8, this.knockbackForce * this.facingRight, this.knockbackForce, this);
 		} else {			// Call get hit of other person
-			obj2.getHit(5 + (this.attack * this.heroLevel), this.knockbackForce * this.facingRight, this.knockbackForce, this);
+			obj2.getHit(50 + (this.attack * this.heroLevel), this.knockbackForce * this.facingRight, this.knockbackForce, this);
 		}
 	}
 };
@@ -156,7 +157,7 @@ BasicGame.HeroTrooperMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(Math.round(this.attack * this.heroLevel * 2.5), 50 * this.facingRight, 30, this);	
+		obj2.getHit(50 + this.attack * this.heroLevel * 2.5, 50 * this.facingRight, 30, this);	
 	}
 };
 
@@ -184,7 +185,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillA = function() {
 		this.isAttacking = true;
 		this.skillATimer = this.game.time.now + this.skillACooldown; 
 		this.skillsEnabled = false;
-		this.skillTimer = this.game.time.now + this.skillCooldown;
+		this.skillTimer = this.game.time.now + this.skillACooldown;
 	}
 };
 
@@ -197,6 +198,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillB = function() {
 		this.skillBSFX.play();
 
 		this.applyBuff("BUFF_HASTE", this.moveSpeed * 1.8, 5000 + (this.heroLevel * 100), 0);
+		this.applyBuff("BUFF_FURY", (this.skillACooldown / 2 <= 200) ? 200 : (this.skillACooldown / 2), 5000 + (this.heroLevel * 100), 0);
 		this.skillsEnabled = false;
 		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
