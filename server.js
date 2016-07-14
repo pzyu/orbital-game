@@ -161,7 +161,7 @@ eurecaServer.exports.chooseHost = function(roomName) {
 
 eurecaServer.exports.startGameTDM = function(roomName) {
 	lobbylist[roomName].status = ' On-going'; // Update Lobby Status
-	lobbylist[roomName].game = {ScoreGoal: lobbylist[roomName].maxPlayers * 5, TeamScore: []};
+	lobbylist[roomName].game = {ScoreGoal: lobbylist[roomName].maxPlayers * 5, TeamScore: [0, 0, 0]};
 	eurecaServer.exports.requestClientInfo(); // update all lobby clients
 	// for every client in the lobby, start the game
 	for (var id in lobbylist[roomName].clientInfo) { 
@@ -275,12 +275,19 @@ eurecaServer.exports.handshake = function(room) {
 
 eurecaServer.exports.playerKillTDM = function(teamID, roomID) {
 	// Credit team score
-	lobbylist[roomID].game.TeamScore[teamID] = (lobbylist[roomID].game.TeamScore[teamID] == null) ? 1 : lobbylist[roomID].game.TeamScore[teamID]++;
+	if (lobbylist[roomID].game.TeamScore[teamID] == null) {
+		lobbylist[roomID].game.TeamScore[teamID] = 1;
+	} else {
+		lobbylist[roomID].game.TeamScore[teamID]++;
+	}
+	//lobbylist[roomID].game.TeamScore[teamID] = (lobbylist[roomID].game.TeamScore[teamID] == null) ? 1 : lobbylist[roomID].game.TeamScore[teamID]++;
 	// add win condition here!
 }
 
 eurecaServer.exports.getTeamScore = function(roomID, teamID) {
-	return (lobbylist[roomID].game.TeamScore[teamID] == null) ? 0 : lobbylist[roomID].game.TeamScore[teamID];
+	//console.log(lobbylist[roomID].game.TeamScore[teamID]);
+	//return (lobbylist[roomID].game.TeamScore[teamID] == null) ? -99 : lobbylist[roomID].game.TeamScore[teamID];
+	return lobbylist[roomID].game.TeamScore;
 }
 
 eurecaServer.exports.handleKeys = function(keys, room) {

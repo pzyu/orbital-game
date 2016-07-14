@@ -290,8 +290,13 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 			this.curHealth = 0;
 			this.isDead = true; // kill confirmed
 
-			// credit kill to killerID
-			BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
+			// If local client is the killer then send to server,
+			// otherwise every client will be incrementing score 
+			if (BasicGame.myID == killerInfo.ID) {
+				// credit kill to killerID
+				BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
+			}
+		
 			killerInfo.heroExp += 100;
 			if (killerInfo.heroExp >= 100) {
 				var levelGain = Math.floor(killerInfo.heroExp / 100);
