@@ -286,7 +286,7 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 
 		this.body.velocity.x += knockbackX;
 		this.body.velocity.y -= knockbackY;
-		this.curHealth -= damage;
+		this.curHealth -= Math.round(damage);
 
 		// If dead, respawn
 		if (this.curHealth <= 0) {
@@ -387,6 +387,18 @@ BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, de
 		this.buffEffect.playTimed(buffName, this, 0, 0, duration);
 	} 
 
+	if (buffName == "BUFF_FURY") {
+		var fury = this.game.add.tween(this).to({0: 0}, duration, Phaser.Easing.Linear.None, true, delay);
+		fury.onStart.add(function() {
+			this.isBuffed = true;
+			this.skillACooldown = amount;
+		}, this);
+		fury.onComplete.add(function() {
+			this.isBuffed = false;
+			this.skillACooldown = this.defaultAS;
+		}, this);
+	}
+
 	if (buffName == "BUFF_INVIS") {
 		var invis = this.game.add.tween(this).to({alpha: 0.2}, 500, Phaser.Easing.Linear.None, true, delay);
 		invis.onStart.add(function() {
@@ -412,17 +424,19 @@ function creditExp(targetPlayer, exp) {
 // on level up event, update stats
 function onLevelUp(targetPlayer) {
 	if (targetPlayer.heroLevel < 25) { //Level Limit
+		var originalHPPercent = targetPlayer.curHealth / targetPlayer.maxHealth;
+
 		targetPlayer.heroLevel ++;
 		// Hero attributes
-		targetPlayer.moveSpeed = targetPlayer.moveSpeed + targetPlayer.movSpeed; // update movement speed
+		targetPlayer.moveSpeed += targetPlayer.movSpeed; // update movement speed
 		targetPlayer.defaultMoveSpeed += targetPlayer.movSpeed;
-		targetPlayer.maxHealth = targetPlayer.maxHealth + targetPlayer.constituition; // update max hp
-		targetPlayer.curHealth = targetPlayer.maxHealth;
+		targetPlayer.maxHealth += (targetPlayer.constituition * 5); // update max hp
+		targetPlayer.curHealth = Math.round(originalHPPercent * targetPlayer.maxHealth);
 		 // update atk speed with a limiter tied to it (Best Atk speed = 0.2s per hit)
 		targetPlayer.skillACooldown = (targetPlayer.skillACooldown - (targetPlayer.atkSpeed * 2) <= 200) ? 200 : targetPlayer.skillACooldown - (targetPlayer.atkSpeed * 2);
 
 		// Update Cooldown
-		targetPlayer.skillACooldown -= 2 * targetPlayer.atkSpeed; // attack speed
+		targetPlayer.defaultAS = (targetPlayer.skillACooldown - (targetPlayer.atkSpeed * 2) <= 200) ? 200 : targetPlayer.skillACooldown - (targetPlayer.atkSpeed * 2);
 		targetPlayer.skillBCooldown -= targetPlayer.skillBLvl;
 		targetPlayer.skillCCooldown -= targetPlayer.skillCLvl;
 		targetPlayer.skillDCooldown -= targetPlayer.skillDLvl;

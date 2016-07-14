@@ -24,7 +24,7 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y, team, nick) {
 	this.jumpStrength = -1500;
 	this.moveSpeed = 600;
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 50;
+	this.maxHealth = 500;
 	this.curHealth = this.maxHealth;
 	this.knockbackForce = 1500;
 
@@ -34,6 +34,7 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y, team, nick) {
 	this.skillCCooldown = 4500; // shotgun (Default 4.5s)
 	this.skillDCooldown = 8000;	// grenade (Default 8s)
 	this.skillECooldown = 30000; // Ulti (Default 40s)
+	this.defaultAS = this.skillACooldown;
 
 	// Attack collider
     this.attackCollider = new BasicGame.Collider(this.game, this, 80, 100, 80, 0, 2000, 1);
@@ -174,7 +175,7 @@ BasicGame.HeroDestroyerMP.prototype.attCallback = function(obj1, obj2) {
 		this.attackCollider.x = this.attackCollider.y = -200;
 		this.attackCollider.deactivate();
 		// Call get hit of other person
-		obj2.getHit(5 + (this.attack * this.heroLevel), (this.knockbackForce + (this.heroLevel) * 100) * this.facingRight, this.knockbackForce, this);
+		obj2.getHit(100 + (this.attack * this.heroLevel), (this.knockbackForce + (this.heroLevel) * 100) * this.facingRight, this.knockbackForce, this);
 	}
 };
 
@@ -184,7 +185,7 @@ BasicGame.HeroDestroyerMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(Math.round(this.attack * this.heroLevel * 0.7), 0, 0, this);	
+		obj2.getHit(50 + (this.attack * this.heroLevel), 0, 0, this);	
 	}
 };
 
@@ -195,7 +196,7 @@ BasicGame.HeroDestroyerMP.prototype.grenadeCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(this.attack * this.heroLevel * 1.5, 0, 0, this);	
+		obj2.getHit(150 + (this.attack * this.heroLevel * 1.5), 0, 0, this);	
 	}
 };
 
@@ -226,7 +227,7 @@ BasicGame.HeroDestroyerMP.prototype.handleSkillA = function() {
 		this.isAttacking = true;
 		this.skillATimer = this.game.time.now + this.skillACooldown; 
 		this.skillsEnabled = false;
-		this.skillTimer = this.game.time.now + this.skillCooldown;
+		this.skillTimer = this.game.time.now + this.skillACooldown;
 	}
 };
 

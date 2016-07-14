@@ -24,9 +24,9 @@ BasicGame.HeroGunnerMP = function (id, game, x, y, team, nick) {
 	this.jumpStrength = -1500;
 	this.moveSpeed = 600;
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 40;
+	this.maxHealth = 400;
 	this.curHealth = this.maxHealth;
-	this.healthAmt = 10;
+	this.healthAmt = 100;
 	
 	// Skill cooldowns in milliseconds
     this.skillACooldown = 1000; // normal attack - shoot bullet (Default 1s)
@@ -34,6 +34,7 @@ BasicGame.HeroGunnerMP = function (id, game, x, y, team, nick) {
 	this.skillCCooldown = 4500; // trap (Default 4.5s)
 	this.skillDCooldown = 30000; // health pack (Default 30s)
 	this.skillECooldown = 30000; // Ulti - revive (Default 40s)
+	this.defaultAS = this.skillACooldown;
 
 	// Revive collider
     this.attackCollider = new BasicGame.Collider(this.game, this, 250, 100, 150, 20, 1000, 1);
@@ -266,7 +267,7 @@ BasicGame.HeroGunnerMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(5 + (this.heroLevel * this.attack), 0, 0, this);	
+		obj2.getHit(70 + (this.heroLevel * this.attack), 700, 40, this);	
 	}
 };
 
@@ -300,7 +301,7 @@ BasicGame.HeroGunnerMP.prototype.handleSkillA = function() {
 		this.isAttacking = true;
 		this.skillATimer = this.game.time.now + this.skillACooldown; 
 		this.skillsEnabled = false;
-		this.skillTimer = this.game.time.now + this.skillCooldown;
+		this.skillTimer = this.game.time.now + this.skillACooldown;
 	}
 };
 

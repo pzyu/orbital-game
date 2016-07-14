@@ -25,7 +25,7 @@ BasicGame.HeroWalkerMP = function (id, game, x, y, team, nick) {
 	this.jumpStrength = -2000;
 	this.moveSpeed = 550;
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 50;
+	this.maxHealth = 500;
 	this.curHealth = this.maxHealth;
 
 	// Skill cooldowns in milliseconds
@@ -34,6 +34,7 @@ BasicGame.HeroWalkerMP = function (id, game, x, y, team, nick) {
 	this.skillCCooldown = 8000; // rocket (Default 4.5s)
 	this.skillDCooldown = 3000; // backdash (Default 3s)
 	this.skillECooldown = 15000; // Ulti - missile barrage (Default 15s)
+	this.defaultAS = this.skillACooldown;
 
 	// Attack collider
     this.attackCollider = new BasicGame.Collider(this.game, this, 100, 120, 120, -50, 1200, 1);
@@ -191,7 +192,7 @@ BasicGame.HeroWalkerMP.prototype.attCallback = function(obj1, obj2) {
 		this.isAttacking = false;
 		this.attackCollider.deactivate();
 		// Call get hit of other person
-		obj2.getHit(12 + (this.heroLevel * this.attack), this.knockbackForce * this.facingRight, this.knockbackForce, this);
+		obj2.getHit(80 + (this.heroLevel * this.attack), this.knockbackForce * this.facingRight, this.knockbackForce, this);
 	}
 };
 
@@ -201,7 +202,7 @@ BasicGame.HeroWalkerMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(5 + (this.heroLevel * this.attack), 0, 0, this);	
+		obj2.getHit(30 + (this.heroLevel * this.attack), 0, 0, this);	
 		this.skillExplSFX.play();
 	}
 };
@@ -235,7 +236,7 @@ BasicGame.HeroWalkerMP.prototype.handleSkillA = function() {
 		this.isAttacking = true;
 		this.skillATimer = this.game.time.now + this.skillACooldown; 
 		this.skillsEnabled = false;
-		this.skillTimer = this.game.time.now + this.skillCooldown;
+		this.skillTimer = this.game.time.now + this.skillACooldown;
 	}
 };
 
