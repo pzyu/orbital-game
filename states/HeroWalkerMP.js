@@ -194,7 +194,7 @@ BasicGame.HeroWalkerMP.prototype.attCallback = function(obj1, obj2) {
 		this.isAttacking = false;
 		this.attackCollider.deactivate();
 		// Call get hit of other person
-		obj2.getHit(80 + (this.heroLevel * this.attack), this.knockbackForce * this.facingRight, this.knockbackForce, this);
+		obj2.getHit(80 + (this.heroLevel * this.attack), this.knockbackForce * this.facingRight * 2, this.knockbackForce / 2, this);
 	}
 };
 

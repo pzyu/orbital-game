@@ -22,7 +22,7 @@ BasicGame.HeroTrooperMP = function (id, game, x, y, team, nick) {
 
 	// Base Hero attributes
 	this.jumpStrength = -1500;
-	this.moveSpeed = 800;
+	this.moveSpeed = 720;
 	this.defaultMoveSpeed = this.moveSpeed;
 	this.maxHealth = 450;
 	this.curHealth = this.maxHealth;
