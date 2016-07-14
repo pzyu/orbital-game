@@ -303,7 +303,10 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 				// credit kill to killerID
 				BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
 			}
-			creditExp(killerInfo, 100);
+			var levelDiff = this.heroLevel - killerInfo.heroLevel;
+			var expToGive = (levelDiff >= 10) ? 100 : (50 * killerInfo.heroLevel * (1 + (levelDiff / 10)));
+
+			creditExp(killerInfo, expToGive); // give exp to killer
 
 			console.log("Dead");
 			this.spawn();
