@@ -33,7 +33,8 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 		skillE: false,
 		x: 0,
 		y: 0,
-		hp: 0
+		hp: 0,
+		inCircle: false
 	}
 
 	this.anchor.setTo(0.5, 0.5);
@@ -51,6 +52,7 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	this.isDead = false;
 	this.isRevived = false; 		// Check if has been revived
 	this.isBuffed = false;
+	this.inCircle = false;
 	
 	// Hero Levels
 	this.heroLevel = 1;
@@ -213,6 +215,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 			this.myInput.hp = this.curHealth;
 			this.myInput.lvl = this.heroLevel;
 			this.myInput.exp = this.heroExp;
+			this.myInput.inCircle = this.inCircle;
 
 			BasicGame.eurecaServer.compensate(this.myInput, BasicGame.roomID);
 		}
@@ -361,6 +364,10 @@ BasicGame.HeroBase.prototype.miteCallback = function(obj1, obj2, team) {
 	}
 };
 
+BasicGame.HeroBase.prototype.magicCircleCallback = function() {
+	this.inCircle = true;
+};
+
 BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, delay) {
 	if (buffName == "BUFF_SLOW" || buffName == "BUFF_HASTE") {
 		var tween = this.game.add.tween(this).to({0: 0}, duration, Phaser.Easing.Linear.None, true, delay);
@@ -391,6 +398,7 @@ BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, de
 
 // function to handle exp
 function creditExp(targetPlayer, exp) {
+	console.log("adding exp to " + targetPlayer)
 	targetPlayer.heroExp += exp;
 	while (targetPlayer.heroExp >= targetPlayer.heroToNextLevel) {
 		onLevelUp(targetPlayer); // perform levelup on target player
@@ -405,6 +413,7 @@ function onLevelUp(targetPlayer) {
 		targetPlayer.moveSpeed = targetPlayer.moveSpeed + targetPlayer.movSpeed; // update movement speed
 		targetPlayer.defaultMoveSpeed += targetPlayer.movSpeed;
 		targetPlayer.maxHealth = targetPlayer.maxHealth + targetPlayer.constituition; // update max hp
+		targetPlayer.curHealth = targetPlayer.maxHealth;
 		 // update atk speed with a limiter tied to it (Best Atk speed = 0.2s per hit)
 		targetPlayer.skillACooldown = (targetPlayer.skillACooldown - (targetPlayer.atkSpeed * 2) <= 200) ? 200 : targetPlayer.skillACooldown - (targetPlayer.atkSpeed * 2);
 

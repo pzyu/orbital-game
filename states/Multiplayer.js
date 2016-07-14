@@ -117,6 +117,13 @@ BasicGame.Multiplayer.prototype.preload = function() {
 			curPlayer.heroExp = state.exp;
 			//curPlayer.interpolateTo(state.x, state.y, 1000);
 		}
+		if (curPlayer) {
+			curPlayer.inCircle = state.inCircle;
+			//console.log(curPlayer.inCircle);
+			if (curPlayer.inCircle) {
+				creditExp(curPlayer, 20);
+			}
+		}
 	};	
 
 	BasicGame.eurecaClient.exports.getChar = function() {
@@ -129,6 +136,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		if (ref.magicCircle != null) {
 			ref.magicCircle.position = ref.magicSpawnPoints[index];
 			console.log('setting magic circle to: ' + ref.magicCircle.position.x + ' ' + ref.magicCircle.position.y);
+			ref.broadcast("A magic circle has appeared");
 		}
 	};
 
@@ -330,7 +338,7 @@ BasicGame.Multiplayer.prototype.update = function() {
 	//this.chat();
 	this.game.debug.spriteInfo(this.magicCircle, 0, 100);
 	this.game.debug.body(this.magicCircle, 0, 200);
-	this.physics.arcade.overlap(BasicGame.playerCG, this.magicCircle, this.magicCircleCallback.bind(this));
+	//this.physics.arcade.overlap(BasicGame.playerCG, this.magicCircle, this.magicCircleCallback.bind(this));
 
 	// if (this.game.input.mousePointer.isDown)
  //    {
@@ -421,10 +429,12 @@ BasicGame.Multiplayer.prototype.baseCallback= function(obj1, obj2) {
 	}
 };
 
-BasicGame.Multiplayer.prototype.magicCircleCallback= function(obj1, obj2) {
-	console.log(obj2.nick + " is in circle");
-	creditExp(obj2, 1);
-};
+// BasicGame.Multiplayer.prototype.magicCircleCallback= function(obj1, obj2) {
+// 	console.log(obj2.nick + " is in circle");
+// 	if (BasicGame.myID == obj2.ID && !obj2.isDead) {
+// 		creditExp(obj2, 1);
+// 	}
+// };
 
 BasicGame.Multiplayer.prototype.projectileCallback= function(obj1, obj2) {
 	obj1.onCollide();
