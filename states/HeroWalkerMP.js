@@ -98,13 +98,14 @@ BasicGame.HeroWalkerMP = function (id, game, x, y, team, nick) {
 
     // Shield
     //this.shield = this.game.add.sprite(-100, -100, 'walker_shield');
-    this.shield = new BasicGame.Collider(this.game, this, 390, 800, 150, -40, 0, 0.25, 'walker_shield');
+    this.shield = new BasicGame.Collider(this.game, this, 100, 200, 150, 0, 0, 1, 'walker_shield');
     this.shield.alpha = 0;
     this.shield.anchor.setTo(0.5, 0.5);
     this.shieldActive = false;
     this.shieldDuration = 5000;
     this.shield.body.immovable = true;
     BasicGame.shieldCG.add(this.shield);
+    //this.shieldDirection 
 
     // Backdash
     this.muzzleFX = new BasicGame.Effect(this.game, 'muzzle', 0, 1, true);
@@ -181,7 +182,7 @@ BasicGame.HeroWalkerMP.prototype.update = function() {
 	this.getChildAt(0).setText(this.nick + " " + this.heroLevel);
 	this.getChildAt(0).scale.x = this.facingRight;
 	//this.game.debug.body(this);
-	//this.game.debug.body(this.shield);
+	this.game.debug.body(this.shield);
 	//this.rocket.debug(0, 0, true);
 };
 
@@ -253,6 +254,7 @@ BasicGame.HeroWalkerMP.prototype.handleSkillB = function(){
 			var tween = this.game.add.tween(this.shield).to({alpha: 1}, 250, Phaser.Easing.Linear.None, true, 0);
 			this.shieldActive = true;
 			this.skillBSFX.play();
+			this.shield.activate();
 		}, this);
 		tween.onComplete.add(function() {
 			// Break shield here
@@ -276,7 +278,6 @@ BasicGame.HeroWalkerMP.prototype.handleSkillB = function(){
 	if (this.shieldActive) {
 		//this.body.velocity.x = 0;
 		//this.body.width = 100;
-		this.shield.activate();
 	} else {
 		//this.body.width = 160;
 		this.shield.deactivate();

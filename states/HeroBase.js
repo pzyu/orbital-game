@@ -390,7 +390,7 @@ BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, de
 	} 
 
 	if (buffName == "BUFF_INVIS") {
-		var invis = this.game.add.tween(this).to({alpha: 0.2}, 500, Phaser.Easing.Linear.None, true, delay);
+		var invis = this.game.add.tween(this).to({alpha: 0.05}, 500, Phaser.Easing.Linear.None, true, delay);
 		invis.onStart.add(function() {
 			this.isBuffed = true;
 		}, this);

@@ -130,6 +130,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 				creditExp(curPlayer, 20);
 			}
 		}
+		ref.updatePlayerList();
 	};	
 
 	BasicGame.eurecaClient.exports.getChar = function() {
@@ -352,7 +353,10 @@ BasicGame.Multiplayer.prototype.removePlayerName = function(id) {
 
 BasicGame.Multiplayer.prototype.updatePlayerList = function() {
 	for (id in this.playerListHUD) {
-		this.playerListHUD[id].getChildAt(0).setText(this.playerList[id][1] + " - " + this.playerList[id][0].curHealth + " (" + this.playerList[id][0].heroLevel + ") ");
+		//console.log(this.playerListHUD[id].children.length);
+		if(this.playerListHUD[id].children.length > 0) {
+			this.playerListHUD[id].getChildAt(0).setText(this.playerList[id][1] + " - " + this.playerList[id][0].curHealth + " (" + this.playerList[id][0].heroLevel + ") ");
+		}
 	}
 };
 
@@ -384,7 +388,7 @@ BasicGame.Multiplayer.prototype.update = function() {
 
 	this.handleHUD();
 	//this.showPlayerList();
-	this.updatePlayerList();
+	//this.updatePlayerList();
 	//this.game.debug.body(this.teamA);
 	//this.game.debug.body(this.teamB);
 	//this.chat();
