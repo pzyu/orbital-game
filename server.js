@@ -300,6 +300,8 @@ eurecaServer.exports.getTeamScore = function(roomID, teamID) {
 		}
 	}
 
+	teamChk = true;// DISABLED teamChk for development purpose
+
 	if (teamChk == true) {
 		// more than 1 team exist
 		return lobbylist[roomID].game.TeamScore; // return team score
@@ -310,8 +312,8 @@ eurecaServer.exports.getTeamScore = function(roomID, teamID) {
 }
 
 eurecaServer.exports.winGame = function(roomID) {
-	for (var id in lobbylist[room].clientInfo) {
-		lobbylist[room].clientInfo[id].remote.kickToMenu(); // kick every player in lobby
+	for (var id in lobbylist[roomID].clientInfo) {
+		lobbylist[roomID].clientInfo[id].remote.kickToMenu(); // kick every player in lobby
 	}
 }
 
