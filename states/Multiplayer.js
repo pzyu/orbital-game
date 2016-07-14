@@ -91,7 +91,9 @@ BasicGame.Multiplayer.prototype.preload = function() {
 				var player = new BasicGame.HeroGunnerMP(i, ref.game, curX, curY, team, nick);
 			}
 			ref.playerList[i] = [player, nick, team];
-			ref.addPlayerName(i);
+			if (team == BasicGame.myTeam) {
+				ref.addPlayerName(i);
+			}
 		}
 		// Every time you add a player, sort the group so local client is always on top
 		BasicGame.playerCG.sort('z', Phaser.Group.SORT_DESCENDING);
@@ -385,7 +387,7 @@ BasicGame.Multiplayer.prototype.update = function() {
 	//this.game.debug.body(this.teamA);
 	//this.game.debug.body(this.teamB);
 	//this.chat();
-	this.game.debug.spriteInfo(this.magicCircle, 0, 100);
+	//this.game.debug.spriteInfo(this.magicCircle, 0, 100);
 	this.game.debug.body(this.magicCircle, 0, 200);
 };
 
