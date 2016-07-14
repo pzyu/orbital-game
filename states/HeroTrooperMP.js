@@ -121,6 +121,11 @@ BasicGame.HeroTrooperMP.prototype.update = function() {
 	// Collide with walker's shield
 	this.refMP.physics.arcade.collide(this.snipe.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
 
+	// Collide with mite
+	this.refMP.physics.arcade.overlap(this.attackCollider, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});
+	this.refMP.physics.arcade.overlap(this.snipe.bullets, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});
+
+
 	//this.snipe.debug(0, 0, true);
 };
 

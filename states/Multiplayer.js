@@ -184,9 +184,9 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 
 	// Assign global groups
 	BasicGame.playerCG = this.add.group();
-	BasicGame.projectileCG = this.add.group();
 	BasicGame.colliderCG = this.add.group();
 	BasicGame.shieldCG = this.add.group();
+	BasicGame.miteCG = this.add.group();
 
 	this.playerList = {};
 
@@ -338,9 +338,10 @@ BasicGame.Multiplayer.prototype.handleHUD = function() {
 	if (this.game.time.now > this.textTimer) {
 		this.textTimer = this.game.time.now + 500;
 		var ref = this;
-		BasicGame.eurecaServer.getTeamScore(BasicGame.roomID, 1).onReady(function(result) {
+		BasicGame.eurecaServer.getTeamScore(BasicGame.roomID).onReady(function(result) {
 			ref.teamScores = result;
 		}, this);
+		
 		this.teamAHUD.setText(this.teamScores[1]);
 		this.teamBHUD.setText(this.teamScores[2]);
 	}

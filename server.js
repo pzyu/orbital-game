@@ -284,7 +284,7 @@ eurecaServer.exports.playerKillTDM = function(teamID, roomID) {
 	// add win condition here!
 }
 
-eurecaServer.exports.getTeamScore = function(roomID, teamID) {
+eurecaServer.exports.getTeamScore = function(roomID) {
 	//console.log(lobbylist[roomID].game.TeamScore[teamID]);
 	//return (lobbylist[roomID].game.TeamScore[teamID] == null) ? -99 : lobbylist[roomID].game.TeamScore[teamID];
 	return lobbylist[roomID].game.TeamScore;

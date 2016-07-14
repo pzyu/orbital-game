@@ -166,6 +166,11 @@ BasicGame.HeroWalkerMP.prototype.update = function() {
 	this.refMP.physics.arcade.overlap(this.rocket.bullets, BasicGame.playerCG, this.bulletCallback.bind(this));
 	this.refMP.physics.arcade.overlap(this.nuke.bullets, BasicGame.playerCG, this.bulletCallback.bind(this));
 
+	// Collide with mite
+	this.refMP.physics.arcade.overlap(this.attackCollider, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});
+	this.refMP.physics.arcade.overlap(this.rocket.bullets, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});
+	this.refMP.physics.arcade.overlap(this.nuke.bullets, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});
+
 	//this.game.debug.body(this);
 	//this.game.debug.body(this.shield);
 	//this.rocket.debug(0, 0, true);

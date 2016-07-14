@@ -149,6 +149,12 @@ BasicGame.HeroDestroyerMP.prototype.update = function() {
 	this.refMP.physics.arcade.collide(this.weapon.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
 	this.refMP.physics.arcade.collide(this.grenade.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
 
+	// Collide with mite
+	this.refMP.physics.arcade.overlap(this.attackCollider, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});
+	this.refMP.physics.arcade.overlap(this.weapon.bullets, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});
+	this.refMP.physics.arcade.overlap(this.grenade.bullets, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});
+
+
 	//this.game.debug.body(this.attackCollider);
 	//this.weapon.debug(0, 0, true);
 	//this.grenade.debug(0, 100, true);
@@ -169,7 +175,6 @@ BasicGame.HeroDestroyerMP.prototype.attCallback = function(obj1, obj2) {
 BasicGame.HeroDestroyerMP.prototype.bulletCallback = function(obj1, obj2) {
 	// If not colliding with yourself
 	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
- 		//this.explosionGroup.getFirstExists(false).playUntracked('anim_2', obj1.x, obj1.y);
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
@@ -178,8 +183,6 @@ BasicGame.HeroDestroyerMP.prototype.bulletCallback = function(obj1, obj2) {
 };
 
 BasicGame.HeroDestroyerMP.prototype.collideCallback = function(obj1, obj2) {
-	//console.log(this.explosionGroup.getFirstExists(false));
- 	//this.explosionGroup.getFirstExists(false).playUntracked('anim_2', obj1.x, obj1.y);
  	// Don't kill grenade
  	if (obj1.key != "grenade") {
 		obj1.kill();

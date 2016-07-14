@@ -5,6 +5,7 @@ var BasicGame = {
   projectileCG: null,
   colliderCG: null,
   shieldCG: null,
+  miteCG: null,
   playerCG: null,
   selectedChar: null,
   musicPlayer: null,
