@@ -136,7 +136,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		if (ref.magicCircle != null) {
 			ref.magicCircle.position = ref.magicSpawnPoints[index];
 			console.log('setting magic circle to: ' + ref.magicCircle.position.x + ' ' + ref.magicCircle.position.y);
-			ref.broadcast("A magic circle has appeared");
+			ref.broadcast("A magic circle has appeared", 2);
 		}
 	};
 
