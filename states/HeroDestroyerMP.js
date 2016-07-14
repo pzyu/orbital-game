@@ -6,7 +6,7 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y, team, nick) {
 	this.body.setSize(110, 220, 110, 20);
 
 	// Hero Levels
-	this.heroLevel = 0;
+	this.heroLevel = 1;
 	this.heroExp = 0;
 	this.heroToNextLevel = 100;
 
