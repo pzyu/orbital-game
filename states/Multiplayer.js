@@ -47,6 +47,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 
 	BasicGame.eurecaClient.exports.kill = function(id) {	
 		if (ref.playerList[id][0]) {
+			ref.removePlayerName(id);
 			ref.playerList[id][0].kill();
 			ref.broadcast(ref.playerList[id][1] + " has left the game!", 2);
 			console.log('killing ', id, ref.playerList[id][1], Object.keys(ref.playerList).length);
@@ -90,6 +91,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 				var player = new BasicGame.HeroGunnerMP(i, ref.game, curX, curY, team, nick);
 			}
 			ref.playerList[i] = [player, nick, team];
+			ref.addPlayerName(i);
 		}
 		// Every time you add a player, sort the group so local client is always on top
 		BasicGame.playerCG.sort('z', Phaser.Group.SORT_DESCENDING);
@@ -117,9 +119,10 @@ BasicGame.Multiplayer.prototype.preload = function() {
 			curPlayer.heroExp = state.exp;
 			//curPlayer.interpolateTo(state.x, state.y, 1000);
 		}
-		if (curPlayer) {
+		//console.log(BasicGame.myID, id);
+		if (curPlayer && BasicGame.myID == id) {
 			curPlayer.inCircle = state.inCircle;
-			//console.log(curPlayer.inCircle);
+			// console.log(curPlayer.ID +  " " + curPlayer.inCircle);
 			if (curPlayer.inCircle) {
 				creditExp(curPlayer, 20);
 			}
@@ -136,7 +139,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		if (ref.magicCircle != null) {
 			ref.magicCircle.position = ref.magicSpawnPoints[index];
 			console.log('setting magic circle to: ' + ref.magicCircle.position.x + ' ' + ref.magicCircle.position.y);
-			ref.broadcast("A magic circle has appeared", 2);
+			ref.broadcast("The sigil of Antares has appeared", 2);
 		}
 	};
 
@@ -268,28 +271,55 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.cropRectC = new Phaser.Rectangle(0, 0, this.skillC.width, this.skillC.height);
 	this.cropRectD = new Phaser.Rectangle(0, 0, this.skillD.width, this.skillD.height);
 
-	this.healthBarEmpty = this.game.add.image(250, this.game.height - 20, 'hpEmpty');
+	// Healthbar
+	this.healthBarEmpty = this.game.add.image(500, this.game.height - 20, 'hpEmpty');
 	this.healthBarEmpty.fixedToCamera = true;
 	this.healthBarEmpty.anchor.setTo(0, 1);
 
-	this.healthBar = this.game.add.image(250, this.game.height - 20, 'hpFull');
+	this.healthBar = this.game.add.image(500, this.game.height - 20, 'hpFull');
 	this.healthBar.fixedToCamera = true;
 	this.healthBar.anchor.setTo(0, 1);
 	this.healthRect = new Phaser.Rectangle(0, 0, this.healthBar.width, this.healthBar.height);
 
-	var style = { font: '32pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 800, align: 'center'};
-	this.message = this.game.add.text(-500, 0, 'Default message', style), 
-	this.message.fixedToCamera = true;
-	this.message.anchor.setTo(0.5, 0.5);
+	this.healthBarPercentage = this.game.add.text(650, this.game.height - 40, '0%', { font: '24pt myfont', align: 'center', fill: 'white'});
+	this.healthBarPercentage.fixedToCamera = true;
+	this.healthBarPercentage.anchor.setTo(0.5, 0.5);
 
-	this.logo = this.game.add.image(240, 10, 'score');
-	this.teamAHUD = this.game.add.text(BasicGame.gameWidth/2 - 90, 50, 'TeamA', { font: '16pt myfont', align: 'right', fill: 'white'});
-	this.teamBHUD = this.game.add.text(BasicGame.gameWidth/2 + 50, 50, 'TeamB', { font: '16pt myfont', align: 'left', fill: 'white'});
+	// Exp bar
+	this.expBarEmpty = this.game.add.image(522, this.game.height - 65, 'expEmpty');
+	this.expBarEmpty.fixedToCamera = true;
+	this.expBarEmpty.anchor.setTo(0, 1);
+
+	this.expBar = this.game.add.image(522, this.game.height - 65, 'expFull');
+	this.expBar.fixedToCamera = true;
+	this.expBar.anchor.setTo(0, 1);
+	this.expRect = new Phaser.Rectangle(0, 0, this.expBar.width, this.expBar.height);
+
+	this.expBarPercentage = this.game.add.text(650, this.game.height - 72, '0%', { font: '16pt myfont', align: 'center', fill: 'white'});
+	this.expBarPercentage.fixedToCamera = true;
+	this.expBarPercentage.anchor.setTo(0.5, 0.5);
+
+	// Team gui
+	this.logo = this.game.add.image(240, 0, 'score');
+	this.teamAHUD = this.game.add.text(BasicGame.gameWidth/2 - 90, 40, 'TeamA', { font: '16pt myfont', align: 'right', fill: 'white'});
+	this.teamBHUD = this.game.add.text(BasicGame.gameWidth/2 + 50, 40, 'TeamB', { font: '16pt myfont', align: 'left', fill: 'white'});
 
 	this.logo.fixedToCamera = true;
 	this.teamAHUD.fixedToCamera = true;
 	this.teamBHUD.fixedToCamera = true;
 
+	// Team list
+	this.playerCount = 0;
+	this.playerListHUD = [];
+	this.addPlayerName(BasicGame.myID);
+
+	// Broadcast messages
+	var style = { font: '32pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 800, align: 'center'};
+	this.message = this.game.add.text(-500, 0, 'Default message', style), 
+	this.message.fixedToCamera = true;
+	this.message.anchor.setTo(0.5, 0.5);
+
+	// Magic circle
 	this.magicCircle = this.game.add.sprite(-500, -500, 'magicCircle');
 	this.magicCircle.anchor.setTo(0.5, 0.5);
 	this.game.physics.arcade.enableBody(this.magicCircle);
@@ -301,8 +331,26 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	BasicGame.eurecaServer.handshake(BasicGame.roomID);
 
 	console.log("my team: " + BasicGame.myTeam);
+};
 
+BasicGame.Multiplayer.prototype.addPlayerName = function(id) {
+	// Factory function
+	this.playerListHUD[id] = this.game.add.sprite(25, 15 + (this.playerCount * 35), 'playerName');
+	var text = this.game.add.text(15, 15, this.playerList[id][1] + " - " + this.playerList[id][0].curHealth + " (" + this.playerList[id][0].heroLevel + ")", { font: '10pt myfont', align: 'left', fill: "white", align: 'left'});
+	this.playerListHUD[id].addChild(text);
+ 	this.playerListHUD[id].fixedToCamera = true;
+ 	this.playerCount++;
+};
 
+BasicGame.Multiplayer.prototype.removePlayerName = function(id) {
+	this.playerCount--;
+	this.playerListHUD[id].destroy();
+};
+
+BasicGame.Multiplayer.prototype.updatePlayerList = function() {
+	for (id in this.playerListHUD) {
+		this.playerListHUD[id].getChildAt(0).setText(this.playerList[id][1] + " - " + this.playerList[id][0].curHealth + " (" + this.playerList[id][0].heroLevel + ") ");
+	}
 };
 
 BasicGame.Multiplayer.prototype.broadcast = function(msg, duration) {
@@ -332,27 +380,25 @@ BasicGame.Multiplayer.prototype.update = function() {
 	this.physics.arcade.overlap(this.teamB, BasicGame.playerCG, this.baseCallback.bind(this));	
 
 	this.handleHUD();
-	this.showPlayerList();
+	//this.showPlayerList();
+	this.updatePlayerList();
 	//this.game.debug.body(this.teamA);
 	//this.game.debug.body(this.teamB);
 	//this.chat();
 	this.game.debug.spriteInfo(this.magicCircle, 0, 100);
 	this.game.debug.body(this.magicCircle, 0, 200);
-	//this.physics.arcade.overlap(BasicGame.playerCG, this.magicCircle, this.magicCircleCallback.bind(this));
-
-	// if (this.game.input.mousePointer.isDown)
- //    {
- //        //  400 is the speed it will move towards the mouse
- //        this.game.physics.arcade.moveToPointer(this.magicCircle, 2000);
- //    } else {
- //        this.magicCircle.body.velocity.setTo(0, 0);
- //    }
 };
 
 BasicGame.Multiplayer.prototype.handleHUD = function() {
 	// Health
+	this.healthBarPercentage.setText(this.game.math.floorTo(this.player.getHP() * 100) + "%");
 	this.healthRect.width = 283 * this.player.getHP();
 	this.healthBar.crop(this.healthRect);
+
+	// Exp
+	this.expBarPercentage.setText(this.game.math.floorTo(this.player.getExp() * 100) + "%");
+	this.expRect.width = 240 * this.player.getExp();
+	this.expBar.crop(this.expRect);
 
 	// Skills
 	this.cropRectA.height = 66 * (this.player.getSkillB() + 1);
@@ -378,28 +424,7 @@ BasicGame.Multiplayer.prototype.handleHUD = function() {
 		this.teamAHUD.setText(this.teamScores[1]);
 		this.teamBHUD.setText(this.teamScores[2]);
 	}
-}
-
-BasicGame.Multiplayer.prototype.showPlayerList = function() {
-	var count = 0;
-	var ref = this;
-	var style2 = { font: '10pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 800, align: 'center'};
-
-	BasicGame.Multiplayer.prototype.resetPlayerListHUD(); // reset playerlist
-	for (var player in this.playerList) {
-		this.playerListHUD[count] = ref.game.add.text(25, 20 + (count * 15), this.playerList[player][1] + " - " + this.playerList[player][0].curHealth + " (" + this.playerList[player][0].heroLevel + ") ", style2);
-		this.playerListHUD[count].fixedToCamera = true;
-		count++;
-	}
-}
-
-// function for clearing playerListHUD text
-BasicGame.Multiplayer.prototype.resetPlayerListHUD = function() {
-	for (var item in this.playerListHUD) {
-		this.playerListHUD[item].destroy();
-	}
-	this.playerListHUD = {};
-}
+};
 
 BasicGame.Multiplayer.prototype.chat = function() {
 	if (this.enter.isDown && this.game.time.now > this.textTimer) {

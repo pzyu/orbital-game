@@ -126,7 +126,7 @@ BasicGame.HeroTrooperMP.prototype.update = function() {
 	this.refMP.physics.arcade.overlap(this.snipe.bullets, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});
 
 	this.inCircle = false;
-	this.refMP.physics.arcade.overlap(BasicGame.playerCG, this.refMP.magicCircle, this.magicCircleCallback.bind(this));
+	this.refMP.physics.arcade.overlap(this, this.refMP.magicCircle, this.magicCircleCallback.bind(this));
 	//this.snipe.debug(0, 0, true);
 };
 

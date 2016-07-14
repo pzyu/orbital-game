@@ -165,12 +165,13 @@ eurecaServer.exports.startGameTDM = function(roomName) {
 	lobbylist[roomName].game = {ScoreGoal: lobbylist[roomName].maxPlayers * 5, TeamScore: [0, 0, 0], index: 0};
 	// Timer
 	setInterval(function() {
+		console.log('interval');
 		var index = Math.floor(Math.random() * 4)
 		for (var id in lobbylist[roomName].clientInfo) { 
 			var remote = lobbylist[roomName].clientInfo[id].remote;
 			remote.setIndex(index);
 		}
-	}, 60000);
+	}, 30000);
 	eurecaServer.exports.requestClientInfo(); // update all lobby clients
 	// for every client in the lobby, start the game
 	for (var id in lobbylist[roomName].clientInfo) { 

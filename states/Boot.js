@@ -74,7 +74,10 @@ BasicGame.Boot.prototype = {
         this.load.image('skill', 'images/sprites/heroes/skill.png');
         this.load.image('hpEmpty', 'images/sprites/heroes/hpEmpty.png');
         this.load.image('hpFull', 'images/sprites/heroes/hpFull.png');
+        this.load.image('expEmpty', 'images/sprites/heroes/expEmpty.png');
+        this.load.image('expFull', 'images/sprites/heroes/expFull.png');
         this.load.image('score', 'images/score.png');
+        this.load.image('playerName', 'images/playerName.png');
         this.load.image('magicCircle', 'images/magiccircle.png');
 
         // Effect atlas

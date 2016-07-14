@@ -176,7 +176,7 @@ BasicGame.HeroWalkerMP.prototype.update = function() {
 	this.refMP.physics.arcade.overlap(this.nuke.bullets, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});
 	
 	this.inCircle = false;
-	this.refMP.physics.arcade.overlap(BasicGame.playerCG, this.refMP.magicCircle, this.magicCircleCallback.bind(this));
+	this.refMP.physics.arcade.overlap(this, this.refMP.magicCircle, this.magicCircleCallback.bind(this));
 
 	//this.game.debug.body(this);
 	//this.game.debug.body(this.shield);

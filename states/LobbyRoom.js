@@ -68,7 +68,7 @@ BasicGame.LobbyRoom.prototype = {
 				// Load player teams
 				for (var id in playerList) {
 					var player = playerList[id];
-					var displayNick = (player.nick.length > 16) ? player.nick.substring(0,12) + '...' : player.nick;
+					var displayNick = (player.nick.length > 16) ? player.nick.substring(0,10) + '...' : player.nick;
 					var nickColor = (BasicGame.myID == player.id) ? ref.subTextCyan : (player.ready ? ref.subTextGreen : ref.subText);
 
 					if (!player.ready) { 

@@ -138,7 +138,7 @@ BasicGame.HeroBase.prototype.constructor = BasicGame.HeroBase;
 BasicGame.HeroBase.prototype.spawn = function() {
 	if (this.isDead) {
 		this.body.velocity.x = this.body.velocity.y = 0;
-		var tween = this.game.add.tween(this).to({0: 0}, 15000, Phaser.Easing.Linear.None, true, 0, 0);
+		var tween = this.game.add.tween(this).to({0: 0}, 1500, Phaser.Easing.Linear.None, true, 0, 0);
 		tween.onStart.add(function(){
 			this.animations.play('anim_dead');
 		}, this);
@@ -336,6 +336,10 @@ BasicGame.HeroBase.prototype.getHP = function() {
 	return this.curHealth / this.maxHealth;
 };
 
+BasicGame.HeroBase.prototype.getExp = function() {
+	return this.heroExp / this.heroToNextLevel;
+};
+
 BasicGame.HeroBase.prototype.kill = function() {
 	this.destroy();
 };
@@ -398,7 +402,7 @@ BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, de
 
 // function to handle exp
 function creditExp(targetPlayer, exp) {
-	console.log("adding exp to " + targetPlayer)
+	console.log("adding exp to " + targetPlayer.ID)
 	targetPlayer.heroExp += exp;
 	while (targetPlayer.heroExp >= targetPlayer.heroToNextLevel) {
 		onLevelUp(targetPlayer); // perform levelup on target player

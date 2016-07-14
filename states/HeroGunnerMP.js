@@ -223,7 +223,7 @@ BasicGame.HeroGunnerMP.prototype.update = function() {
 	this.refMP.physics.arcade.overlap(this.mite.bullets, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});
 
 	this.inCircle = false;
-	this.refMP.physics.arcade.overlap(BasicGame.playerCG, this.refMP.magicCircle, this.magicCircleCallback.bind(this));
+	this.refMP.physics.arcade.overlap(this, this.refMP.magicCircle, this.magicCircleCallback.bind(this));
 
 	//this.weapon.debug(0, 0, true);
 	//this.trap.debug(0, 100, true);
