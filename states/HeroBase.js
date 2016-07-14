@@ -389,7 +389,7 @@ function onLevelUp(targetPlayer) {
 		targetPlayer.heroLevel ++;
 		// Hero attributes
 		targetPlayer.moveSpeed = targetPlayer.moveSpeed + targetPlayer.movSpeed; // update movement speed
-		targetPlayer.defaultMoveSpeed = targetPlayer.moveSpeed;
+		targetPlayer.defaultMoveSpeed += targetPlayer.movSpeed;
 		targetPlayer.maxHealth = targetPlayer.maxHealth + targetPlayer.constituition; // update max hp
 		 // update atk speed with a limiter tied to it (Best Atk speed = 0.2s per hit)
 		targetPlayer.skillACooldown = (targetPlayer.skillACooldown - (targetPlayer.atkSpeed * 2) <= 200) ? 200 : targetPlayer.skillACooldown - (targetPlayer.atkSpeed * 2);
