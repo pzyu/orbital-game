@@ -128,8 +128,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		// Return player's selected character
 		if (ref.magicCircle != null) {
 			ref.magicCircle.position = ref.magicSpawnPoints[index];
-			console.log('index: ' + index);
-			console.log('setting to: ' + ref.magicCircle.position.x + ' ' + ref.magicCircle.position.y);
+			console.log('setting magic circle to: ' + ref.magicCircle.position.x + ' ' + ref.magicCircle.position.y);
 		}
 	};
 
@@ -424,6 +423,7 @@ BasicGame.Multiplayer.prototype.baseCallback= function(obj1, obj2) {
 
 BasicGame.Multiplayer.prototype.magicCircleCallback= function(obj1, obj2) {
 	console.log(obj2.nick + " is in circle");
+	creditExp(obj2, 1);
 };
 
 BasicGame.Multiplayer.prototype.projectileCallback= function(obj1, obj2) {

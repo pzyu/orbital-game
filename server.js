@@ -34,18 +34,6 @@ var eurecaServer = new Eureca.Server({allow:['setID',
 var clients = {};
 var connectedCount = 0;
 var lobbylist = {};
-var serverTime = 0;
-
-// // Timer
-// setInterval(function() {
-// 	//serverTime++;
-// 	//console.log('Server time: ' + serverTime);
-	
-// 	for (var id in lobbylist.clientInfo) { 
-// 		console.log('asdasd');
-// 		console.log(id);
-// 	}
-// }, 1000);
 
 // Initialize public lobby
 eurecaServer.exports.initializeLobby = function() {
@@ -177,13 +165,8 @@ eurecaServer.exports.startGameTDM = function(roomName) {
 	lobbylist[roomName].game = {ScoreGoal: lobbylist[roomName].maxPlayers * 5, TeamScore: [0, 0, 0], index: 0};
 	// Timer
 	setInterval(function() {
-		//lobbylist[roomName].game.Time++;
-		//lobbylist[roomName].game.index = Math.floor(Math.random() * 4);
-		//console.log(roomName + " index: " + lobbylist[roomName].game.index);
 		for (var id in lobbylist[roomName].clientInfo) { 
 			var remote = lobbylist[roomName].clientInfo[id].remote;
-			//console.log(remote);
-			// initialize team deathmatch for all clients in lobby
 			remote.setIndex( Math.floor(Math.random() * 4));
 		}
 	}, 10000);
