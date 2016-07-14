@@ -347,6 +347,18 @@ BasicGame.HeroBase.prototype.shootCallback = function() {
 	this.attackCollider.deactivate();
 };
 
+BasicGame.HeroBase.prototype.miteCallback = function(obj1, obj2, team) {
+	// If not the same team, then destroy
+	if (this.myTeam != this.team || this.myTeam == null) {
+		// If projectile then destroy projectile
+		if (obj1.key == "effects_sprite" || obj1.key == "walker_rocket" || obj1.key == "walker_rocket" ||
+		obj1.key == "grenade" || obj1.key == "laser_blue" || obj1.key == "laser_red" || obj1.key == "slimeball" || obj1.key == "mite_sprite") {
+			obj1.kill();
+		}
+		obj2.kill();
+	}
+};
+
 BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, delay) {
 	if (buffName == "BUFF_SLOW" || buffName == "BUFF_HASTE") {
 		var tween = this.game.add.tween(this).to({0: 0}, duration, Phaser.Easing.Linear.None, true, delay);

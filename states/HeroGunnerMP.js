@@ -115,6 +115,7 @@ BasicGame.HeroGunnerMP = function (id, game, x, y, team, nick) {
     this.mite.bullets.setAll('body.maxVelocity.y', 1500);
     this.mite.setBulletBodyOffset(100, 20, 20, 50);
 	this.mite.fireAngle = 0;
+    BasicGame.miteCG = this.mite.bullets;
 
 	// Health pack
     this.pack = this.game.add.weapon(4, 'grenade');
@@ -215,6 +216,11 @@ BasicGame.HeroGunnerMP.prototype.update = function() {
 	this.refMP.physics.arcade.collide(this.weapon.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
 	this.refMP.physics.arcade.collide(this.trap.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
 	this.refMP.physics.arcade.collide(this.mite.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
+
+	// Collide with mite
+	this.refMP.physics.arcade.overlap(this.weapon.bullets, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});
+	this.refMP.physics.arcade.overlap(this.trap.bullets, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});
+	this.refMP.physics.arcade.overlap(this.mite.bullets, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});
 
 	//this.weapon.debug(0, 0, true);
 	//this.trap.debug(0, 100, true);
@@ -439,6 +445,6 @@ BasicGame.HeroGunnerMP.prototype.handleSkillE = function(){
 		this.isAttacking = true;
 		this.skillETimer = this.game.time.now + this.skillECooldown; 
 		this.skillsEnabled = false;
-		this.skillTimer = this.game.time.now + this.skillCooldown;
+		this.skillTimer = this.game.time.now + 2000;
 	}
 };
