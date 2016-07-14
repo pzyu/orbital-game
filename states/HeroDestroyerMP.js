@@ -6,7 +6,7 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y, team, nick) {
 	this.body.setSize(110, 220, 110, 20);
 
 	// Hero Levels
-	this.heroLevel = 1;
+	this.heroLevel = 0;
 	this.heroExp = 0;
 	this.heroToNextLevel = 100;
 
@@ -15,26 +15,30 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y, team, nick) {
 	this.attack = 5; // multiplayer for attack damage
 	this.atkSpeed = 5; // multiplier for attack speed
 	this.movSpeed = 5; // multiplier for movement speed
+	this.skillBLvl = -100;
+	this.skillCLvl = -100;
+	this.skillDLvl = -120;
+	this.skillELvl = -400;
 
-	// Hero attributes
+	// Base Hero attributes
 	this.jumpStrength = -1500;
-	this.moveSpeed = 600 + (this.movSpeed * this.heroLevel);
+	this.moveSpeed = 600;
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 50 + (this.constituition * this.heroLevel); // base hp of 50
+	this.maxHealth = 50;
 	this.curHealth = this.maxHealth;
+	this.knockbackForce = 1500;
 
 	// Skill cooldowns in milliseconds (Min Cool Down time)
-    this.skillACooldown = 800  - (this.heroLevel * this.atkSpeed);
-	this.skillBCooldown = 2000;
-	this.skillCCooldown = 2000;
-	this.skillDCooldown = 2000;	
-	this.skillECooldown = 2000;
+    this.skillACooldown = 1000; // normal attack - shoot bullet (Default 1s)
+	this.skillBCooldown = 5000; // knockback melee (Default 5s)
+	this.skillCCooldown = 4500; // shotgun (Default 4.5s)
+	this.skillDCooldown = 8000;	// grenade (Default 8s)
+	this.skillECooldown = 30000; // Ulti (Default 40s)
 
 	// Attack collider
     this.attackCollider = new BasicGame.Collider(this.game, this, 80, 100, 80, 0, 2000, 1);
     this.game.add.existing(this.attackCollider);
     BasicGame.colliderCG.add(this.attackCollider);
-	this.knockbackForce = 1500;
 
     // Each hero will have an effect object which basically plays whatever effect they have
 	this.effect = new BasicGame.Effect(this.game, 'bolt', 0, 0.4, true);
@@ -168,7 +172,7 @@ BasicGame.HeroDestroyerMP.prototype.attCallback = function(obj1, obj2) {
 		this.attackCollider.x = this.attackCollider.y = -200;
 		this.attackCollider.deactivate();
 		// Call get hit of other person
-		obj2.getHit(15 + (this.attack * this.heroLevel), this.knockbackForce * this.facingRight, this.knockbackForce, this);
+		obj2.getHit(5 + (this.attack * this.heroLevel), (this.knockbackForce + (this.heroLevel) * 100) * this.facingRight, this.knockbackForce, this);
 	}
 };
 
@@ -178,7 +182,7 @@ BasicGame.HeroDestroyerMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(8 + Math.round(this.attack * this.heroLevel * 0.7), 0, 0, this);	
+		obj2.getHit(Math.round(this.attack * this.heroLevel * 0.7), 0, 0, this);	
 	}
 };
 
