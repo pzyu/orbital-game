@@ -26,7 +26,7 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y, team, nick) {
 	this.defaultMoveSpeed = this.moveSpeed;
 	this.maxHealth = 500;
 	this.curHealth = this.maxHealth;
-	this.knockbackForce = 1500;
+	this.knockbackForce = 1000;
 
 	// Skill cooldowns in milliseconds (Min Cool Down time)
     this.skillACooldown = 1000; // normal attack - shoot bullet (Default 1s)
@@ -177,7 +177,7 @@ BasicGame.HeroDestroyerMP.prototype.attCallback = function(obj1, obj2) {
 		this.attackCollider.x = this.attackCollider.y = -200;
 		this.attackCollider.deactivate();
 		// Call get hit of other person
-		obj2.getHit(100 + (this.attack * this.heroLevel), (this.knockbackForce + (this.heroLevel) * 100) * this.facingRight, this.knockbackForce, this);
+		obj2.getHit(100 + (this.attack * this.heroLevel), (this.knockbackForce + (this.heroLevel * 100)) * this.facingRight, this.knockbackForce, this);
 	}
 };
 
@@ -198,7 +198,7 @@ BasicGame.HeroDestroyerMP.prototype.grenadeCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(150 + (this.attack * this.heroLevel * 1.5), 0, 0, this);	
+		obj2.getHit(150 + (this.attack * this.heroLevel * 1.5), (this.knockbackForce + (this.heroLevel * 100)) * this.facingRight * 1.5, 0, this);	
 	}
 };
 

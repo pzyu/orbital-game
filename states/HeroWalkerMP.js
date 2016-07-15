@@ -17,7 +17,7 @@ BasicGame.HeroWalkerMP = function (id, game, x, y, team, nick) {
 	this.movSpeed = 3; // multiplier for movement speed
 	this.skillBLvl = -20;
 	this.skillCLvl = -100;
-	this.skillDLvl = -20;
+	this.skillDLvl = -60;
 	this.skillELvl = -200;
 
 	// Hero attributes

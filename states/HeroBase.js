@@ -142,7 +142,8 @@ BasicGame.HeroBase.prototype.constructor = BasicGame.HeroBase;
 BasicGame.HeroBase.prototype.spawn = function() {
 	if (this.isDead) {
 		this.body.velocity.x = this.body.velocity.y = 0;
-		var tween = this.game.add.tween(this).to({0: 0}, 1500, Phaser.Easing.Linear.None, true, 0, 0);
+		var spawnTime = 5000 + (this.heroLevel * 1000);
+		var tween = this.game.add.tween(this).to({0: 0}, spawnTime, Phaser.Easing.Linear.None, true, 0, 0);
 		tween.onStart.add(function(){
 			this.animations.play('anim_dead');
 		}, this);
@@ -303,10 +304,12 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 				// credit kill to killerID
 				BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
 			}
+			// Calculate exp to credit to the killer based on killer's hero level and level difference. if level difference is more than 10
+			// credit a base 100 exp. else change exp given by 0.1x per level difference
 			var levelDiff = this.heroLevel - killerInfo.heroLevel;
 			var expToGive = (levelDiff >= 10) ? 100 : (50 * killerInfo.heroLevel * (1 + (levelDiff / 10)));
 
-			creditExp(killerInfo, expToGive); // give exp to killer
+			creditExp(killerInfo, Math.round(expToGive)); // give exp to killer
 
 			console.log("Dead");
 			this.spawn();
@@ -377,7 +380,7 @@ BasicGame.HeroBase.prototype.magicCircleCallback = function() {
 	this.inCircle = true;
 };
 
-BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, delay) {
+BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, delay, clientTeam) {
 	if (buffName == "BUFF_SLOW" || buffName == "BUFF_HASTE") {
 		var tween = this.game.add.tween(this).to({0: 0}, duration, Phaser.Easing.Linear.None, true, delay);
 		tween.onStart.add(function() {
@@ -405,7 +408,11 @@ BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, de
 	}
 
 	if (buffName == "BUFF_INVIS") {
-		var invis = this.game.add.tween(this).to({alpha: 0.2}, 500, Phaser.Easing.Linear.None, true, delay);
+		if(this.myTeam != clientTeam) {
+			var invis = this.game.add.tween(this).to({alpha: 0.00}, 500, Phaser.Easing.Linear.None, true, delay);
+		} else {
+			var invis = this.game.add.tween(this).to({alpha: 0.2}, 500, Phaser.Easing.Linear.None, true, delay);
+		}
 		invis.onStart.add(function() {
 			this.isBuffed = true;
 		}, this);
@@ -441,7 +448,7 @@ function onLevelUp(targetPlayer) {
 		targetPlayer.skillACooldown = (targetPlayer.skillACooldown - (targetPlayer.atkSpeed * 2) <= 200) ? 200 : targetPlayer.skillACooldown - (targetPlayer.atkSpeed * 2);
 
 		// Update Cooldown
-		targetPlayer.defaultAS = (targetPlayer.skillACooldown - (targetPlayer.atkSpeed * 2) <= 200) ? 200 : targetPlayer.skillACooldown - (targetPlayer.atkSpeed * 2);
+		targetPlayer.defaultAS = (targetPlayer.defaultAS - (targetPlayer.atkSpeed * 2) <= 200) ? 200 : targetPlayer.defaultAS - (targetPlayer.atkSpeed * 2);
 		targetPlayer.skillBCooldown -= targetPlayer.skillBLvl;
 		targetPlayer.skillCCooldown -= targetPlayer.skillCLvl;
 		targetPlayer.skillDCooldown -= targetPlayer.skillDLvl;

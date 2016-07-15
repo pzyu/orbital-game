@@ -244,7 +244,7 @@ BasicGame.HeroGunnerMP.prototype.healthPackCallback = function(obj1, obj2) {
 BasicGame.HeroGunnerMP.prototype.trapCallback = function(obj1, obj2) {
 	// If not colliding with yourself
 	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
-		obj2.applyBuff("BUFF_SLOW", 300 + (this.heroLevel * 10), 5000 + (this.heroLevel * 100), 0);
+		obj2.applyBuff("BUFF_SLOW", 300 + (this.heroLevel * 10), 5000 + (this.heroLevel * 100), 0, BasicGame.myTeam);
 		obj1.kill();
 	}
 };
