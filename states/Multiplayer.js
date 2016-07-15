@@ -381,7 +381,7 @@ BasicGame.Multiplayer.prototype.update = function() {
 	//console.log("TEST update");
 	// Enable collision between player and layer and shield
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
-	this.physics.arcade.collide(BasicGame.playerCG, BasicGame.shieldCG);
+	this.physics.arcade.collide(BasicGame.playerCG, BasicGame.shieldCG, this.shieldCallback.bind(this));
 	// Team colliders
 	this.physics.arcade.overlap(this.teamA, BasicGame.playerCG, this.baseCallback.bind(this));	
 	this.physics.arcade.overlap(this.teamB, BasicGame.playerCG, this.baseCallback.bind(this));	
@@ -461,12 +461,11 @@ BasicGame.Multiplayer.prototype.baseCallback= function(obj1, obj2) {
 	}
 };
 
-// BasicGame.Multiplayer.prototype.magicCircleCallback= function(obj1, obj2) {
-// 	console.log(obj2.nick + " is in circle");
-// 	if (BasicGame.myID == obj2.ID && !obj2.isDead) {
-// 		creditExp(obj2, 1);
-// 	}
-// };
+BasicGame.Multiplayer.prototype.shieldCallback= function(obj1, obj2) {
+	if (obj1.myTeam) {
+		obj1.body.velocity.x += obj2.facingRight * 200;
+	}
+};
 
 BasicGame.Multiplayer.prototype.projectileCallback= function(obj1, obj2) {
 	obj1.onCollide();

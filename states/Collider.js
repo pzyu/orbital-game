@@ -12,6 +12,7 @@ BasicGame.Collider = function (game, target, width, height, offsetX, offsetY, fo
 
 	this.offX = offsetX;
 	this.target = target;
+	this.facingRight = 1;
 
 	this.isActive = false;
 };
@@ -22,10 +23,9 @@ BasicGame.Collider.prototype.constructor = BasicGame.Collider;
 BasicGame.Collider.prototype.update = function() {
 	// If it's active track target
 	if(this.isActive) {
-		console.log('active');
 		this.x = this.target.x + this.offX * this.target.facingRight;
 		this.y = this.target.y;
-		this.game.physics.arcade.moveToXY(this, this.x, this.target.y, 100);
+		this.facingRight = this.target.facingRight;
 		this.scale.x = this.scaleX * this.target.facingRight;
 		//this.body.offset.x = this.offX * this.target.facingRight;
 		//this.body.velocity.x = 10 * this.target.facingRight;

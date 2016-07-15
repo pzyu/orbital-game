@@ -128,7 +128,8 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	this.timeStep = this.refMP.timeStep;
 	this.delta = this.refMP.delta;
 
-	var text = this.game.add.text(0, -this.height/2 - 10, this.nick + " " + this.heroLevel, { font: '12pt myfont', align: 'left', fill: "white", align: 'center'});
+	var teamFill = (team == BasicGame.myTeam) ? "blue" : "red";
+	var text = this.game.add.text(0, -this.height/2 - 10, this.nick + " " + this.heroLevel, { font: '12pt myfont', align: 'left', fill: teamFill, align: 'center'});
 	text.anchor.setTo(0.5, 0);
 	this.addChild(text);
 
