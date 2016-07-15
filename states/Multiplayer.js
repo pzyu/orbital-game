@@ -11,7 +11,7 @@ BasicGame.Multiplayer = function (game) {
 
 	this.mapLayer;
 
-	this.timeStep = 1000;				// Time step for interpolation
+	this.timeStep = 350;				// Time step for interpolation
 	this.delta = 5;						// Delta for smoothing
 
 	this.spawnPoints = [				// Array of spawn points, set in each hero class
@@ -393,7 +393,7 @@ BasicGame.Multiplayer.prototype.update = function() {
 	//this.game.debug.body(this.teamB);
 	//this.chat();
 	//this.game.debug.spriteInfo(this.magicCircle, 0, 100);
-	this.game.debug.body(this.magicCircle, 0, 200);
+	//this.game.debug.body(this.magicCircle, 0, 200);
 };
 
 BasicGame.Multiplayer.prototype.handleHUD = function() {

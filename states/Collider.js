@@ -35,7 +35,7 @@ BasicGame.Collider.prototype.update = function() {
 		this.x = this.y = -100;
 	}
 
-	 this.game.debug.spriteInfo(this);
+	//this.game.debug.spriteInfo(this);
 };
 
 BasicGame.Collider.prototype.activate = function() {

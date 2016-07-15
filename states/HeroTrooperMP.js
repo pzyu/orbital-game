@@ -109,7 +109,7 @@ BasicGame.HeroTrooperMP.prototype.update = function() {
 		this.handleSkillD();
 		this.handleSkillE();
 	}
-	this.game.debug.body(this.attackCollider);
+	//this.game.debug.body(this.attackCollider);
 	// this.game.debug.bodyInfo(this, 32, 200);
 
 	// Collide with map
