@@ -7,6 +7,7 @@ BasicGame.CharSelect = function (game) {
 	this.multiplayer = false;
 	this.loaded = false;
 	this.charArr = new Array(4);
+	this.textContainer = {};
 };
 
 BasicGame.CharSelect.prototype = {
@@ -41,6 +42,7 @@ BasicGame.CharSelect.prototype = {
 
 	// On click
 	onClick: function (target) {
+		BasicGame.eurecaServer.getTeamSelection(BasicGame.roomID, BasicGame.myTeam, target.key, BasicGame.myID); // sends input to all other clients
 		this.resetFilter(target);
 		this.isClicked = target; // chosen character information is stored into this.isClicked
 		target.filters = null; // highlight chosen character
@@ -101,6 +103,30 @@ BasicGame.CharSelect.prototype = {
 
 		console.log('called');
 
+		BasicGame.eurecaClient.exports.loadTeamChar = function(teamArr) {
+			// clear existing text
+			for (var idx in ref.textContainer) {
+				ref.textContainer[idx].destroy();
+			}
+			ref.textContainer = {};
+
+			// Update with new text
+			var textColorDefault = {font: '14pt myfont', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
+			var plCounter = 0;
+
+			for (var i=0; i<teamArr.length; i++) {
+				if (teamArr[i][2] != BasicGame.myID) {
+					plCounter++;
+					var selChar = (teamArr[i][1] == null) ? "None" : (teamArr[i][1] == "player_destroyer") ? "Destroyer"
+																	: (teamArr[i][1] == "player_trooper") ? "Ace"
+																	: (teamArr[i][1] == "player_walker") ? "Walker"
+																	: (teamArr[i][1] == "player_gunner") ? "Disruptor"
+																	: "None";
+					ref.textContainer[i + " 1"] = ref.add.text(100, ref.world.height / 2 + 20 + (plCounter * 25),  teamArr[i][0] + " has selected: " + selChar, textColorDefault);
+				}
+			}
+		}
+
 		// Just use factory function
 		this.addCharacter('player_destroyer');
 		this.addCharacter('player_trooper');
@@ -147,10 +173,14 @@ BasicGame.CharSelect.prototype = {
 				this.game.state.start("MainGame");
 			} else if (BasicGame.selectedChar != null && ref.multiplayer) {
 				// Go into multiplayer
-				BasicGame.eurecaServer.setClientCharacter(BasicGame.myID, BasicGame.selectedChar);
 				this.game.state.start("Multiplayer");
 			}
 		});
+
+		// Multiplayer Add-on
+		if (ref.multiplayer) {
+			BasicGame.eurecaServer.getTeamSelection(BasicGame.roomID, BasicGame.myTeam, null, BasicGame.myID);
+		}
 
 	},
 
@@ -159,4 +189,11 @@ BasicGame.CharSelect.prototype = {
 
 	update: function() {
 	}
+};
+
+BasicGame.CharSelect.prototype.clearTextContainer = function() {
+	for (var idx in ref.textContainer) {
+		ref.textContainer[idx].destroy();
+	}
+	ref.textContainer = {};
 };
