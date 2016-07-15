@@ -381,7 +381,7 @@ BasicGame.Multiplayer.prototype.update = function() {
 	//console.log("TEST update");
 	// Enable collision between player and layer and shield
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
-	this.physics.arcade.collide(BasicGame.playerCG, BasicGame.shieldCG, this.shieldCallback.bind(this));
+	this.physics.arcade.overlap(BasicGame.playerCG, BasicGame.shieldCG, this.shieldCallback.bind(this));
 	// Team colliders
 	this.physics.arcade.overlap(this.teamA, BasicGame.playerCG, this.baseCallback.bind(this));	
 	this.physics.arcade.overlap(this.teamB, BasicGame.playerCG, this.baseCallback.bind(this));	
@@ -462,8 +462,10 @@ BasicGame.Multiplayer.prototype.baseCallback= function(obj1, obj2) {
 };
 
 BasicGame.Multiplayer.prototype.shieldCallback= function(obj1, obj2) {
-	if (obj1.myTeam) {
-		obj1.body.velocity.x += obj2.facingRight * 200;
+	// If not same team, push back
+	if (obj1.myTeam != obj2.myTeam) {
+		obj1.inShield = true;
+		obj1.body.velocity.x = obj2.facingRight * 500;
 	}
 };
 

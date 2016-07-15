@@ -53,6 +53,7 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	this.isRevived = false; 		// Check if has been revived
 	this.isBuffed = false;
 	this.inCircle = false;
+	this.inShield = false;
 	
 	// Hero Levels
 	this.heroLevel = 1;
@@ -233,7 +234,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 	}
 
 	// Local client
-	if (this.cursor.left && !this.isAttacking) {
+	if (this.cursor.left && !this.isAttacking && !this.inShield) {
 		this.facingRight = -1;
     	this.scale.x = -this.scaleX;
 		this.body.velocity.x = -this.moveSpeed;
@@ -242,7 +243,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 			this.animations.play('anim_run');	
 		}
 
-	} else if (this.cursor.right && !this.isAttacking) {
+	} else if (this.cursor.right && !this.isAttacking && !this.inShield) {
 		this.facingRight = 1;
     	this.scale.x = this.scaleX;
 		this.body.velocity.x = this.moveSpeed;
@@ -273,6 +274,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
     else if (this.body.onFloor()) {
     	this.jumpCount = 0;
     }
+    this.inShield = false;
 };
 
 BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, killerInfo) {

@@ -13,6 +13,7 @@ BasicGame.Collider = function (game, target, width, height, offsetX, offsetY, fo
 	this.offX = offsetX;
 	this.target = target;
 	this.facingRight = 1;
+	this.myTeam = target.myTeam;
 
 	this.isActive = false;
 };
