@@ -21,6 +21,7 @@ var eurecaServer = new Eureca.Server({allow:['setID',
 	'gameStart',
 	'updateLobby',
 	'loadPlayersLR',
+	'loadTeamChar',
 	'kickToMenu',
 	'spawnOtherPlayers', 
 	'kill', 
@@ -129,11 +130,6 @@ eurecaServer.exports.setClientStatus = function(roomName, id) {
 	eurecaServer.exports.updateLobbyRoom(roomName);
 }
 
-// function to set client ready status on the server and to update the other clients in the room
-eurecaServer.exports.setClientCharacter = function(id, character) {
-	clients[id].char = character;
-}
-
 // function to set client team value on the server and to update the other clients in the room
 eurecaServer.exports.setClientTeam = function(roomName, id, team) {
 	clients[id].team = team;
@@ -240,6 +236,24 @@ eurecaServer.exports.requestClientInfo = function() {
 			lobbylist['publicLobby3'], 
 			lobbylist['publicLobby4']
 		);
+	}
+}
+
+eurecaServer.exports.getTeamSelection = function(roomID, teamID, selection, callerID) {
+	clients[callerID].char = selection; // set client's selected character
+
+	var returnArr = [];
+	for (var c in lobbylist[roomID].clientInfo) {
+		if (lobbylist[roomID].clientInfo[c].team == teamID) {
+			returnArr[returnArr.length] = [lobbylist[roomID].clientInfo[c].nick, lobbylist[roomID].clientInfo[c].char, lobbylist[roomID].clientInfo[c].id];
+		}
+	}
+
+	// Update every client with the same team
+	for (var c in lobbylist[roomID].clientInfo) {
+		if (lobbylist[roomID].clientInfo[c].team == teamID) {
+			lobbylist[roomID].clientInfo[c].remote.loadTeamChar(returnArr);
+		}
 	}
 }
 

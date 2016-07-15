@@ -26,7 +26,7 @@ BasicGame.HeroTrooperMP = function (id, game, x, y, team, nick) {
 	this.defaultMoveSpeed = this.moveSpeed;
 	this.maxHealth = 450;
 	this.curHealth = this.maxHealth;
-	this.knockbackForce = 600;
+	this.knockbackForce = 750;
 
     // Skill cooldowns in milliseconds
     this.skillACooldown = 800; // normal attack - dagger (Default 0.8s)
@@ -197,8 +197,8 @@ BasicGame.HeroTrooperMP.prototype.handleSkillB = function() {
 
 		this.skillBSFX.play();
 
-		this.applyBuff("BUFF_HASTE", this.moveSpeed * 1.8, 5000 + (this.heroLevel * 100), 0);
-		this.applyBuff("BUFF_FURY", (this.skillACooldown / 2 <= 200) ? 200 : (this.skillACooldown / 2), 5000 + (this.heroLevel * 100), 0);
+		this.applyBuff("BUFF_HASTE", this.moveSpeed * 1.8, 5000 + (this.heroLevel * 100), 0, BasicGame.myTeam);
+		this.applyBuff("BUFF_FURY", (this.skillACooldown / 2 <= 200) ? 200 : (this.skillACooldown / 2), 5000 + (this.heroLevel * 100), 0, BasicGame.myTeam);
 		this.skillsEnabled = false;
 		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
@@ -213,7 +213,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillC = function() {
     		this.smokeEffect.playUntracked('anim_4', this.x - 20 * this.facingRight, this.y - 10);
     	}, this);
 
-		this.applyBuff("BUFF_INVIS", 0, 5000 + (this.heroLevel * 200), 500);
+		this.applyBuff("BUFF_INVIS", 0, 5000 + (this.heroLevel * 200), 500, BasicGame.myTeam);
 
     	// Play the animation
     	this.animations.play('anim_stealth');
