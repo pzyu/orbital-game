@@ -335,6 +335,7 @@ BasicGame.HeroDestroyerMP.prototype.handleSkillE = function() {
 			this.attackCollider.offX = 80;
     	}, this);
 
+    	// Refresh skill timer
     	this.skillATimer = this.game.time.now;
     	this.skillBTimer = this.game.time.now;
     	this.skillCTimer = this.game.time.now;
