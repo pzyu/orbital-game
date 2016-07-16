@@ -285,7 +285,7 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.healthBar.anchor.setTo(0, 1);
 	this.healthRect = new Phaser.Rectangle(0, 0, this.healthBar.width, this.healthBar.height);
 
-	this.healthBarPercentage = this.game.add.text(650, this.game.height - 40, '0%', { font: '24pt myfont', align: 'center', fill: 'white'});
+	this.healthBarPercentage = this.game.add.text(680, this.game.height - 40, '0%', { font: '24pt myfont', align: 'right', fill: 'white'});
 	this.healthBarPercentage.fixedToCamera = true;
 	this.healthBarPercentage.anchor.setTo(0.5, 0.5);
 
@@ -299,7 +299,7 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.expBar.anchor.setTo(0, 1);
 	this.expRect = new Phaser.Rectangle(0, 0, this.expBar.width, this.expBar.height);
 
-	this.expBarPercentage = this.game.add.text(650, this.game.height - 72, '0%', { font: '16pt myfont', align: 'center', fill: 'white'});
+	this.expBarPercentage = this.game.add.text(680, this.game.height - 72, '0%', { font: '16pt myfont', align: 'right', fill: 'white'});
 	this.expBarPercentage.fixedToCamera = true;
 	this.expBarPercentage.anchor.setTo(0.5, 0.5);
 
@@ -398,12 +398,12 @@ BasicGame.Multiplayer.prototype.update = function() {
 
 BasicGame.Multiplayer.prototype.handleHUD = function() {
 	// Health
-	this.healthBarPercentage.setText(this.game.math.floorTo(this.player.getHP() * 100) + "%");
+	this.healthBarPercentage.setText(this.game.math.floorTo(this.player.getHP() * 100) + "% HP");
 	this.healthRect.width = 283 * this.player.getHP();
 	this.healthBar.crop(this.healthRect);
 
 	// Exp
-	this.expBarPercentage.setText(this.game.math.floorTo(this.player.getExp() * 100) + "%");
+	this.expBarPercentage.setText(this.game.math.floorTo(this.player.getExp() * 100) + "%   EXP");
 	this.expRect.width = 240 * this.player.getExp();
 	this.expBar.crop(this.expRect);
 
@@ -478,15 +478,6 @@ BasicGame.Multiplayer.prototype.bulletCallback= function(obj1, obj2) {
 	obj1.kill();
 };
 
-BasicGame.Multiplayer.prototype.colliderCallback= function(obj1, obj2) {
-	//console.log(obj1.__proto__);
-	//if (obj1.__proto__ != Phaser.Sprite) {}
-	//obj1.onCollide(obj2);
-};
-
-BasicGame.Multiplayer.prototype.shieldCallBack = function(obj1, obj2) {
-	obj1.onCollide();
-};
 
 BasicGame.Multiplayer.prototype.getID = function() {
 	return BasicGame.myID;

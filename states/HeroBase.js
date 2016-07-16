@@ -267,7 +267,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 		this.jumpCount++;
     }
     // Idle | if not moving and on the floor
-    else if (this.body.velocity.x == 0 && this.body.onFloor()  && !this.isAttacking) {
+    else if (this.body.velocity.x == 0 && this.body.onFloor()  && !this.isAttacking && !this.animations.currentAnim.isPlaying) {
     	this.animations.play('anim_idle');
     	this.jumpCount = 0;
     } 

@@ -35,6 +35,7 @@ var eurecaServer = new Eureca.Server({allow:['setID',
 var clients = {};
 var connectedCount = 0;
 var lobbylist = {};
+var timerlist = {};
 
 // Initialize public lobby
 eurecaServer.exports.initializeLobby = function() {
@@ -158,7 +159,9 @@ eurecaServer.exports.chooseHost = function(roomName) {
 
 eurecaServer.exports.startGameTDM = function(roomName) {
 	lobbylist[roomName].status = ' On-going'; // Update Lobby Status
-	lobbylist[roomName].game = {ScoreGoal: lobbylist[roomName].maxPlayers * 5, TeamScore: [0, 0, 0], index: 0};
+	lobbylist[roomName].game = {ScoreGoal: lobbylist[roomName].maxPlayers * 5, TeamScore: [0, 0, 0]};
+
+	// Interval for lobby games
 	var last = Date.now();
 	console.log('last: ' + last)
 	function setSpawnIndex() {
@@ -170,8 +173,9 @@ eurecaServer.exports.startGameTDM = function(roomName) {
 			remote.setIndex(index);
 		}
 	}
-	// Timer
-	setInterval(setSpawnIndex, 30000);
+	// Assign to timer list
+	timerlist[roomName] = setInterval(setSpawnIndex, 30000);
+
 	eurecaServer.exports.requestClientInfo(); // update all lobby clients
 	// for every client in the lobby, start the game
 	for (var id in lobbylist[roomName].clientInfo) { 
@@ -220,6 +224,7 @@ eurecaServer.exports.resetLobbyRoom = function(roomName) {
 			lobbylist[roomName].clientInfo = {};
 			lobbylist[roomName].playerCount = 0;
 			lobbylist[roomName].host = '';
+			clearInterval(timerlist[roomName]);
 		} else {
 			delete lobbylist[roomName];
 		}
