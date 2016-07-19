@@ -3,7 +3,8 @@ BasicGame.Multiplayer = function (game) {
 	this.playerListHUD;
 	this.logo;
 	this.selectedChar = '';				// Selected character
-	this.team = '';
+	this.team = '';						// Selected Team
+	this.winState = false;				// win condition not met
 
 	this.gravity = 5000;				// Gravity
 	this.spawnX = 1000;					// Starting spawn
@@ -56,24 +57,51 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		}
 	}	
 
-	BasicGame.eurecaClient.exports.winGame = function() {
-		// go to win game screen
-		//ref.game.state.start("winTDM", true);
-		BasicGame.eurecaServer.destroyRoomLink(BasicGame.roomID, BasicGame.myID);
-		//game.paused = true;
+	BasicGame.eurecaClient.exports.winGame = function(winTeam) {
+		// Apply forced disconnection to lobby to "freeze" game state
+		console.log("Forcing LobbyRoom disconnection on client...");
+		ref.winState = true;
+		BasicGame.eurecaServer.destroyRoomLink(BasicGame.roomID, BasicGame.myID); // forced disconnection from game lobby
+		var winText = (BasicGame.myTeam == winTeam) ? "You are Victorious!" : "You are Defeated!";
+		console.log("Client successfully disconnected from LobbyRoom!");
 
-		var returnMenu = ref.add.text(300, 1000,  "Back to Main Menu", {font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"});
+		// Show win/lose message
+		var winLoseMsg = game.add.text(ref.game.width / 2, ref.game.height / 4, winText, 
+			{font: '64pt myfont', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", boundsAlignH: "center", boundsAlignV: "middle"}); 
+		winLoseMsg.fixedToCamera = true;
+		winLoseMsg.anchor.setTo(0.5, 0.5);
+		winLoseMsg.alpha = 0.1;
+		game.add.tween(winLoseMsg).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true);
+
+		// Add return to menu button
+		var returnMenu = game.add.text(ref.game.width / 2, ref.game.height / 4 + 235,  "Back to Main Menu", 
+			{font: '25pt myfont', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", boundsAlignH: "center", boundsAlignV: "middle"}); 
 		returnMenu.inputEnabled = true;
+		returnMenu.fixedToCamera = true;
+		returnMenu.anchor.setTo(0.5, 0.5);
 		returnMenu.events.onInputOver.add(BasicGame.onOver);
 		returnMenu.events.onInputOut.add(BasicGame.onOut);
-		console.log("return menu done");
+
 		// Back button clicked
 		returnMenu.events.onInputUp.add(function() {
-			console.log("return menu clicked");
-			BasicGame.eurecaServer.destroyRoomLink(BasicGame.roomID, BasicGame.myID);
 			BasicGame.eurecaClient.disconnect(); // disconnect user completely from server
 			BasicGame.disconnectClient(); // adjust client to reset connection variable
+			returnMenu.destroy();
 			ref.game.state.start("MainMenu", true);
+		});
+
+		// Add return lobby button
+		var returnLobby = game.add.text(ref.game.width / 2, ref.game.height / 4 + 200,  "Back to Lobby", 
+			{font: '25pt myfont', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", boundsAlignH: "center", boundsAlignV: "middle"}); 
+		returnLobby.inputEnabled = true;
+		returnLobby.fixedToCamera = true;
+		returnLobby.anchor.setTo(0.5, 0.5);
+		returnLobby.events.onInputOver.add(BasicGame.onOver);
+		returnLobby.events.onInputOut.add(BasicGame.onOut);
+		
+		// return lobby button clicked
+		returnLobby.events.onInputUp.add(function() {
+			ref.game.state.start("LobbyMulti", true);
 		});
 	}
 
@@ -356,6 +384,14 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	// create all other clients
 	BasicGame.eurecaServer.handshake(BasicGame.roomID);
 
+	// Initialize and reset team variables
+	this.winState = false;
+	this.teamScores = [
+		0, 
+		0,
+		0
+	];
+
 	console.log("my team: " + BasicGame.myTeam);
 };
 
@@ -443,16 +479,15 @@ BasicGame.Multiplayer.prototype.handleHUD = function() {
 	this.skillD.crop(this.cropRectD);
 
 	// Update every 500ms so won't be that taxing
-	if (this.game.time.now > this.textTimer) {
+	if (this.winState == false && this.game.time.now > this.textTimer) {
 		this.textTimer = this.game.time.now + 500;
 		var ref = this;
 		BasicGame.eurecaServer.getTeamScore(BasicGame.roomID).onReady(function(result) {
 			ref.teamScores = result;
-		}, this);
+		}, this);	
 
 		this.teamAHUD.setText(this.teamScores[1]);
 		this.teamBHUD.setText(this.teamScores[2]);
-	
 	}
 };
 

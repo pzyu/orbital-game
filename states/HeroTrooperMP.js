@@ -144,9 +144,9 @@ BasicGame.HeroTrooperMP.prototype.attCallback = function(obj1, obj2) {
 		if (this.facingRight == obj2.facingRight) {
 			// Backstab
 			console.log("backstab");
-			obj2.getHit(50 + this.attack * this.heroLevel * 1.8, this.knockbackForce * this.facingRight * 1.2, this.knockbackForce, this);
+			obj2.getHit(50 + this.attack * this.heroLevel * 1.8, this.knockbackForce * this.facingRight * 1.08, this.knockbackForce, this);
 		} else {			// Call get hit of other person
-			obj2.getHit(50 + (this.attack * this.heroLevel), this.knockbackForce * this.facingRight * 1.2, this.knockbackForce, this);
+			obj2.getHit(50 + (this.attack * this.heroLevel), this.knockbackForce * this.facingRight * 1.08, this.knockbackForce, this);
 		}
 	}
 };
