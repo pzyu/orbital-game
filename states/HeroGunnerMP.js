@@ -46,7 +46,7 @@ BasicGame.HeroGunnerMP = function (id, game, x, y, team, nick) {
 
 	// Movement animations
 	this.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Anim_Gunner_Idle_00', 0, 9), 16, true);
-	this.animations.add('anim_run', Phaser.Animation.generateFrameNames('Anim_Gunner_Walk_00', 0, 9), 16, true);
+	this.animations.add('anim_run', Phaser.Animation.generateFrameNames('Anim_Gunner_Walk_00', 0, 9), 16, false);
 	this.animations.add('anim_jump', Phaser.Animation.generateFrameNames('Anim_Gunner_Jump_00', 0, 9), 16, false);
 	this.animations.add('anim_dead', Phaser.Animation.generateFrameNames('Anim_Gunner_Dead_00', 0, 9), 16, false);
 	
@@ -85,8 +85,8 @@ BasicGame.HeroGunnerMP = function (id, game, x, y, team, nick) {
     this.weapon.setBulletBodyOffset(40, 40, 200, 200);
 
     // Trap
-    this.trap = this.game.add.weapon(4, 'effects_sprite');
-	this.trap.addBulletAnimation('anim_1', Phaser.Animation.generateFrameNames('slime_idle (', 1, 10, ')'), 16, true);
+    this.trap = this.game.add.weapon(4, 'slime_sprite');
+	this.trap.addBulletAnimation('anim_1', Phaser.Animation.generateFrameNames('slime_idle (', 1, 7, ')'), 16, true);
     this.trap.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;				
     this.trap.bulletLifespan = 10000;
     this.trap.bulletSpeed = 1000;											
@@ -127,7 +127,7 @@ BasicGame.HeroGunnerMP = function (id, game, x, y, team, nick) {
     this.pack.trackSprite(this, 0, -60);										
     this.pack.bullets.setAll('scale.x', 1);								
     this.pack.bullets.setAll('scale.y', 1);
-    this.pack.bullets.setAll('body.maxVelocity.x', 1000);
+    this.pack.bullets.setAll('body.maxVelocity.x', 800);
     this.pack.bullets.setAll('body.drag.x', 1000);
     this.pack.setBulletBodyOffset(50, 40, 10, 10);
 
@@ -170,7 +170,7 @@ BasicGame.HeroGunnerMP = function (id, game, x, y, team, nick) {
 	}, this);
 
 	this.ultEffect = new BasicGame.Effect(this.game, 'beam', 50, 0.5, false);
-	this.ultEffect2 = new BasicGame.Effect(this.game, 'ice', 50, 0.5, false);
+	this.ultEffect2 = new BasicGame.Effect(this.game, 'energy', 50, 0.5, false);
 	this.ultEffect2.animations.getAnimation('anim_1').reverse();
 	this.canRevive = false;
 
