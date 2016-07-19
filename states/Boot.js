@@ -81,13 +81,22 @@ BasicGame.Boot.prototype = {
         this.load.image('magicCircle', 'images/magiccircle.png');
 
         // Effect atlas
-        this.load.atlas('blood_effect_sprite', 'images/sprites/effects/blood_spritesheet.png', 'images/sprites/effects/blood_spritemap.json');
-        this.load.atlas('bolt_effect_sprite', 'images/sprites/effects/bolt_spritesheet.png', 'images/sprites/effects/bolt_spritemap.json');
-        this.load.atlas('muzzle_effect_sprite', 'images/sprites/effects/muzzle.png', 'images/sprites/effects/muzzle.json');
-        this.load.atlas('explosion_effect_sprite', 'images/sprites/effects/explosion.png', 'images/sprites/effects/explosion.json');
+        this.load.atlas('beam_effect_sprite', 'images/sprites/effects/beam.png', 'images/sprites/effects/beam.json');
         this.load.atlas('blast_effect_sprite', 'images/sprites/effects/blast.png', 'images/sprites/effects/blast.json');
+        this.load.atlas('blood_effect_sprite', 'images/sprites/effects/blood.png', 'images/sprites/effects/blood.json');
+        this.load.atlas('bolt_effect_sprite', 'images/sprites/effects/bolt.png', 'images/sprites/effects/bolt.json');
+        this.load.atlas('energy_effect_sprite', 'images/sprites/effects/energy.png', 'images/sprites/effects/energy.json');
+        this.load.atlas('explosion_effect_sprite', 'images/sprites/effects/explosion.png', 'images/sprites/effects/explosion.json');
+        this.load.atlas('fire_effect_sprite', 'images/sprites/effects/fire.png', 'images/sprites/effects/fire.json');
+        this.load.atlas('ice_effect_sprite', 'images/sprites/effects/ice.png', 'images/sprites/effects/ice.json');
         this.load.atlas('mite_sprite', 'images/sprites/effects/mite.png', 'images/sprites/effects/mite.json');
-        this.load.atlas('effects_sprite', 'images/sprites/effects/effects.png', 'images/sprites/effects/effects.json');
+        this.load.atlas('muzzle_effect_sprite', 'images/sprites/effects/muzzle.png', 'images/sprites/effects/muzzle.json');
+        this.load.atlas('muzzle2_effect_sprite', 'images/sprites/effects/muzzle_1.png', 'images/sprites/effects/muzzle_1.json');
+        this.load.atlas('slash_effect_sprite', 'images/sprites/effects/slash.png', 'images/sprites/effects/slash.json');
+        this.load.atlas('slime_effect_sprite', 'images/sprites/effects/slime.png', 'images/sprites/effects/slime.json');
+        this.load.atlas('slime_sprite', 'images/sprites/effects/slime_idle.png', 'images/sprites/effects/slime_idle.json');
+        this.load.atlas('smoke_effect_sprite', 'images/sprites/effects/smoke.png', 'images/sprites/effects/smoke.json');
+        this.load.atlas('summon_effect_sprite', 'images/sprites/effects/summon.png', 'images/sprites/effects/summon.json');
     },
 
     loadAudio: function() {

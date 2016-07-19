@@ -103,10 +103,9 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	this.hitAnim;
 
 	// Buff effect
-	this.buffEffect = new BasicGame.Effect(this.game, '', 50, 0.5, true);
-	this.buffEffect.animations.add('BUFF_SLOW', Phaser.Animation.generateFrameNames('summon (', 1, 18, ')'), 16, true);
-	this.buffEffect.animations.add('BUFF_HASTE', Phaser.Animation.generateFrameNames('bolt_sizzle (', 1, 10, ')'), 16, true);
-	this.game.add.existing(this.buffEffect);
+	this.hasteEffect = new BasicGame.Effect(this.game, 'bolt', 50, 0.5, true);
+	this.slowEffect = new BasicGame.Effect(this.game, 'summon', 50, 0.5, true);
+	//this.game.add.existing(this.buffEffect);
 
 	// Keep track of jump anim
 	this.jumpAnim;
@@ -267,7 +266,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 		this.jumpCount++;
     }
     // Idle | if not moving and on the floor
-    else if (this.body.velocity.x == 0 && this.body.onFloor()  && !this.isAttacking && !this.animations.currentAnim.isPlaying) {
+    else if (this.body.velocity.x == 0 && this.body.onFloor()  && !this.isAttacking) {
     	this.animations.play('anim_idle');
     	this.jumpCount = 0;
     } 
@@ -395,7 +394,12 @@ BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, de
 			this.moveSpeed = this.defaultMoveSpeed;
 		}, this);
 
-		this.buffEffect.playTimed(buffName, this, 0, 0, duration);
+		//this.buffEffect.playTimed(buffName, this, 0, 0, duration);
+		if (buffName == "BUFF_SLOW") {
+			this.slowEffect.playTimed('anim_1', this, 0, 0, duration);
+		} else {
+			this.hasteEffect.playTimed('anim_1', this, 0, 0, duration);
+		}
 	} 
 
 	if (buffName == "BUFF_FURY") {

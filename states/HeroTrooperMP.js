@@ -54,7 +54,7 @@ BasicGame.HeroTrooperMP = function (id, game, x, y, team, nick) {
 
     // Movement Animations
 	this.animations.add('anim_idle', Phaser.Animation.generateFrameNames('Anim_Trooper_Idle_00', 0, 9), 16, true);
-	this.animations.add('anim_run', Phaser.Animation.generateFrameNames('Anim_Trooper_Run_00', 0, 9), 16, true);
+	this.animations.add('anim_run', Phaser.Animation.generateFrameNames('Anim_Trooper_Run_00', 0, 9), 16, false);
 	this.animations.add('anim_jump', Phaser.Animation.generateFrameNames('Anim_Trooper_Jump_00', 0, 9), 16, false);
 	this.animations.add('anim_dead', Phaser.Animation.generateFrameNames('Anim_Trooper_Dead_00', 0, 9), 16, false);
 
@@ -139,7 +139,7 @@ BasicGame.HeroTrooperMP.prototype.attCallback = function(obj1, obj2) {
 	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
 		// Kill collider
 		this.attackCollider.deactivate();
-		this.isAttacking = false;
+		//this.isAttacking = false;
 
 		if (this.facingRight == obj2.facingRight) {
 			// Backstab
