@@ -47,10 +47,12 @@ BasicGame.CharSelect.prototype = {
 		this.isClicked = target; // chosen character information is stored into this.isClicked
 		target.filters = null; // highlight chosen character
 		//target.animations.play('anim_attack');
-		target.animations.currentAnim.onLoop.add(function() { 
-			target.animations.play('anim_idle');
-		});
-		BasicGame.selectedChar = target.key;
+		//target.animations.currentAnim.onLoop.add(function() { 
+		//	target.animations.play('anim_idle');
+		//});
+		var selected = 'player_' + target.key.substring(0, target.key.length - 9);
+		console.log(selected);
+		BasicGame.selectedChar = selected;
 	},
 
 	addCharacter: function(spriteName) {
@@ -67,31 +69,31 @@ BasicGame.CharSelect.prototype = {
 		if (spriteName == 'player_trooper') {
 			animName = "Anim_Trooper_";
 			char.x += 120;
-			char.y += 100;
+			char.y += 10000;
 		}
 		if (spriteName == 'player_walker') {
 			animName = "Anim_Walker_";
 			char.x += 50;
-			char.y += 20;
+			char.y += 2000;
 		}
 		if (spriteName == 'player_gunner') {
 			animName = "Anim_Gunner_";
 			char.x += 110;
-			char.y += 75;
+			char.y += 7500;
 		}
 
 		// Add animation and play
 		char.animations.add('anim_idle', Phaser.Animation.generateFrameNames(animName + 'Idle_00', 0, 9), 16, true);
-		char.animations.add('anim_attack', Phaser.Animation.generateFrameNames(animName + 'Shoot_00', 0, 10), 16, true);
+		//char.animations.add('anim_attack', Phaser.Animation.generateFrameNames(animName + 'Shoot_00', 0, 10), 16, true);
 		char.animations.play('anim_idle');
 
 		this.charArr[this.charCount] = char;
 
 		// Set input functions
-		char.inputEnabled = true;
-		char.events.onInputUp.add(this.onClick, this);
-		char.events.onInputOver.add(this.onOver, this);
-		char.events.onInputOut.add(this.onOut, this);
+		//char.inputEnabled = true;
+		//char.events.onInputUp.add(this.onClick, this);
+		//char.events.onInputOver.add(this.onOver, this);
+		//char.events.onInputOut.add(this.onOut, this);
 
 		this.charCount++;
 	},
@@ -135,6 +137,30 @@ BasicGame.CharSelect.prototype = {
 		this.resetFilter();
 		this.isClicked = null;
 
+		this.destroyer = this.game.add.image(500, 0, 'destroyer_portrait');
+		this.destroyer.inputEnabled = true;
+		this.destroyer.events.onInputUp.add(this.onClick, this);
+		this.destroyer.events.onInputOver.add(this.onOver, this);
+		this.destroyer.events.onInputOut.add(this.onOut, this);
+
+		this.walker = this.game.add.image(670, 35, 'walker_portrait');
+		this.walker.inputEnabled = true;
+		this.walker.events.onInputUp.add(this.onClick, this);
+		this.walker.events.onInputOver.add(this.onOver, this);
+		this.walker.events.onInputOut.add(this.onOut, this);
+
+		this.gunner = this.game.add.image(450, 150, 'gunner_portrait');
+		this.gunner.inputEnabled = true;
+		this.gunner.events.onInputUp.add(this.onClick, this);
+		this.gunner.events.onInputOver.add(this.onOver, this);
+		this.gunner.events.onInputOut.add(this.onOut, this);
+
+		this.trooper = this.game.add.image(572, 142, 'trooper_portrait');
+		this.trooper.inputEnabled = true;
+		this.trooper.events.onInputUp.add(this.onClick, this);
+		this.trooper.events.onInputOver.add(this.onOver, this);
+		this.trooper.events.onInputOut.add(this.onOut, this);
+
 		// Add start game button
 		var optionStyle = {font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
 		if (ref.multiplayer) {
@@ -142,10 +168,15 @@ BasicGame.CharSelect.prototype = {
 		} else {
 			var joinTxt = "Start Game";
 		}
-		this.add.text(400, 300, "Arrow keys for controls, \nA,S,D,F for skills", optionStyle);
+		//this.add.text(400, 300, "Arrow keys for controls, \nA,S,D,F for skills", optionStyle);
+		
+		this.add.text(100, 250, "Destroyer", optionStyle);
+		this.add.text(100, 300, "Skill descriptions", optionStyle);
+		this.add.text(1000, 50, "Team", optionStyle);
+		//this.add.text(900, 600, "Ultimate skill", optionStyle);
 
-		this.returnMenu = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 100,  "Back", optionStyle);
-		this.startGame = this.add.text(this.world.width - this.world.width/3.5, this.world.height - 100,  joinTxt, optionStyle);
+		this.returnMenu = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 110,  "Back", optionStyle);
+		this.startGame = this.add.text(this.world.width - this.world.width/3.5, this.world.height - 110,  joinTxt, optionStyle);
 		this.startGame.inputEnabled = true; 
 		this.returnMenu.inputEnabled = true;
 		this.returnMenu.events.onInputOver.add(BasicGame.onOver);

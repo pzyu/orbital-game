@@ -11,7 +11,6 @@ BasicGame.Effect = function (game, effectName, loopCount, scale, trackTarget) {
 	if (effectName == "explosion") {
 		this.animations.add('anim_1', Phaser.Animation.generateFrameNames('explosion_ground (', 1, 10, ')'), 60, false);
 		this.animations.add('anim_2', Phaser.Animation.generateFrameNames('explosion_air (', 1, 10, ')'), 60, false);
-		console.log(this.animations);
 	}
 
 	if (effectName == "blast") {
