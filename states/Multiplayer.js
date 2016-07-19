@@ -69,6 +69,8 @@ BasicGame.Multiplayer.prototype.preload = function() {
 			{font: '64pt myfont', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", boundsAlignH: "center", boundsAlignV: "middle"}); 
 		winLoseMsg.fixedToCamera = true;
 		winLoseMsg.anchor.setTo(0.5, 0.5);
+		winLoseMsg.alpha = 0.1;
+		game.add.tween(winLoseMsg).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true);
 
 		// Add return to menu button
 		var returnMenu = game.add.text(ref.game.width / 2, ref.game.height / 4 + 235,  "Back to Main Menu", 
