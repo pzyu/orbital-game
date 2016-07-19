@@ -317,7 +317,7 @@ eurecaServer.exports.playerKillTDM = function(teamID, roomID) {
 
 	// add win condition here!
 	if (lobbylist[roomID].game.TeamScore[teamID] >= lobbylist[roomID].game.ScoreGoal) {
-		eurecaServer.exports.winGame(roomID); // win game
+		eurecaServer.exports.winGame(roomID, teamID); // win game
 	}
 }
 
@@ -334,20 +334,20 @@ eurecaServer.exports.getTeamScore = function(roomID, teamID) {
 		}
 	}
 
-	//teamChk = true;// DISABLED teamChk for development purpose
+	teamChk = true;// DISABLED teamChk for development purpose
 
 	if (teamChk == true) {
 		// more than 1 team exist
 		return lobbylist[roomID].game.TeamScore; // return team score
 	} else {
 		// only 1 team exist, give auto win
-		eurecaServer.exports.winGame(roomID); // win game
+		eurecaServer.exports.winGame(roomID, team); // win game
 	}
 }
 
-eurecaServer.exports.winGame = function(roomID) {
+eurecaServer.exports.winGame = function(roomID, teamID) {
 	for (var id in lobbylist[roomID].clientInfo) {
-		lobbylist[roomID].clientInfo[id].remote.winGame(); // kick every player in lobby
+		lobbylist[roomID].clientInfo[id].remote.winGame(teamID); // kick every player in lobby
 	}
 }
 

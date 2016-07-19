@@ -122,7 +122,7 @@ BasicGame.CharSelect.prototype = {
 																	: (teamArr[i][1] == "player_walker") ? "Walker"
 																	: (teamArr[i][1] == "player_gunner") ? "Disruptor"
 																	: "None";
-					ref.textContainer[i + " 1"] = ref.add.text(100, ref.world.height / 2 + 20 + (plCounter * 25),  teamArr[i][0] + " has selected: " + selChar, textColorDefault);
+					ref.textContainer[i + " 1"] = ref.add.text(100, ref.game.height / 2 + 20 + (plCounter * 25),  teamArr[i][0] + " has selected: " + selChar, textColorDefault);
 				}
 			}
 		}
@@ -144,8 +144,8 @@ BasicGame.CharSelect.prototype = {
 		}
 		this.add.text(400, 300, "Arrow keys for controls, \nA,S,D,F for skills", optionStyle);
 
-		this.returnMenu = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 100,  "Back", optionStyle);
-		this.startGame = this.add.text(this.world.width - this.world.width/3.5, this.world.height - 100,  joinTxt, optionStyle);
+		this.returnMenu = this.add.text(this.game.width - this.game.width/1.08, this.game.height - 100,  "Back", optionStyle);
+		this.startGame = this.add.text(this.game.width - this.game.width/3.5, this.game.height - 100,  joinTxt, optionStyle);
 		this.startGame.inputEnabled = true; 
 		this.returnMenu.inputEnabled = true;
 		this.returnMenu.events.onInputOver.add(BasicGame.onOver);
