@@ -190,10 +190,3 @@ BasicGame.CharSelect.prototype = {
 	update: function() {
 	}
 };
-
-BasicGame.CharSelect.prototype.clearTextContainer = function() {
-	for (var idx in ref.textContainer) {
-		ref.textContainer[idx].destroy();
-	}
-	ref.textContainer = {};
-};

@@ -22,6 +22,7 @@ var eurecaServer = new Eureca.Server({allow:['setID',
 	'updateLobby',
 	'loadPlayersLR',
 	'loadTeamChar',
+	'winGame',
 	'kickToMenu',
 	'spawnOtherPlayers', 
 	'kill', 
@@ -333,7 +334,7 @@ eurecaServer.exports.getTeamScore = function(roomID, teamID) {
 		}
 	}
 
-	teamChk = true;// DISABLED teamChk for development purpose
+	//teamChk = true;// DISABLED teamChk for development purpose
 
 	if (teamChk == true) {
 		// more than 1 team exist
@@ -346,7 +347,7 @@ eurecaServer.exports.getTeamScore = function(roomID, teamID) {
 
 eurecaServer.exports.winGame = function(roomID) {
 	for (var id in lobbylist[roomID].clientInfo) {
-		lobbylist[roomID].clientInfo[id].remote.kickToMenu(); // kick every player in lobby
+		lobbylist[roomID].clientInfo[id].remote.winGame(); // kick every player in lobby
 	}
 }
 

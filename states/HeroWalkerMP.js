@@ -183,7 +183,7 @@ BasicGame.HeroWalkerMP.prototype.update = function() {
 	this.getChildAt(0).setText(this.nick + " " + this.heroLevel);
 	this.getChildAt(0).scale.x = this.facingRight;
 	//this.game.debug.body(this);
-	this.game.debug.body(this.shield);
+	//this.game.debug.body(this.shield);
 	//this.rocket.debug(0, 0, true);
 };
 

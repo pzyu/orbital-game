@@ -120,7 +120,7 @@ BasicGame.LobbyMulti.prototype = {
 		var ref = this;
 
 		// Add back button
-		this.returnMenu = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 100,  "Back to Main Menu", optionStyle);
+		this.returnMenu = this.add.text(this.game.width - this.game.width/1.08, this.game.height - 100,  "Back to Main Menu", optionStyle);
 		this.returnMenu.inputEnabled = true;
 		this.returnMenu.events.onInputOver.add(BasicGame.onOver);
 		this.returnMenu.events.onInputOut.add(BasicGame.onOut);
@@ -144,10 +144,10 @@ BasicGame.LobbyMulti.prototype = {
 		var lobbyOptionText1 = {font: '14pt myfont', align: 'center', stroke: 'rgba(0,10,0,0)', strokeThickness: 2, fill: "white"};
 
 		// Fixed labels
-		this.add.text((this.world.width/5 * 1), 100,  "Lobby1", lobbyFixedText1);
-		this.add.text((this.world.width/5 * 2), 100,  "Lobby2", lobbyFixedText1);
-		this.add.text((this.world.width/5 * 3), 100,  "Lobby3", lobbyFixedText1);
-		this.add.text((this.world.width/5 * 4), 100,  "Lobby4", lobbyFixedText1);
+		this.add.text((this.game.width/5 * 1), 100,  "Lobby1", lobbyFixedText1);
+		this.add.text((this.game.width/5 * 2), 100,  "Lobby2", lobbyFixedText1);
+		this.add.text((this.game.width/5 * 3), 100,  "Lobby3", lobbyFixedText1);
+		this.add.text((this.game.width/5 * 4), 100,  "Lobby4", lobbyFixedText1);
 		this.add.text(30, 180,  "Game :", lobbyOptionText1);
 		this.add.text(30, 230,  "Current Players :", lobbyOptionText1);
 		this.add.text(30, 280,  "Max Players :", lobbyOptionText1);
@@ -155,33 +155,33 @@ BasicGame.LobbyMulti.prototype = {
 
 		// Updating labels
 		// Lobby 1
-		this.L1GameTxt = this.add.text((this.world.width/5 * 1) - 35, 180,  '', lobbyOptionText1);
-		this.L1CurrPlayersTxt = this.add.text((this.world.width/5 * 1) + 55, 230,  '', lobbyOptionText1);
-		this.L1MaxPlayersTxt = this.add.text((this.world.width/5 * 1) + 55, 280,  '', lobbyOptionText1);
-		this.L1StatusTxt = this.add.text((this.world.width/5 * 1) + 10, 330,  '', lobbyOptionText1);
+		this.L1GameTxt = this.add.text((this.game.width/5 * 1) - 35, 180,  '', lobbyOptionText1);
+		this.L1CurrPlayersTxt = this.add.text((this.game.width/5 * 1) + 55, 230,  '', lobbyOptionText1);
+		this.L1MaxPlayersTxt = this.add.text((this.game.width/5 * 1) + 55, 280,  '', lobbyOptionText1);
+		this.L1StatusTxt = this.add.text((this.game.width/5 * 1) + 10, 330,  '', lobbyOptionText1);
 		// Lobby 2
-		this.L2GameTxt = this.add.text((this.world.width/5 * 2) - 35, 180,  '', lobbyOptionText1);
-		this.L2CurrPlayersTxt = this.add.text((this.world.width/5 * 2) + 55, 230,  '', lobbyOptionText1);
-		this.L2MaxPlayersTxt = this.add.text((this.world.width/5 * 2) + 55, 280,  '', lobbyOptionText1);
-		this.L2StatusTxt = this.add.text((this.world.width/5 * 2) + 10, 330,  '', lobbyOptionText1);
+		this.L2GameTxt = this.add.text((this.game.width/5 * 2) - 35, 180,  '', lobbyOptionText1);
+		this.L2CurrPlayersTxt = this.add.text((this.game.width/5 * 2) + 55, 230,  '', lobbyOptionText1);
+		this.L2MaxPlayersTxt = this.add.text((this.game.width/5 * 2) + 55, 280,  '', lobbyOptionText1);
+		this.L2StatusTxt = this.add.text((this.game.width/5 * 2) + 10, 330,  '', lobbyOptionText1);
 		// Lobby 3
-		this.L3GameTxt = this.add.text((this.world.width/5 * 3) - 35, 180,  '', lobbyOptionText1);
-		this.L3CurrPlayersTxt = this.add.text((this.world.width/5 * 3) + 55, 230,  '', lobbyOptionText1);
-		this.L3MaxPlayersTxt = this.add.text((this.world.width/5 * 3) + 55, 280,  '', lobbyOptionText1);
-		this.L3StatusTxt = this.add.text((this.world.width/5 * 3) + 10, 330,  '', lobbyOptionText1);
+		this.L3GameTxt = this.add.text((this.game.width/5 * 3) - 35, 180,  '', lobbyOptionText1);
+		this.L3CurrPlayersTxt = this.add.text((this.game.width/5 * 3) + 55, 230,  '', lobbyOptionText1);
+		this.L3MaxPlayersTxt = this.add.text((this.game.width/5 * 3) + 55, 280,  '', lobbyOptionText1);
+		this.L3StatusTxt = this.add.text((this.game.width/5 * 3) + 10, 330,  '', lobbyOptionText1);
 		// Lobby 4
-		this.L4GameTxt = this.add.text((this.world.width/5 * 4) - 35, 180,  '', lobbyOptionText1);
-		this.L4CurrPlayersTxt = this.add.text((this.world.width/5 * 4) + 55, 230,  '', lobbyOptionText1);
-		this.L4MaxPlayersTxt = this.add.text((this.world.width/5 * 4) + 55, 280,  '', lobbyOptionText1);
-		this.L4StatusTxt = this.add.text((this.world.width/5 * 4) + 10, 330,  '', lobbyOptionText1);
+		this.L4GameTxt = this.add.text((this.game.width/5 * 4) - 35, 180,  '', lobbyOptionText1);
+		this.L4CurrPlayersTxt = this.add.text((this.game.width/5 * 4) + 55, 230,  '', lobbyOptionText1);
+		this.L4MaxPlayersTxt = this.add.text((this.game.width/5 * 4) + 55, 280,  '', lobbyOptionText1);
+		this.L4StatusTxt = this.add.text((this.game.width/5 * 4) + 10, 330,  '', lobbyOptionText1);
 		// total players
 		this.playerStatus = this.add.text(30, 450,  "Total Online Players : NOT ONLINE! Check your connection!", lobbyFixedText1);
 
 		// Join lobby buttons
-		this.joinLobby1 = this.add.text((this.world.width/5 * 1) + 20, 380,  "Join", lobbyFixedText1);
-		this.joinLobby2 = this.add.text((this.world.width/5 * 2) + 20, 380,  "Join", lobbyFixedText1);
-		this.joinLobby3 = this.add.text((this.world.width/5 * 3) + 20, 380,  "Join", lobbyFixedText1);
-		this.joinLobby4 = this.add.text((this.world.width/5 * 4) + 20, 380,  "Join", lobbyFixedText1);
+		this.joinLobby1 = this.add.text((this.game.width/5 * 1) + 20, 380,  "Join", lobbyFixedText1);
+		this.joinLobby2 = this.add.text((this.game.width/5 * 2) + 20, 380,  "Join", lobbyFixedText1);
+		this.joinLobby3 = this.add.text((this.game.width/5 * 3) + 20, 380,  "Join", lobbyFixedText1);
+		this.joinLobby4 = this.add.text((this.game.width/5 * 4) + 20, 380,  "Join", lobbyFixedText1);
 
 		this.joinLobby1.visible = false;
 		this.joinLobby2.visible = false;
@@ -216,7 +216,7 @@ BasicGame.LobbyMulti.prototype = {
 
 
 		/* DEVELOPER FEATURE*/
-		this.resetServer = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 130,  "Server Reset", lobbyFixedText1);
+		this.resetServer = this.add.text(this.game.width - this.game.width/1.08, this.game.height - 130,  "Server Reset", lobbyFixedText1);
 		this.resetServer.inputEnabled = true;
 		this.resetServer.events.onInputOver.add(BasicGame.onOver);
 		this.resetServer.events.onInputOut.add(BasicGame.onOut);

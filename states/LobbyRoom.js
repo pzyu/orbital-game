@@ -78,15 +78,15 @@ BasicGame.LobbyRoom.prototype = {
 					// Print player nicknames on lobby
 					if (player.team == null) {
 						// current player has no team = player List
-						ref.PlayerText[id] = ref.add.text(ref.world.width/6 * 4.5 + 10, 100 + (plCounter * 25),  displayNick, nickColor);
+						ref.PlayerText[id] = ref.add.text(ref.game.width/6 * 4.5 + 10, 100 + (plCounter * 25),  displayNick, nickColor);
 						plCounter++;
 					} else if (player.team == 1) {
 						// current player belongs to team A
-						ref.PlayerText[id] = ref.add.text(ref.world.width/6 + 5, 170 + (t1Counter * 25),  displayNick, nickColor);
+						ref.PlayerText[id] = ref.add.text(ref.game.width/6 + 5, 170 + (t1Counter * 25),  displayNick, nickColor);
 						t1Counter++;
 					} else if (player.team == 2) {
 						// current player belongs to team B
-						ref.PlayerText[id] = ref.add.text(ref.world.width/2 + 5, 170 + (t2Counter * 25),  displayNick, nickColor);
+						ref.PlayerText[id] = ref.add.text(ref.game.width/2 + 5, 170 + (t2Counter * 25),  displayNick, nickColor);
 						t2Counter++;
 					}
 				}
@@ -94,13 +94,13 @@ BasicGame.LobbyRoom.prototype = {
 				ref.allReady = readyCheck;
 
 				// load game info
-				ref.PlayerText["gameHostTxt"] = ref.add.text(ref.world.width/10, ref.world.height/7 * 5 - 35,  'Game Host : ' + playerList[ref.gameLeader].nick, ref.headerTextDefault);
-				ref.PlayerText["gameTypeTxt"] = ref.add.text(ref.world.width/10, ref.world.height/7 * 5,  'Game Mode : ' + gametype, ref.headerTextDefault);
+				ref.PlayerText["gameHostTxt"] = ref.add.text(ref.game.width/10, ref.game.height/7 * 5 - 35,  'Game Host : ' + playerList[ref.gameLeader].nick, ref.headerTextDefault);
+				ref.PlayerText["gameTypeTxt"] = ref.add.text(ref.game.width/10, ref.game.height/7 * 5,  'Game Mode : ' + gametype, ref.headerTextDefault);
 
 				// Add Headers and buttons
-				ref.PlayerText["headerTeamA"] = ref.add.text(ref.world.width/6, 120,  "Team A", ref.headerTextDefault);
-				ref.PlayerText["headerTeamB"] = ref.add.text(ref.world.width/2, 120,  "Team B", ref.headerTextDefault);
-				ref.PlayerText["headerPL"] = ref.add.text(ref.world.width/6 * 4.5, 50,  "Player List", ref.headerTextDefault);
+				ref.PlayerText["headerTeamA"] = ref.add.text(ref.game.width/6, 120,  "Team A", ref.headerTextDefault);
+				ref.PlayerText["headerTeamB"] = ref.add.text(ref.game.width/2, 120,  "Team B", ref.headerTextDefault);
+				ref.PlayerText["headerPL"] = ref.add.text(ref.game.width/6 * 4.5, 50,  "Player List", ref.headerTextDefault);
 
 				// Header Team A
 				ref.PlayerText['headerTeamA'].inputEnabled = !playerList[BasicGame.myID].ready;
@@ -134,7 +134,7 @@ BasicGame.LobbyRoom.prototype = {
 					// player has selected a team, show option to let player ready
 					if (playerList[BasicGame.myID].ready) {
 						// Player has announced they are ready
-						ref.PlayerText["readyButton"] = ref.add.text(ref.world.width/10 * 7, ref.world.height/7 * 6,  'READY!', ref.headerTextGreen);
+						ref.PlayerText["readyButton"] = ref.add.text(ref.game.width/10 * 7, ref.game.height/7 * 6,  'READY!', ref.headerTextGreen);
 						ref.PlayerText["readyButton"].events.onInputOver.add(ref.readyOnOver);
 						ref.PlayerText["readyButton"].events.onInputOut.add(ref.readyOnOut);
 
@@ -142,10 +142,10 @@ BasicGame.LobbyRoom.prototype = {
 						if (ref.allReady) {
 							if (ref.gameLeader == BasicGame.myID) {
 								// you are the host, choose when to start game
-								ref.PlayerText["status"] = ref.add.text(ref.world.width/10 * 7 - 50, ref.world.height - 50,  'Start game when you are ready...', ref.subText);
+								ref.PlayerText["status"] = ref.add.text(ref.game.width/10 * 7 - 50, ref.game.height - 50,  'Start game when you are ready...', ref.subText);
 
 								// START GAME BUTTON
-								ref.PlayerText["startButton"] = ref.add.text(ref.world.width/10 * 8.5, ref.world.height/7 * 6,  'START', ref.headerTextGreen);
+								ref.PlayerText["startButton"] = ref.add.text(ref.game.width/10 * 8.5, ref.game.height/7 * 6,  'START', ref.headerTextGreen);
 								ref.PlayerText["startButton"].events.onInputOver.add(ref.readyOnOver);
 								ref.PlayerText["startButton"].events.onInputOut.add(ref.readyOnOut);
 								ref.PlayerText["startButton"].inputEnabled = true;
@@ -155,15 +155,15 @@ BasicGame.LobbyRoom.prototype = {
 								});
 							} else {
 								// waiting for host to start game
-								ref.PlayerText["status"] = ref.add.text(ref.world.width/10 * 7 - 50, ref.world.height - 50,  'Waiting for host to start game...', ref.subText);
+								ref.PlayerText["status"] = ref.add.text(ref.game.width/10 * 7 - 50, ref.game.height - 50,  'Waiting for host to start game...', ref.subText);
 							}
 						} else {
 							// not all player has announced they are ready
-							ref.PlayerText["status"] = ref.add.text(ref.world.width/10 * 7 - 50, ref.world.height - 50,  'Waiting for all players to ready...', ref.subText);
+							ref.PlayerText["status"] = ref.add.text(ref.game.width/10 * 7 - 50, ref.game.height - 50,  'Waiting for all players to ready...', ref.subText);
 						}
 					} else {
 						// Player has not announced they are ready, give ready button
-						ref.PlayerText["readyButton"] = ref.add.text(ref.world.width/10 * 7, ref.world.height/7 * 6,  'READY!', ref.headerTextDefault);
+						ref.PlayerText["readyButton"] = ref.add.text(ref.game.width/10 * 7, ref.game.height/7 * 6,  'READY!', ref.headerTextDefault);
 						ref.PlayerText["readyButton"].events.onInputOver.add(ref.readyOnOver);
 						ref.PlayerText["readyButton"].events.onInputOut.add(BasicGame.onOut);
 					}
@@ -174,7 +174,7 @@ BasicGame.LobbyRoom.prototype = {
 					});
 				} else {
 					// Player has not select a team, ask player to choose team
-					ref.PlayerText["readyButton"] = ref.add.text(ref.world.width/10 * 7, ref.world.height/7 * 6,  'Choose a team', ref.headerTextDefault);
+					ref.PlayerText["readyButton"] = ref.add.text(ref.game.width/10 * 7, ref.game.height/7 * 6,  'Choose a team', ref.headerTextDefault);
 				}
 			} else {
 				// unknown game mode
@@ -213,7 +213,7 @@ BasicGame.LobbyRoom.prototype = {
 		this.LobbyName = this.add.text(50, 30, this.roomID, {font: "40pt myfont", fill: 'white', align: 'right'});
 
 		// Add back button
-		this.returnMenu = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 100,  "Back to Main Menu", optionStyle);
+		this.returnMenu = this.add.text(this.game.width - this.game.width/1.08, this.game.height - 100,  "Back to Main Menu", optionStyle);
 		this.returnMenu.inputEnabled = true;
 		this.returnMenu.events.onInputOver.add(BasicGame.onOver);
 		this.returnMenu.events.onInputOut.add(BasicGame.onOut);
@@ -229,7 +229,7 @@ BasicGame.LobbyRoom.prototype = {
 		});
 
 		// Add return lobby button
-		this.returnLobby = this.add.text(this.world.width - this.world.width/1.08, this.world.height - 135,  "Back to Lobby", optionStyle);
+		this.returnLobby = this.add.text(this.game.width - this.game.width/1.08, this.game.height - 135,  "Back to Lobby", optionStyle);
 		this.returnLobby.inputEnabled = true;
 		this.returnLobby.events.onInputOver.add(BasicGame.onOver);
 		this.returnLobby.events.onInputOut.add(BasicGame.onOut);

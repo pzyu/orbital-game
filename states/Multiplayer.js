@@ -55,6 +55,27 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		}
 	}	
 
+	BasicGame.eurecaClient.exports.winGame = function() {
+		// go to win game screen
+		//ref.game.state.start("winTDM", true);
+		BasicGame.eurecaServer.destroyRoomLink(BasicGame.roomID, BasicGame.myID);
+		//game.paused = true;
+
+		var returnMenu = ref.add.text(300, 1000,  "Back to Main Menu", {font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"});
+		returnMenu.inputEnabled = true;
+		returnMenu.events.onInputOver.add(BasicGame.onOver);
+		returnMenu.events.onInputOut.add(BasicGame.onOut);
+		console.log("return menu done");
+		// Back button clicked
+		returnMenu.events.onInputUp.add(function() {
+			console.log("return menu clicked");
+			BasicGame.eurecaServer.destroyRoomLink(BasicGame.roomID, BasicGame.myID);
+			BasicGame.eurecaClient.disconnect(); // disconnect user completely from server
+			BasicGame.disconnectClient(); // adjust client to reset connection variable
+			ref.game.state.start("MainMenu", true);
+		});
+	}
+
 	BasicGame.eurecaClient.exports.kickToMenu = function() {
 		ref.game.state.start("MainMenu", true);
 		BasicGame.eurecaClient.disconnect(); // request server to disconnect client
@@ -205,7 +226,7 @@ BasicGame.Multiplayer.prototype.preloadGame = function() {
 
 BasicGame.Multiplayer.prototype.createGame = function() {
 	var ref = this;
-	var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
+	var optionStyle = {font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
 	var txt = this.add.text(this.world.width - this.world.width/2, this.world.height - 100,  "Back to main menu", optionStyle);
 	txt.inputEnabled = true;
 	txt.events.onInputUp.add(function() {
@@ -318,7 +339,7 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.addPlayerName(BasicGame.myID);
 
 	// Broadcast messages
-	var style = { font: '32pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 800, align: 'center'};
+	var style = {font: '32pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 800, align: 'center'};
 	this.message = this.game.add.text(-500, 0, 'Default message', style), 
 	this.message.fixedToCamera = true;
 	this.message.anchor.setTo(0.5, 0.5);
@@ -427,9 +448,10 @@ BasicGame.Multiplayer.prototype.handleHUD = function() {
 		BasicGame.eurecaServer.getTeamScore(BasicGame.roomID).onReady(function(result) {
 			ref.teamScores = result;
 		}, this);
-		
+
 		this.teamAHUD.setText(this.teamScores[1]);
 		this.teamBHUD.setText(this.teamScores[2]);
+	
 	}
 };
 
