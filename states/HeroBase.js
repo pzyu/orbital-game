@@ -123,7 +123,11 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	BasicGame.playerCG.add(this);
 
 	// Multiplayer stuff
-	this.refMP = this.game.state.states['Multiplayer'];
+	if (id != "SoloKid") {
+		this.refMP = this.game.state.states['Multiplayer'];
+	} else {
+		this.refMP = this.game.state.states['MainGame'];
+	}
 	this.stepTimer = 0;
 	this.timeStep = this.refMP.timeStep;
 	this.delta = this.refMP.delta;
@@ -205,9 +209,16 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 	// If input has changed
 	if (myInputChanged) {
 		if (this.ID == BasicGame.myID) {
+			// multiplayer
 			this.myInput.x = this.x;
 			this.myInput.y = this.y;
-			BasicGame.eurecaServer.handleKeys(this.myInput, BasicGame.roomID);
+			if (this.ID == "SoloKid") {
+				// Single Player
+				BasicGame.MainGame.prototype.updateState("SoloKid", this.myInput);
+			} else {
+				// Multiplayer
+				BasicGame.eurecaServer.handleKeys(this.myInput, BasicGame.roomID);
+			}
 		}
 	}
 	
@@ -223,7 +234,9 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 			this.myInput.exp = this.heroExp;
 			this.myInput.inCircle = this.inCircle;
 
-			BasicGame.eurecaServer.compensate(this.myInput, BasicGame.roomID);
+			if (this.ID != "SoloKid") {
+				BasicGame.eurecaServer.compensate(this.myInput, BasicGame.roomID);
+			}
 		}
 	}
 
