@@ -230,6 +230,11 @@ BasicGame.CharSelect.prototype = {
 					}
 				}
 			}
+
+			BasicGame.eurecaClient.exports.kill = function(id) { // overwrite lobbyroom kill function
+				BasicGame.eurecaServer.getTeamSelection(BasicGame.roomID, BasicGame.myTeam, null, BasicGame.myID); // update everyone in lobbyroom
+			}
+
 			BasicGame.eurecaServer.getTeamSelection(BasicGame.roomID, BasicGame.myTeam, null, BasicGame.myID);
 		}
 
