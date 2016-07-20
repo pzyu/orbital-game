@@ -1,14 +1,14 @@
 'use strict';
-BasicGame.HeroTrooperMP = function (id, game, x, y, team, nick) {
+BasicGame.HeroTrooperMP = function (id, game, x, y, team, nick, initLvl) {
 	BasicGame.HeroBase.call(this, id, game, x, y, 'player_trooper', team, nick);
 
 	// Collider size
 	this.body.setSize(70, 140, 40, 10);
 
 	// Hero Levels
-	this.heroLevel = 1;
+	this.heroLevel = initLvl;
 	this.heroExp = 0;
-	this.heroToNextLevel = 80;
+	this.heroToNextLevel = this.heroLevel * 80;
 
 	// Hero Stats (Assasin Class - Trooper)
 	this.constituition = 4; // multiplier for hp

@@ -128,16 +128,16 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		// If doesn't already exist
 		if (ref.playerList[i] == null) {
 			if (char == "player_trooper") {
-				var player = new BasicGame.HeroTrooperMP(i, ref.game, curX, curY, team, nick);
+				var player = new BasicGame.HeroTrooperMP(i, ref.game, curX, curY, team, nick, 1);
 			} 
 			if (char == "player_walker") {
-				var player = new BasicGame.HeroWalkerMP(i, ref.game, curX, curY, team, nick);
+				var player = new BasicGame.HeroWalkerMP(i, ref.game, curX, curY, team, nick, 1);
 			}
 			if (char == "player_destroyer") {
-				var player = new BasicGame.HeroDestroyerMP(i, ref.game, curX, curY, team, nick);
+				var player = new BasicGame.HeroDestroyerMP(i, ref.game, curX, curY, team, nick, 1);
 			}
 			if (char == "player_gunner") {
-				var player = new BasicGame.HeroGunnerMP(i, ref.game, curX, curY, team, nick);
+				var player = new BasicGame.HeroGunnerMP(i, ref.game, curX, curY, team, nick, 1);
 			}
 			ref.playerList[i] = [player, nick, team];
 			// Uncomment for team only
@@ -168,6 +168,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 			curPlayer.y = state.y;
 			curPlayer.curHealth = state.hp;
 			curPlayer.heroLevel = state.lvl;
+			curPlayer.heroToNextLevel = state.expNext;
 			curPlayer.heroExp = state.exp;
 			//curPlayer.interpolateTo(state.x, state.y, 1000);
 		}
@@ -272,16 +273,16 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	// Create client's hero
 	if (BasicGame.selectedChar == "player_trooper") {
 		//console.log(this.game.rnd.integerInRange(0, 3));
-		var player = new BasicGame.HeroTrooperMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick);
+		var player = new BasicGame.HeroTrooperMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick, 1);
 	}
 	if (BasicGame.selectedChar == "player_walker") {
-		var player = new BasicGame.HeroWalkerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick);
+		var player = new BasicGame.HeroWalkerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick, 1);
 	}
 	if (BasicGame.selectedChar == "player_destroyer") {
-		var player = new BasicGame.HeroDestroyerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick);
+		var player = new BasicGame.HeroDestroyerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick, 1);
 	}
 	if (BasicGame.selectedChar == "player_gunner") {
-		var player = new BasicGame.HeroGunnerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick);
+		var player = new BasicGame.HeroGunnerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick, 1);
 	}
 	console.log("Creating game");
 

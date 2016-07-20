@@ -58,7 +58,7 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	// Hero Levels
 	this.heroLevel = 1;
 	this.heroExp = 0;
-	this.heroToNextLevel = 100;
+	this.heroToNextLevel = 80;
 
 	// Hero Stats
 	this.constituition = 0;
@@ -231,6 +231,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 			this.myInput.y = this.y;
 			this.myInput.hp = this.curHealth;
 			this.myInput.lvl = this.heroLevel;
+			this.myInput.expNext = this.heroToNextLevel;
 			this.myInput.exp = this.heroExp;
 			this.myInput.inCircle = this.inCircle;
 
@@ -317,7 +318,12 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 			// otherwise every client will be incrementing score 
 			if (BasicGame.myID == killerInfo.ID) {
 				// credit kill to killerID
-				BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
+				if (BasicGame.myID == "SoloKid") {
+					// Single Player kill handling
+					this.refMP.teamScores[1]++; // add to teamscore
+				} else {
+					BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
+				}
 			}
 			// Calculate exp to credit to the killer based on killer's hero level and level difference. if level difference is more than 10
 			// credit a base 100 exp. else change exp given by 0.1x per level difference

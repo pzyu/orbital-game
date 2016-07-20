@@ -4,6 +4,7 @@ BasicGame.MainGame = function (game) {
 	this.logo;
 	this.selectedChar = '';				// Selected character
 	this.team = '';						// Selected Team
+	this.teamScores = [0, 0, 0];			// Single Player Team Score
 	this.winState = false;				// win condition not met
 
 	this.gravity = 5000;				// Gravity
@@ -12,8 +13,8 @@ BasicGame.MainGame = function (game) {
 
 	this.mapLayer;
 
-	this.timeStep = 350;				// Time step for interpolation
-	this.delta = 5;						// Delta for smoothing
+	this.timeStep = 350;				// Time step for interpolation (Needed to prevent null entry in HeroBase.js)
+	this.delta = 5;						// Delta for smoothing (Needed to prevent game from breaking)
 
 	this.spawnPoints = [				// Array of spawn points, set in each hero class
 		{x: 1000,  y: 250},
@@ -163,18 +164,17 @@ BasicGame.MainGame.prototype.createGame = function() {
 	// Create client's hero
 	if (BasicGame.selectedChar == "player_trooper") {
 		//console.log(this.game.rnd.integerInRange(0, 3));
-		var player = new BasicGame.HeroTrooperMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick);
+		var player = new BasicGame.HeroTrooperMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick, 1);
 	}
 	if (BasicGame.selectedChar == "player_walker") {
-		var player = new BasicGame.HeroWalkerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick);
+		var player = new BasicGame.HeroWalkerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick, 1);
 	}
 	if (BasicGame.selectedChar == "player_destroyer") {
-		var player = new BasicGame.HeroDestroyerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick);
+		var player = new BasicGame.HeroDestroyerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick, 1);
 	}
 	if (BasicGame.selectedChar == "player_gunner") {
-		var player = new BasicGame.HeroGunnerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick);
+		var player = new BasicGame.HeroGunnerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick, 1);
 	}
-	console.log("Creating game");
 
 	this.playerList[BasicGame.myID] = [player, BasicGame.myNick, BasicGame.myTeam];
 	this.camera.follow(player);
@@ -278,8 +278,6 @@ BasicGame.MainGame.prototype.createGame = function() {
 		0,
 		0
 	];
-
-	console.log("my team: " + BasicGame.myTeam);
 };
 
 BasicGame.MainGame.prototype.addPlayerName = function(id) {
@@ -364,6 +362,13 @@ BasicGame.MainGame.prototype.handleHUD = function() {
 
 	this.cropRectD.height = 66 * (this.player.getSkillE() + 1);
 	this.skillD.crop(this.cropRectD);
+
+	// Update every 500ms so won't be that taxing
+	if (this.winState == false && this.game.time.now > this.textTimer) {
+		this.textTimer = this.game.time.now + 500;
+		this.teamAHUD.setText(this.teamScores[1]);
+		this.teamBHUD.setText(this.teamScores[2]);
+	}
 };
 
 BasicGame.MainGame.prototype.chat = function() {
@@ -409,13 +414,4 @@ BasicGame.MainGame.prototype.projectileCallback= function(obj1, obj2) {
 BasicGame.MainGame.prototype.bulletCallback= function(obj1, obj2) {
 	//console.log(obj1);
 	obj1.kill();
-};
-
-
-BasicGame.MainGame.prototype.getID = function() {
-	return BasicGame.myID;
-};
-
-BasicGame.MainGame.prototype.getChar = function() {
-	return BasicGame.selectedChar;
 };

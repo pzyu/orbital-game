@@ -1,14 +1,14 @@
 'use strict';
-BasicGame.HeroWalkerMP = function (id, game, x, y, team, nick) {
+BasicGame.HeroWalkerMP = function (id, game, x, y, team, nick, initLvl) {
 	BasicGame.HeroBase.call(this, id, game, x, y, 'player_walker', team, nick);
 
 	// Collider size
 	this.body.setSize(160, 200, 44, 24);
 
 	// Hero Levels
-	this.heroLevel = 1;
+	this.heroLevel = initLvl;
 	this.heroExp = 0;
-	this.heroToNextLevel = 80;
+	this.heroToNextLevel = this.heroLevel * 80;
 
 	// Hero Stats (Tank class - Walker)
 	this.constituition = 10; // multiplier for hp

@@ -1,14 +1,14 @@
 'use strict';
-BasicGame.HeroGunnerMP = function (id, game, x, y, team, nick) {
+BasicGame.HeroGunnerMP = function (id, game, x, y, team, nick, initLvl) {
 	BasicGame.HeroBase.call(this, id, game, x, y, 'player_gunner', team, nick);
 
 	// Collider size
 	this.body.setSize(180, 120, 60, 54);
 
 	// Hero Levels
-	this.heroLevel = 1;
+	this.heroLevel = initLvl;
 	this.heroExp = 0;
-	this.heroToNextLevel = 80;
+	this.heroToNextLevel = this.heroLevel * 80;
 
 	// Hero Stats (Support Class - Gunner)
 	this.constituition = 5; // multiplier for hp

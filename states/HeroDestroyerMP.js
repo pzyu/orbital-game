@@ -1,14 +1,14 @@
 'use strict';
-BasicGame.HeroDestroyerMP = function (id, game, x, y, team, nick) {
+BasicGame.HeroDestroyerMP = function (id, game, x, y, team, nick, initLvl) {
 	BasicGame.HeroBase.call(this, id, game, x, y, 'player_destroyer', team, nick);
 
 	// Collider size
 	this.body.setSize(110, 220, 110, 20);
 
 	// Hero Levels
-	this.heroLevel = 1;
+	this.heroLevel = initLvl;
 	this.heroExp = 0;
-	this.heroToNextLevel = 80;
+	this.heroToNextLevel = this.heroLevel * 80;
 
 	// Hero Stats (Attacker class - Destroyer)
 	this.constituition = 7; // multiplier for hp
