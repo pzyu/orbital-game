@@ -48,7 +48,7 @@ BasicGame.Boot.prototype = {
 
     loadImages: function() {  
         // Load background image
-        this.load.image('menu_background', 'images/menu_background.gif');
+        this.load.image('menu_background', 'images/background.jpg');
 
         // Tilemap spritesheet json and png
         this.load.tilemap('map', 'images/tiles_spritesheet.json', null, Phaser.Tilemap.TILED_JSON);
@@ -107,8 +107,12 @@ BasicGame.Boot.prototype = {
 
         // Char select
         this.load.atlas('stats', 'images/sprites/stats.png', 'images/sprites/stats.json');
+        this.load.atlas('skills', 'images/sprites/skills.png', 'images/sprites/skills.json');
         this.load.image('hero_name', 'images/sprites/hero_name.png');
-        this.load.image('skill_destroyer', 'images/sprites/skill_destroyer.png');
+        this.load.image('team_panel', 'images/sprites/team.png');
+        this.load.image('lobby_panel', 'images/sprites/lobby_panel.png');
+        this.load.image('lobby_big_panel', 'images/sprites/lobby_big_panel.png');
+        this.load.image('lobby_team_panel', 'images/sprites/lobby_team.png');
     },
 
     loadAudio: function() {

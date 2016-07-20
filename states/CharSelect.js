@@ -7,6 +7,7 @@ BasicGame.CharSelect = function (game) {
 	this.multiplayer = false;
 	this.loaded = false;
 	this.charArr = new Array(4);
+	this.skillArr = new Array(4);
 	this.textContainer = {};
 	this.highlight = null;
 };
@@ -62,6 +63,7 @@ BasicGame.CharSelect.prototype = {
 		BasicGame.selectedChar = selected;
 		this.heroName.setText(char.charAt(0).toUpperCase() + char.slice(1));
 		this.stats.animations.frameName = char;
+		this.skills.animations.frameName = char;
 
 		this.highlight = this.charArr[selected];
 		this.highlight.position.setTo(250, 140);
@@ -147,7 +149,7 @@ BasicGame.CharSelect.prototype = {
 		this.trooper.events.onInputOut.add(this.onOut, this);
 
 		// Add start game button
-		var optionStyle = {font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
+		var optionStyle = {font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,255)', strokeThickness: 4, fill: "white"};
 		if (ref.multiplayer) {
 			var joinTxt = "Enter Game!";
 		} else {
@@ -157,9 +159,8 @@ BasicGame.CharSelect.prototype = {
 		
 		this.heroPanel = this.game.add.image(245, 275, 'hero_name');
 		this.heroPanel.anchor.setTo(0.5, 0.5);
-		this.heroName = this.add.text(250, 250, "Pick a hero", {font: '30pt myfont', align: 'center', fill: 'white'});
+		this.heroName = this.add.text(250, 250, "", {font: '30pt myfont', align: 'center', fill: 'white'});
 		this.heroName.anchor.x = 0.5;
-		this.add.text(900, 350, "Team", optionStyle);
 		//this.add.text(900, 600, "Ultimate skill", optionStyle);
 
 		this.returnMenu = this.add.text(this.world.width - this.world.width/4, this.world.height - 70,  "Back", optionStyle);
@@ -172,13 +173,16 @@ BasicGame.CharSelect.prototype = {
 		this.startGame.events.onInputOver.add(BasicGame.onOver);
 		this.startGame.events.onInputOut.add(BasicGame.onOut);
 
-		this.stats = this.game.add.image(415, 10, 'stats');
+		this.stats = this.game.add.image(440, 10, 'stats');
 		this.stats.animations.frameName = "stats";
+		this.stats.scale.setTo(0.8, 0.8);
 
-		this.skillA = this.game.add.image(100, 350, 'skill_destroyer');
-		this.skillB = this.game.add.image(100, 530, 'skill_destroyer');
-		this.skillC = this.game.add.image(400, 350, 'skill_destroyer');
-		this.skillD = this.game.add.image(400, 530, 'skill_destroyer');
+		this.teamPanel = this.game.add.image(900, 350, 'team_panel');
+		this.teamPanel.scale.setTo(0.8, 0.8);
+		this.add.text(1010, 345, "Team", optionStyle);
+
+		this.skills = this.game.add.image(100, 350, 'skills');
+		this.skills.animations.frameName = 'base';
 
 
 		// Back button clicked
@@ -215,18 +219,17 @@ BasicGame.CharSelect.prototype = {
 				ref.textContainer = {};
 
 				// Update with new text
-				var textColorDefault = {font: '14pt myfont', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
+				var textColorDefault = {font: '12pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
 				var plCounter = 0;
-
 				for (var i=0; i<teamArr.length; i++) {
 					if (teamArr[i][2] != BasicGame.myID) {
 						plCounter++;
-						var selChar = (teamArr[i][1] == null) ? "None" : (teamArr[i][1] == "player_destroyer") ? "Destroyer"
-																		: (teamArr[i][1] == "player_trooper") ? "Ace"
-																		: (teamArr[i][1] == "player_walker") ? "Walker"
-																		: (teamArr[i][1] == "player_gunner") ? "Disruptor"
+						var selChar = (teamArr[i][1] == null) ? "None" : (teamArr[i][1] == "destroyer_portrait") ? "Destroyer"
+																		: (teamArr[i][1] == "trooper_portrait") ? "Ace"
+																		: (teamArr[i][1] == "walker_portrait") ? "Walker"
+																		: (teamArr[i][1] == "gunner_portrait") ? "Disruptor"
 																		: "None";
-						ref.textContainer[i + " 1"] = ref.add.text(100, ref.game.height / 2 + 20 + (plCounter * 25),  teamArr[i][0] + " has selected: " + selChar, textColorDefault);
+						ref.textContainer[i + " 1"] = ref.add.text(930, ref.game.height / 2 + 15 + (plCounter * 25),  teamArr[i][0] + ": \n[" + selChar + "]", textColorDefault);
 					}
 				}
 			}

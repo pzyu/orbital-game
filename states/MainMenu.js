@@ -102,11 +102,10 @@ BasicGame.MainMenu.prototype = {
 	// Factory function that lets you add options easily
 	addMenuOption: function(text, callback) {
 		// Set default text
-		var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
-		var txt = this.add.text(this.world.width - this.world.width/4, this.world.height/1.5 + this.optionCount * 40, text, optionStyle);
+		var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,255)', strokeThickness: 2, fill: "white"};
+		var txt = this.add.text(this.world.width - this.world.width/4, this.world.height/1.7 + this.optionCount * 40, text, optionStyle);
 
 		// Default style
-		txt.stroke = "rgba(0,0,0,0)";
 		txt.strokeThickness = 4;
 		txt.inputEnabled = true;
 		txt.events.onInputUp.add(callback);

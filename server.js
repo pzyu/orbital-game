@@ -51,10 +51,10 @@ eurecaServer.exports.initializeLobby = function() {
 	}
 	delete lobbylist;
 	lobbylist = {};
-	lobbylist['publicLobby1'] = {gameType:'Team Deathmatch', maxPlayers:4, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
-	lobbylist['publicLobby2'] = {gameType:'Team Deathmatch', maxPlayers:6, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
-	lobbylist['publicLobby3'] = {gameType:'Team Deathmatch', maxPlayers:8, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
-	lobbylist['publicLobby4'] = {gameType:'Team Deathmatch', maxPlayers:12, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
+	lobbylist['publicLobby1'] = {gameType:'TDM', maxPlayers:4, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
+	lobbylist['publicLobby2'] = {gameType:'TDM', maxPlayers:6, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
+	lobbylist['publicLobby3'] = {gameType:'TDM', maxPlayers:8, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
+	lobbylist['publicLobby4'] = {gameType:'TDM', maxPlayers:12, status:'Open Host', password:'', clientInfo:{}, playerCount:0, host:''};
 }
 eurecaServer.exports.initializeLobby();
 

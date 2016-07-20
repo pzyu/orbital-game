@@ -3,19 +3,19 @@ BasicGame.LobbyRoom = function (game) {
 	this.gameLeader = null;
 	this.allReady = false;
 	this.PlayerText = {};
-	this.headerTextDefault = {font: '25pt myfont', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
-	this.headerTextGreen = {font: '25pt myfont', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "#00FF00"};
-	this.subText = {font: '14pt myfont', align: 'center', stroke: 'rgba(0,10,0,0)', strokeThickness: 2, fill: "white"};
-	this.subTextCyan = {font: '14pt myfont', align: 'center', stroke: 'rgba(0,10,0,0)', strokeThickness: 2, fill: "cyan"}; 
-	this.subTextGreen = {font: '14pt myfont', align: 'center', stroke: 'rgba(0,10,0,0)', strokeThickness: 2, fill: "#00FF00"}; 
+	this.headerTextDefault = {font: '25pt myfont', align: 'center', stroke: 'rgba(0,0,0,255)', strokeThickness: 4, fill: "white"};
+	this.headerTextGreen = {font: '25pt myfont', align: 'center', stroke: 'rgba(0,0,0,255)', strokeThickness: 4, fill: "#00FF00"};
+	this.subText = {font: '14pt myfont', align: 'center', stroke: 'rgba(0,10,0,255)', strokeThickness: 4, fill: "white"};
+	this.subTextCyan = {font: '14pt myfont', align: 'center', stroke: 'rgba(0,10,0,255)', strokeThickness: 4, fill: "cyan"}; 
+	this.subTextGreen = {font: '14pt myfont', align: 'center', stroke: 'rgba(0,10,0,255)', strokeThickness: 4, fill: "#00FF00"}; 
 
 	this.readyOnOver =  function (target) {
 		target.fill = "#00FF00";
-		target.stroke = "rgba(255,255,255,1)";
+		target.stroke = "rgba(255,255,255,255)";
 	};
 	this.readyOnOut =  function (target) {
 		target.fill = "#00FF00";
-		target.stroke = "rgba(0,0,0,0)";
+		target.stroke = "rgba(0,0,0,255)";
 	};
 };
 
@@ -64,7 +64,7 @@ BasicGame.LobbyRoom.prototype = {
 			ref.gameLeader = roomHost;
 			ref.clearPlayerText();
 
-			if (gametype == 'Team Deathmatch') { // Team death math game settings
+			if (gametype == 'TDM') { // Team death math game settings
 				// Load player teams
 				for (var id in playerList) {
 					var player = playerList[id];
@@ -78,15 +78,15 @@ BasicGame.LobbyRoom.prototype = {
 					// Print player nicknames on lobby
 					if (player.team == null) {
 						// current player has no team = player List
-						ref.PlayerText[id] = ref.add.text(ref.game.width/6 * 4.5 + 10, 100 + (plCounter * 25),  displayNick, nickColor);
+						ref.PlayerText[id] = ref.add.text(ref.game.width - 350, 200 + (plCounter * 25),  displayNick, nickColor);
 						plCounter++;
 					} else if (player.team == 1) {
 						// current player belongs to team A
-						ref.PlayerText[id] = ref.add.text(ref.game.width/6 + 5, 170 + (t1Counter * 25),  displayNick, nickColor);
+						ref.PlayerText[id] = ref.add.text(ref.game.width/6 - 80, 200 + (t1Counter * 25),  displayNick, nickColor);
 						t1Counter++;
 					} else if (player.team == 2) {
 						// current player belongs to team B
-						ref.PlayerText[id] = ref.add.text(ref.game.width/2 + 5, 170 + (t2Counter * 25),  displayNick, nickColor);
+						ref.PlayerText[id] = ref.add.text(ref.game.width/6 + 320, 200 + (t2Counter * 25),  displayNick, nickColor);
 						t2Counter++;
 					}
 				}
@@ -94,13 +94,13 @@ BasicGame.LobbyRoom.prototype = {
 				ref.allReady = readyCheck;
 
 				// load game info
-				ref.PlayerText["gameHostTxt"] = ref.add.text(ref.game.width/10, ref.game.height/7 * 5 - 35,  'Game Host : ' + playerList[ref.gameLeader].nick, ref.headerTextDefault);
-				ref.PlayerText["gameTypeTxt"] = ref.add.text(ref.game.width/10, ref.game.height/7 * 5,  'Game Mode : ' + gametype, ref.headerTextDefault);
+				ref.PlayerText["gameHostTxt"] = ref.add.text(ref.game.width/2.5, ref.game.height/7 * 5 - 80,  'Game Host : ' + playerList[ref.gameLeader].nick, ref.headerTextDefault);
+				ref.PlayerText["gameTypeTxt"] = ref.add.text(ref.game.width/10, ref.game.height/7 * 5 - 80,  'Game Mode : ' + gametype, ref.headerTextDefault);
 
 				// Add Headers and buttons
-				ref.PlayerText["headerTeamA"] = ref.add.text(ref.game.width/6, 120,  "Team A", ref.headerTextDefault);
-				ref.PlayerText["headerTeamB"] = ref.add.text(ref.game.width/2, 120,  "Team B", ref.headerTextDefault);
-				ref.PlayerText["headerPL"] = ref.add.text(ref.game.width/6 * 4.5, 50,  "Player List", ref.headerTextDefault);
+				ref.PlayerText["headerTeamA"] = ref.add.text(ref.game.width/7.9, 150,  "Team A", ref.headerTextDefault);
+				ref.PlayerText["headerTeamB"] = ref.add.text(ref.game.width/2.27, 150,  "Team B", ref.headerTextDefault);
+				ref.PlayerText["headerPL"] = ref.add.text(ref.game.width/6 * 4.4, 150,  "Player List", ref.headerTextDefault);
 
 				// Header Team A
 				ref.PlayerText['headerTeamA'].inputEnabled = !playerList[BasicGame.myID].ready;
@@ -134,7 +134,7 @@ BasicGame.LobbyRoom.prototype = {
 					// player has selected a team, show option to let player ready
 					if (playerList[BasicGame.myID].ready) {
 						// Player has announced they are ready
-						ref.PlayerText["readyButton"] = ref.add.text(ref.game.width/10 * 7, ref.game.height/7 * 6,  'READY!', ref.headerTextGreen);
+						ref.PlayerText["readyButton"] = ref.add.text(ref.game.width/10 * 7 + 20, ref.game.height/7 * 6,  'READY!', ref.headerTextGreen);
 						ref.PlayerText["readyButton"].events.onInputOver.add(ref.readyOnOver);
 						ref.PlayerText["readyButton"].events.onInputOut.add(ref.readyOnOut);
 
@@ -145,7 +145,7 @@ BasicGame.LobbyRoom.prototype = {
 								ref.PlayerText["status"] = ref.add.text(ref.game.width/10 * 7 - 50, ref.game.height - 50,  'Start game when you are ready...', ref.subText);
 
 								// START GAME BUTTON
-								ref.PlayerText["startButton"] = ref.add.text(ref.game.width/10 * 8.5, ref.game.height/7 * 6,  'START', ref.headerTextGreen);
+								ref.PlayerText["startButton"] = ref.add.text(ref.game.width/10 * 7 + 170, ref.game.height/7 * 6,  'START', ref.headerTextGreen);
 								ref.PlayerText["startButton"].events.onInputOver.add(ref.readyOnOver);
 								ref.PlayerText["startButton"].events.onInputOut.add(ref.readyOnOut);
 								ref.PlayerText["startButton"].inputEnabled = true;
@@ -163,7 +163,7 @@ BasicGame.LobbyRoom.prototype = {
 						}
 					} else {
 						// Player has not announced they are ready, give ready button
-						ref.PlayerText["readyButton"] = ref.add.text(ref.game.width/10 * 7, ref.game.height/7 * 6,  'READY!', ref.headerTextDefault);
+						ref.PlayerText["readyButton"] = ref.add.text(ref.game.width/10 * 7 + 20, ref.game.height/7 * 6,  'READY!', ref.headerTextDefault);
 						ref.PlayerText["readyButton"].events.onInputOver.add(ref.readyOnOver);
 						ref.PlayerText["readyButton"].events.onInputOut.add(BasicGame.onOut);
 					}
@@ -209,8 +209,16 @@ BasicGame.LobbyRoom.prototype = {
 		this.background.height = ref.game.height;
 		this.background.width = ref.game.width;
 
+		this.add.image(10, 80, 'lobby_big_panel');
+		this.add.image(70, 150, 'lobby_team_panel');
+		this.add.image(470, 150, 'lobby_team_panel');
+		this.add.image(870, 150, 'lobby_team_panel');
+		this.add.image(900, 600, 'hero_name');
+
 		// Add Lobby name
-		this.LobbyName = this.add.text(50, 30, this.roomID, {font: "40pt myfont", fill: 'white', align: 'right'});
+		this.LobbyName = this.add.text(50, 20, this.roomID, {font: "40pt myfont", fill: 'white', align: 'right'});
+
+		var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,255)', strokeThickness: 4, fill: "white"};
 
 		// Add back button
 		this.returnMenu = this.add.text(this.game.width - this.game.width/1.08, this.game.height - 100,  "Back to Main Menu", optionStyle);
