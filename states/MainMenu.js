@@ -31,6 +31,7 @@ BasicGame.MainMenu.prototype = {
 
 		// Set default option count for factory function
 		this.optionCount = 1;
+		this.camera.flash('#000000');
 	},
 
 	create: function () {

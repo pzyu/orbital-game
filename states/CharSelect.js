@@ -48,15 +48,9 @@ BasicGame.CharSelect.prototype = {
 	onClick: function (target) {
 		if (this.highlight) {
 			this.highlight.position.setTo(-200, -200);
-		}
-		BasicGame.eurecaServer.getTeamSelection(BasicGame.roomID, BasicGame.myTeam, target.key, BasicGame.myID); // sends input to all other clients
+		} // sends input to all other clients
 		//this.resetFilter(target);
 		this.isClicked = target; // chosen character information is stored into this.isClicked
-		target.filters = null; // highlight chosen character
-		//target.animations.play('anim_attack');
-		//target.animations.currentAnim.onLoop.add(function() { 
-		//	target.animations.play('anim_idle');
-		//});
 		var char = target.key.substring(0, target.key.length - 9);
 		var selected = 'player_' + char;
 		//console.log(selected);
@@ -68,6 +62,7 @@ BasicGame.CharSelect.prototype = {
 		this.highlight = this.charArr[selected];
 		this.highlight.position.setTo(250, 140);
 		//console.log(this.highlight);
+		BasicGame.eurecaServer.getTeamSelection(BasicGame.roomID, BasicGame.myTeam, selected, BasicGame.myID);
 	},
 
 	addCharacter: function(spriteName) {
@@ -179,7 +174,7 @@ BasicGame.CharSelect.prototype = {
 
 		this.teamPanel = this.game.add.image(900, 350, 'team_panel');
 		this.teamPanel.scale.setTo(0.8, 0.8);
-		this.add.text(1010, 345, "Team", optionStyle);
+		this.add.text(1020, 345, "Team", optionStyle);
 
 		this.skills = this.game.add.image(100, 350, 'skills');
 		this.skills.animations.frameName = 'base';
