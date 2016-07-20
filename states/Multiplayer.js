@@ -25,6 +25,7 @@ BasicGame.Multiplayer = function (game) {
 	this.teamScores = [
 		0, 
 		0,
+		0,
 		0
 	];
 

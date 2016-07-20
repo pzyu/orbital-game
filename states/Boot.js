@@ -98,6 +98,17 @@ BasicGame.Boot.prototype = {
         this.load.atlas('slime_sprite', 'images/sprites/effects/slime_idle.png', 'images/sprites/effects/slime_idle.json');
         this.load.atlas('smoke_effect_sprite', 'images/sprites/effects/smoke.png', 'images/sprites/effects/smoke.json');
         this.load.atlas('summon_effect_sprite', 'images/sprites/effects/summon.png', 'images/sprites/effects/summon.json');
+
+        // Character portraits
+        this.load.image('destroyer_portrait', 'images/sprites/destroyer_portrait.png');
+        this.load.image('gunner_portrait', 'images/sprites/gunner_portrait.png');
+        this.load.image('walker_portrait', 'images/sprites/walker_portrait.png');
+        this.load.image('trooper_portrait', 'images/sprites/trooper_portrait.png');
+
+        // Char select
+        this.load.atlas('stats', 'images/sprites/stats.png', 'images/sprites/stats.json');
+        this.load.image('hero_name', 'images/sprites/hero_name.png');
+        this.load.image('skill_destroyer', 'images/sprites/skill_destroyer.png');
     },
 
     loadAudio: function() {

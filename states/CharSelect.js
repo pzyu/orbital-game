@@ -8,6 +8,7 @@ BasicGame.CharSelect = function (game) {
 	this.loaded = false;
 	this.charArr = new Array(4);
 	this.textContainer = {};
+	this.highlight = null;
 };
 
 BasicGame.CharSelect.prototype = {
@@ -29,73 +30,81 @@ BasicGame.CharSelect.prototype = {
 
 	// On over style
 	onOver: function(target) {
-		target.filters = null;
+		//target.filters = null;
+		target.scale.setTo(1.1);
 	},
  
 	// On out style
 	onOut: function (target) {
-		this.resetFilter(target);
-		if (this.isClicked != null) {
-			this.isClicked.filters = null;
-		}
+		//this.resetFilter(target);
+		//if (this.isClicked != null) {
+		//	this.isClicked.filters = null;
+		//}
+		target.scale.setTo(1.0);
 	},
 
 	// On click
 	onClick: function (target) {
-		if (this.multiplayer) {
-			BasicGame.eurecaServer.getTeamSelection(BasicGame.roomID, BasicGame.myTeam, target.key, BasicGame.myID); // sends input to all other clients
+		if (this.highlight) {
+			this.highlight.position.setTo(-200, -200);
 		}
-		this.resetFilter(target);
+		BasicGame.eurecaServer.getTeamSelection(BasicGame.roomID, BasicGame.myTeam, target.key, BasicGame.myID); // sends input to all other clients
+		//this.resetFilter(target);
 		this.isClicked = target; // chosen character information is stored into this.isClicked
 		target.filters = null; // highlight chosen character
 		//target.animations.play('anim_attack');
-		target.animations.currentAnim.onLoop.add(function() { 
-			target.animations.play('anim_idle');
-		});
-		BasicGame.selectedChar = target.key;
+		//target.animations.currentAnim.onLoop.add(function() { 
+		//	target.animations.play('anim_idle');
+		//});
+		var char = target.key.substring(0, target.key.length - 9);
+		var selected = 'player_' + char;
+		//console.log(selected);
+		BasicGame.selectedChar = selected;
+		this.heroName.setText(char.charAt(0).toUpperCase() + char.slice(1));
+		this.stats.animations.frameName = char;
+
+		this.highlight = this.charArr[selected];
+		this.highlight.position.setTo(250, 140);
+		//console.log(this.highlight);
 	},
 
 	addCharacter: function(spriteName) {
 		// This way looks nicer but is more expensive and takes longer to load
-		var char = this.add.sprite(30 + this.offset * this.charCount, 0, spriteName);
+		var char = this.add.sprite(-200, -200, spriteName);
 		//console.log(spriteName + " " + char.height + " " + char.width);
 
 		// To get the correct prefix for each character
 		var animName = "";
 		if (spriteName == 'player_destroyer') {
 			animName = "Anim_Destroyer_";
-			char.y += 10;
+			char.anchor.setTo(0.4, 0.5);
 		}
 		if (spriteName == 'player_trooper') {
 			animName = "Anim_Trooper_";
-			char.x += 120;
-			char.y += 100;
+			char.anchor.setTo(0.4, 0.35);
 		}
 		if (spriteName == 'player_walker') {
 			animName = "Anim_Walker_";
-			char.x += 50;
-			char.y += 20;
+			char.anchor.setTo(0.5, 0.55);
 		}
 		if (spriteName == 'player_gunner') {
 			animName = "Anim_Gunner_";
-			char.x += 110;
-			char.y += 75;
+			char.anchor.setTo(0.5, 0.4);
 		}
-
 		// Add animation and play
 		char.animations.add('anim_idle', Phaser.Animation.generateFrameNames(animName + 'Idle_00', 0, 9), 16, true);
-		char.animations.add('anim_attack', Phaser.Animation.generateFrameNames(animName + 'Shoot_00', 0, 10), 16, true);
+		//char.animations.add('anim_attack', Phaser.Animation.generateFrameNames(animName + 'Shoot_00', 0, 10), 16, true);
 		char.animations.play('anim_idle');
 
-		this.charArr[this.charCount] = char;
+		this.charArr[spriteName] = char;
 
 		// Set input functions
-		char.inputEnabled = true;
-		char.events.onInputUp.add(this.onClick, this);
-		char.events.onInputOver.add(this.onOver, this);
-		char.events.onInputOut.add(this.onOut, this);
+		//char.inputEnabled = true;
+		//char.events.onInputUp.add(this.onClick, this);
+		//char.events.onInputOver.add(this.onOver, this);
+		//char.events.onInputOut.add(this.onOut, this);
 
-		this.charCount++;
+		//this.charCount++;
 	},
 
 	preload: function() {
@@ -105,11 +114,37 @@ BasicGame.CharSelect.prototype = {
 
 		// Just use factory function
 		this.addCharacter('player_destroyer');
-		this.addCharacter('player_trooper');
 		this.addCharacter('player_walker');
 		this.addCharacter('player_gunner');
-		this.resetFilter();
-		this.isClicked = null;
+		this.addCharacter('player_trooper');
+
+		this.destroyer = this.game.add.image(910, 120, 'destroyer_portrait');
+		this.destroyer.anchor.setTo(0.5, 0.5);
+		this.destroyer.inputEnabled = true;
+		this.destroyer.events.onInputUp.add(this.onClick, this);
+		this.destroyer.events.onInputOver.add(this.onOver, this);
+		this.destroyer.events.onInputOut.add(this.onOut, this);
+
+		this.walker = this.game.add.image(1065, 142, 'walker_portrait');
+		this.walker.anchor.setTo(0.5, 0.5);
+		this.walker.inputEnabled = true;
+		this.walker.events.onInputUp.add(this.onClick, this);
+		this.walker.events.onInputOver.add(this.onOver, this);
+		this.walker.events.onInputOut.add(this.onOut, this);
+
+		this.gunner = this.game.add.image(840, 254, 'gunner_portrait');
+		this.gunner.anchor.setTo(0.5, 0.5);
+		this.gunner.inputEnabled = true;
+		this.gunner.events.onInputUp.add(this.onClick, this);
+		this.gunner.events.onInputOver.add(this.onOver, this);
+		this.gunner.events.onInputOut.add(this.onOut, this);
+
+		this.trooper = this.game.add.image(987, 270, 'trooper_portrait');
+		this.trooper.anchor.setTo(0.5, 0.5);
+		this.trooper.inputEnabled = true;
+		this.trooper.events.onInputUp.add(this.onClick, this);
+		this.trooper.events.onInputOver.add(this.onOver, this);
+		this.trooper.events.onInputOut.add(this.onOut, this);
 
 		// Add start game button
 		var optionStyle = {font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
@@ -118,16 +153,33 @@ BasicGame.CharSelect.prototype = {
 		} else {
 			var joinTxt = "Start Game";
 		}
-		this.add.text(400, 300, "Arrow keys for controls, \nA,S,D,F for skills", optionStyle);
+		//this.add.text(400, 300, "Arrow keys for controls, \nA,S,D,F for skills", optionStyle);
+		
+		this.heroPanel = this.game.add.image(245, 275, 'hero_name');
+		this.heroPanel.anchor.setTo(0.5, 0.5);
+		this.heroName = this.add.text(250, 250, "Pick a hero", {font: '30pt myfont', align: 'center', fill: 'white'});
+		this.heroName.anchor.x = 0.5;
+		this.add.text(900, 350, "Team", optionStyle);
+		//this.add.text(900, 600, "Ultimate skill", optionStyle);
 
-		this.returnMenu = this.add.text(this.game.width - this.game.width/1.08, this.game.height - 100,  "Back", optionStyle);
-		this.startGame = this.add.text(this.game.width - this.game.width/3.5, this.game.height - 100,  joinTxt, optionStyle);
+		this.returnMenu = this.add.text(this.world.width - this.world.width/4, this.world.height - 70,  "Back", optionStyle);
+		this.startGame = this.add.text(this.world.width - this.world.width/4, this.world.height - 110,  joinTxt, optionStyle);
+
 		this.startGame.inputEnabled = true; 
 		this.returnMenu.inputEnabled = true;
 		this.returnMenu.events.onInputOver.add(BasicGame.onOver);
 		this.returnMenu.events.onInputOut.add(BasicGame.onOut);
 		this.startGame.events.onInputOver.add(BasicGame.onOver);
 		this.startGame.events.onInputOut.add(BasicGame.onOut);
+
+		this.stats = this.game.add.image(415, 10, 'stats');
+		this.stats.animations.frameName = "stats";
+
+		this.skillA = this.game.add.image(100, 350, 'skill_destroyer');
+		this.skillB = this.game.add.image(100, 530, 'skill_destroyer');
+		this.skillC = this.game.add.image(400, 350, 'skill_destroyer');
+		this.skillD = this.game.add.image(400, 530, 'skill_destroyer');
+
 
 		// Back button clicked
 		if (ref.multiplayer) {
