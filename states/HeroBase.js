@@ -147,6 +147,7 @@ BasicGame.HeroBase.prototype.constructor = BasicGame.HeroBase;
 BasicGame.HeroBase.prototype.spawn = function() {
 	if (this.isDead) {
 		this.body.velocity.x = this.body.velocity.y = 0;
+		this.isAttacking = false;
 		var spawnTime = 5000 + (this.heroLevel * 1000);
 		var tween = this.game.add.tween(this).to({0: 0}, spawnTime, Phaser.Easing.Linear.None, true, 0, 0);
 		tween.onStart.add(function(){
@@ -316,11 +317,15 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 
 			// If local client is the killer then send to server,
 			// otherwise every client will be incrementing score 
-			if (BasicGame.myID == killerInfo.ID) {
+			if (BasicGame.myID == killerInfo.ID || BasicGame.myID == "SoloKid") {
 				// credit kill to killerID
 				if (BasicGame.myID == "SoloKid") {
 					// Single Player kill handling
-					this.refMP.teamScores[1]++; // add to teamscore
+					if(killerInfo.ID == "SoloKid") {
+						this.refMP.teamScores[1]++; // add to teamscore
+					} else {
+						this.refMP.teamScores[2]++; // add to teamscore
+					}
 				} else {
 					BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
 				}
@@ -332,7 +337,7 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 			var expToGive = (levelDiff >= 10) ? 100 : (50 * killerInfo.heroLevel * (1 + (levelDiff / 10)));
 
 			creditExp(killerInfo, Math.round(expToGive)); // give exp to killer
-				
+
 			console.log("Dead");
 			this.spawn();
 

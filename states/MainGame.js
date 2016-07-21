@@ -145,7 +145,7 @@ BasicGame.MainGame.prototype.preloadGame = function() {
 	var test =  { font: '16pt myfont', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 400};
 	this.playerText = this.game.add.text(-100, -100, "Default", test);
 	this.textTimer = 0;
-	this.overLapRate = 0;
+	this.hpTrigger = true;
 
 	this.createGame(); // preload complete, start to create game
 	this.spawnAI("retard_Bot", 500, 1000, "player_trooper", "retard Ace", 2);
@@ -153,39 +153,91 @@ BasicGame.MainGame.prototype.preloadGame = function() {
 
 BasicGame.MainGame.prototype.scriptAI = function(target, me) {
 	// function script which react base on target's behaviour
-	if(!target.isDead) {
-		console.log("Hunting: " +  target.nick);
-		// hunt down the target
-		if(target.x - me.x > 100) {
-			// target is on the right
-			me.cursor.skillA = false;
-			me.cursor.left = false;
-			me.cursor.right =  true;
-		} else if(target.x - me.x < -100) {
-			me.cursor.skillA = false;
-			me.cursor.right = false;
-			me.cursor.left  = true;
-		} else {
-			// target is within range
-			me.cursor.skillA = true;
-			me.cursor.right = false;
-			me.cursor.left  = false;
-			me.cursor.up = false;
-		}
+	if (me.curHealth / me.maxHealth < 0.1) {
+		// low hp, go heal
+		hpTrigger = true;
+	} else if (me.curHealth / me.maxHealth > 0.85) {
+		hpTrigger = false;
+	}
 
-		if (target.y != me.y) {
-			me.cursor.up = true;
-		} else {
+	if (hpTrigger) {
+		// go back base to heal
+		if (me.x >= 3200 && me.y >= 1000) {
+			me.cursor.right = false;
 			me.cursor.up = false;
+			me.cursor.left = false;
+			me.cursor.skillA = false;
+		} else {
+			me.cursor.right = true;
+			me.cursor.up = true;
+			me.cursor.left = false;
+			me.cursor.skillA = false;
 		}
 	} else {
-		console.log("waiting...");
-		// target is dead. go back to rest
-		me.cursor.skillA = false;
-		me.cursor.right = false;
-		me.cursor.left  = false;
-		me.cursor.up = false;
+		// Go and fight the target
+		if (!target.isDead && !me.isDead) {
+			// hunt down the target
+			if(target.x - me.x > 150) {
+				// target is on the right
+				me.cursor.skillA = false;
+				me.cursor.left = false;
+				me.cursor.right =  true;
+			} else if(target.x - me.x < -150) {
+				me.cursor.skillA = false;
+				me.cursor.right = false;
+				me.cursor.left  = true;
+			} else {
+				// target is within attack range
+				me.cursor.up = false;
+				if (target.x > me.x) {
+					// face right
+					me.cursor.left = false;
+					me.cursor.right = true;
+				} else {
+					// face left
+					me.cursor.left  = true;
+					me.cursor.right = false;
+				}
+				me.cursor.skillA = true;
+			}
+
+			if (target.y < me.y) {
+				// target is above me
+				me.cursor.up = true; // jump
+			} else {
+				// target is below or same level as me
+				me.cursor.up = false;
+			}
+
+			if (target.x - me.x > 1200 || target.x - me.x < -1200) {
+				// long range behaviour
+				if (me.game.time.now > me.skillBTimer) {
+					// second skill is available. use skill first
+					me.cursor.skillB = true;
+				} else {
+					me.cursor.skillB = false;
+				}
+
+				if (me.game.time.now > me.skillCTimer) {
+					// second skill is available. use skill first
+					me.cursor.skillC = true;
+				} else {
+					me.cursor.skillC = false;
+				}
+
+				if (me.game.time.now > me.skillETimer) {
+					// second skill is available. use skill first
+					me.cursor.skillE = true;
+				} else {
+					me.cursor.skillE = false;
+				}
+			}
+		} else {
+			// target is dead. go back to heal up/rest
+			hpTrigger = true;
+		}
 	}
+
 };
 
 
