@@ -145,9 +145,40 @@ BasicGame.MainGame.prototype.preloadGame = function() {
 	var test =  { font: '16pt myfont', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 400};
 	this.playerText = this.game.add.text(-100, -100, "Default", test);
 	this.textTimer = 0;
+	this.overLapRate = 0;
 
 	this.createGame(); // preload complete, start to create game
-}
+	this.spawnAI("retard_Bot", 500, 1000, "player_trooper", "retard Ace", 2);
+};
+
+BasicGame.MainGame.prototype.scriptAIAce = function(target, me) {
+	if(!target.isDead) {
+		// hunt down the target
+		if(target.x - me.x > 100) {
+			// target is on the right
+			me.cursor.skillA = false;
+			me.cursor.left = false;
+			me.cursor.right =  true;
+		} else if(target.x - me.x < -100) {
+			me.cursor.skillA = false;
+			me.cursor.right = false;
+			me.cursor.left  = true;
+		} else {
+			// target is within range
+			me.cursor.skillA = true;
+			me.cursor.right = false;
+			me.cursor.left  = false;
+			me.cursor.up = false;
+		}
+
+		if (target.y != me.y) {
+			me.cursor.up = true;
+		} else {
+			me.cursor.up = false;
+		}
+	}
+};
+
 
 BasicGame.MainGame.prototype.createGame = function() {
 	var ref = this;
@@ -280,6 +311,42 @@ BasicGame.MainGame.prototype.createGame = function() {
 	];
 };
 
+BasicGame.MainGame.prototype.spawnAI = function(i, x, y, char, nick, team) {
+	// Spawn enemy at location
+	var curX = x;
+	var curY = y;
+	if (x == 0 || y == 0) {
+		curX = this.spawnX;
+		curY = this.spawnY;
+	}
+
+	this.broadcast(nick + " wants to fight!", 2);
+	console.log('Spawning', i, curX, curY, char, nick, team);
+
+	// If doesn't already exist
+	if (this.playerList[i] == null) {
+		if (char == "player_trooper") {
+			var player = new BasicGame.HeroTrooperMP(i, this.game, curX, curY, team, nick, 1);
+		} 
+		if (char == "player_walker") {
+			var player = new BasicGame.HeroWalkerMP(i, this.game, curX, curY, team, nick, 1);
+		}
+		if (char == "player_destroyer") {
+			var player = new BasicGame.HeroDestroyerMP(i, this.game, curX, curY, team, nick, 1);
+		}
+		if (char == "player_gunner") {
+			var player = new BasicGame.HeroGunnerMP(i, this.game, curX, curY, team, nick, 1);
+		}
+		this.playerList[i] = [player, nick, team];
+		// Uncomment for team only
+		//if (team == BasicGame.myTeam) {
+			this.addPlayerName(i);
+		//}
+	}
+	// Every time you add a player, sort the group so local client is always on top
+	BasicGame.playerCG.sort('z', Phaser.Group.SORT_DESCENDING);
+}
+
 BasicGame.MainGame.prototype.addPlayerName = function(id) {
 	// Factory function
 	this.playerListHUD[id] = this.game.add.sprite(25, 15 + (this.playerCount * 35), 'playerName');
@@ -321,14 +388,19 @@ BasicGame.MainGame.prototype.broadcast = function(msg, duration) {
 };
 
 BasicGame.MainGame.prototype.update = function() {
-	//console.log("TEST update");
+	this.scriptAIAce(this.playerList["SoloKid"][0], this.playerList["retard_Bot"][0]);
 	// Enable collision between player and layer and shield
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
 	this.physics.arcade.overlap(BasicGame.playerCG, BasicGame.shieldCG, this.shieldCallback.bind(this));
 	// Team colliders
 	this.physics.arcade.overlap(this.teamA, BasicGame.playerCG, this.baseCallback.bind(this));	
 	this.physics.arcade.overlap(this.teamB, BasicGame.playerCG, this.baseCallback.bind(this));	
-
+/*
+	// mite colliders
+	this.physics.arcade.collide(this.mite.bullets, this.mapLayer);
+    this.physics.arcade.overlap(this.mite.bullets, BasicGame.playerCG, this.bulletCallback.bind(this));
+    this.physics.arcade.collide(this.mite.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
+*/
 	this.handleHUD();
 	//this.showPlayerList();
 	//this.updatePlayerList();
@@ -405,13 +477,4 @@ BasicGame.MainGame.prototype.shieldCallback= function(obj1, obj2) {
 		obj1.inShield = true;
 		obj1.body.velocity.x = obj2.facingRight * 500;
 	}
-};
-
-BasicGame.MainGame.prototype.projectileCallback= function(obj1, obj2) {
-	obj1.onCollide();
-};
-
-BasicGame.MainGame.prototype.bulletCallback= function(obj1, obj2) {
-	//console.log(obj1);
-	obj1.kill();
 };

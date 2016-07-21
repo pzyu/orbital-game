@@ -48,7 +48,7 @@ BasicGame.CharSelect.prototype = {
 		if (this.highlight) {
 			this.highlight.position.setTo(-200, -200);
 		}
-		BasicGame.eurecaServer.getTeamSelection(BasicGame.roomID, BasicGame.myTeam, target.key, BasicGame.myID); // sends input to all other clients
+		//BasicGame.eurecaServer.getTeamSelection(BasicGame.roomID, BasicGame.myTeam, target.key, BasicGame.myID); // sends input to all other clients
 		//this.resetFilter(target);
 		this.isClicked = target; // chosen character information is stored into this.isClicked
 		target.filters = null; // highlight chosen character

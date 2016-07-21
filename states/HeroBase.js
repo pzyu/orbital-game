@@ -123,10 +123,10 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	BasicGame.playerCG.add(this);
 
 	// Multiplayer stuff
-	if (id != "SoloKid") {
-		this.refMP = this.game.state.states['Multiplayer'];
-	} else {
+	if (id == "SoloKid" || id == "retard_Bot") {
 		this.refMP = this.game.state.states['MainGame'];
+	} else {
+		this.refMP = this.game.state.states['Multiplayer'];
 	}
 	this.stepTimer = 0;
 	this.timeStep = this.refMP.timeStep;
@@ -325,13 +325,14 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 					BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
 				}
 			}
+
 			// Calculate exp to credit to the killer based on killer's hero level and level difference. if level difference is more than 10
 			// credit a base 100 exp. else change exp given by 0.1x per level difference
 			var levelDiff = this.heroLevel - killerInfo.heroLevel;
 			var expToGive = (levelDiff >= 10) ? 100 : (50 * killerInfo.heroLevel * (1 + (levelDiff / 10)));
 
 			creditExp(killerInfo, Math.round(expToGive)); // give exp to killer
-
+				
 			console.log("Dead");
 			this.spawn();
 
