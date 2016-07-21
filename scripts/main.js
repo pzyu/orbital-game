@@ -19,13 +19,15 @@ var BasicGame = {
   // On over style
   onOver: function (target) {
     target.fill = "#CCE8FF";
-    target.stroke = "rgba(255,255,255,1)";
+    target.stroke = "rgba(0,0,0,255)";
+    target.scale.setTo(1.01);
   },
 
   // On out style
   onOut: function (target) {
     target.fill = "white";
-    target.stroke = "rgba(0,0,0,0)";
+    target.stroke = "rgba(0,0,0,255)";
+    target.scale.setTo(1.0);
   },
 
   disconnectClient: function () {

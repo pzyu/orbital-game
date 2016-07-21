@@ -151,8 +151,10 @@ BasicGame.MainGame.prototype.preloadGame = function() {
 	this.spawnAI("retard_Bot", 500, 1000, "player_trooper", "retard Ace", 2);
 };
 
-BasicGame.MainGame.prototype.scriptAIAce = function(target, me) {
+BasicGame.MainGame.prototype.scriptAI = function(target, me) {
+	// function script which react base on target's behaviour
 	if(!target.isDead) {
+		console.log("Hunting: " +  target.nick);
 		// hunt down the target
 		if(target.x - me.x > 100) {
 			// target is on the right
@@ -176,6 +178,13 @@ BasicGame.MainGame.prototype.scriptAIAce = function(target, me) {
 		} else {
 			me.cursor.up = false;
 		}
+	} else {
+		console.log("waiting...");
+		// target is dead. go back to rest
+		me.cursor.skillA = false;
+		me.cursor.right = false;
+		me.cursor.left  = false;
+		me.cursor.up = false;
 	}
 };
 
@@ -388,20 +397,16 @@ BasicGame.MainGame.prototype.broadcast = function(msg, duration) {
 };
 
 BasicGame.MainGame.prototype.update = function() {
-	this.scriptAIAce(this.playerList["SoloKid"][0], this.playerList["retard_Bot"][0]);
+	this.scriptAI(this.playerList["SoloKid"][0], this.playerList["retard_Bot"][0]); // AI Script activated
 	// Enable collision between player and layer and shield
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
 	this.physics.arcade.overlap(BasicGame.playerCG, BasicGame.shieldCG, this.shieldCallback.bind(this));
 	// Team colliders
 	this.physics.arcade.overlap(this.teamA, BasicGame.playerCG, this.baseCallback.bind(this));	
 	this.physics.arcade.overlap(this.teamB, BasicGame.playerCG, this.baseCallback.bind(this));	
-/*
-	// mite colliders
-	this.physics.arcade.collide(this.mite.bullets, this.mapLayer);
-    this.physics.arcade.overlap(this.mite.bullets, BasicGame.playerCG, this.bulletCallback.bind(this));
-    this.physics.arcade.collide(this.mite.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
-*/
+
 	this.handleHUD();
+	this.updatePlayerList();
 	//this.showPlayerList();
 	//this.updatePlayerList();
 	//this.game.debug.body(this.teamA);
