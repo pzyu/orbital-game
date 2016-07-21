@@ -145,44 +145,58 @@ BasicGame.MainGame.prototype.preloadGame = function() {
 	var test =  { font: '16pt myfont', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 400};
 	this.playerText = this.game.add.text(-100, -100, "Default", test);
 	this.textTimer = 0;
-	this.hpTrigger = true;
 
 	this.createGame(); // preload complete, start to create game
-	this.spawnAI("retard_Bot", 500, 1000, "player_trooper", "retard Ace", 2);
+	//this.spawnAI("retard_Bot", 500, 1000, "player_trooper", "retard Ace", 2);
+	//this.spawnAI("retard_Bot1", 500, 1000, "player_destroyer", "retard Destroyer", 2);
+	//this.spawnAI("retard_Bot2", 500, 1000, "player_trooper", "retard Ace", 1);
+	this.spawnAI("retard_Bot3", 500, 1000, "player_trooper", "retard Ace", 2);
+
 };
 
-BasicGame.MainGame.prototype.scriptAI = function(target, me) {
+BasicGame.MainGame.prototype.scriptAIAce = function(target, me) {
 	// function script which react base on target's behaviour
-	if (me.curHealth / me.maxHealth < 0.1) {
+	if (me.curHealth / me.maxHealth < 0.1 || target.isDead) {
 		// low hp, go heal
-		hpTrigger = true;
+		me.hpTrigger = true;
 	} else if (me.curHealth / me.maxHealth > 0.85) {
-		hpTrigger = false;
+		me.hpTrigger = false;
 	}
 
-	if (hpTrigger) {
+	if (me.hpTrigger) {
 		// go back base to heal
-		if (me.x >= 3200 && me.y >= 1000) {
+		if (me.x >= this.spawnPoints[me.myTeam].x && me.y >= this.spawnPoints[me.myTeam].y && me.myTeam == 2) {
+			me.cursor.right = false;
+			me.cursor.up = false;
+			me.cursor.left = false;
+			me.cursor.skillA = false;
+		} else if (me.x <= this.spawnPoints[me.myTeam].x && me.y >= this.spawnPoints[me.myTeam].y && me.myTeam == 1) {
 			me.cursor.right = false;
 			me.cursor.up = false;
 			me.cursor.left = false;
 			me.cursor.skillA = false;
 		} else {
-			me.cursor.right = true;
+			if (me.myTeam == 1) {
+				me.cursor.right = false;
+				me.cursor.left = true;
+			} else if (me.myTeam == 2) {
+				me.cursor.right = true;
+				me.cursor.left = false;
+			}
 			me.cursor.up = true;
-			me.cursor.left = false;
 			me.cursor.skillA = false;
 		}
 	} else {
 		// Go and fight the target
 		if (!target.isDead && !me.isDead) {
+			var distDiff = target.x - me.x;
 			// hunt down the target
-			if(target.x - me.x > 150) {
+			if(distDiff > 150) {
 				// target is on the right
 				me.cursor.skillA = false;
 				me.cursor.left = false;
 				me.cursor.right =  true;
-			} else if(target.x - me.x < -150) {
+			} else if(distDiff < -150) {
 				me.cursor.skillA = false;
 				me.cursor.right = false;
 				me.cursor.left  = true;
@@ -201,7 +215,7 @@ BasicGame.MainGame.prototype.scriptAI = function(target, me) {
 				me.cursor.skillA = true;
 			}
 
-			if (target.y < me.y) {
+			if (target.y < me.y - 40) {
 				// target is above me
 				me.cursor.up = true; // jump
 			} else {
@@ -234,7 +248,149 @@ BasicGame.MainGame.prototype.scriptAI = function(target, me) {
 			}
 		} else {
 			// target is dead. go back to heal up/rest
-			hpTrigger = true;
+			me.cursor.skillA = false;
+			me.cursor.skillB = false;
+			me.cursor.skillC = false;
+			me.cursor.skillE = false;
+		}
+	}
+
+};
+
+BasicGame.MainGame.prototype.scriptAIDestroyer = function(target, me) {
+	// function script which react base on target's behaviour
+	if (me.curHealth / me.maxHealth < 0.1 || target.isDead) {
+		// low hp, go heal
+		me.hpTrigger = true;
+	} else if (me.curHealth / me.maxHealth > 0.85) {
+		me.hpTrigger = false;
+	}
+
+	if (me.hpTrigger) {
+		// go back base to heal
+		me.cursor.skillA = false; // disable all combat
+		me.cursor.skillB = false;
+		me.cursor.skillC = false;
+		me.cursor.skillD = false;
+		me.cursor.skillE = false;
+		if (me.x >= this.spawnPoints[me.myTeam].x && me.y >= this.spawnPoints[me.myTeam].y && me.myTeam == 2) {
+			me.cursor.right = false;
+			me.cursor.up = false;
+			me.cursor.left = false;
+			me.cursor.skillA = false;
+		} else if (me.x <= this.spawnPoints[me.myTeam].x && me.y >= this.spawnPoints[me.myTeam].y && me.myTeam == 1) {
+			me.cursor.right = false;
+			me.cursor.up = false;
+			me.cursor.left = false;
+			me.cursor.skillA = false;
+		} else {
+			if (me.myTeam == 1) {
+				me.cursor.right = false;
+				me.cursor.left = true;
+			} else if (me.myTeam == 2) {
+				me.cursor.right = true;
+				me.cursor.left = false;
+			}
+			me.cursor.up = true;
+		}
+	} else {
+		// Go and fight the target
+		if (!target.isDead && !me.isDead) {
+			var distDiff = target.x - me.x;
+			// hunt down the target
+			if(distDiff > 300) {
+				// target is on the right
+				me.cursor.left = false;
+				me.cursor.right =  true;
+			} else if(distDiff < -300) {
+				// target is on the left
+				me.cursor.right = false;
+				me.cursor.left  = true;
+			} else {
+				// target is within critical range
+				me.cursor.right = false;
+				me.cursor.left  = false;
+				if (target.x > me.x) {
+					// target is at the right, face right
+					me.facingRight = 1;
+    				me.scale.x = me.scaleX;
+				} else {
+					// target is at the left, face left
+					me.facingRight = -1;
+    				me.scale.x = -me.scaleX;
+				}
+
+				// use rifle charge if nearby
+				if (me.game.time.now > me.skillBTimer) {
+					me.cursor.skillA = false;
+					me.cursor.skillB = true;
+				} else {
+					me.cursor.skillB = false;
+				}
+
+				if (me.game.time.now > me.skillCTimer) {
+					// use shotgun if rifle charge is used
+					me.cursor.skillA = false;
+					me.cursor.skillC = true;
+				} else {
+					me.cursor.skillC = false;
+				}
+			}
+
+			if (me.game.time.now > me.skillDTimer && target.x - me.x < 600 && target.x - me.x >= 0) {
+				// third skill is available. use skill first
+				me.cursor.skillA = false;
+				me.cursor.skillB = false;
+				me.cursor.skillC = false;
+				me.cursor.skillD = true;
+			} else if (me.game.time.now > me.skillDTimer && target.x - me.x > -600 && target.x - me.x <= 0) {
+				me.cursor.skillA = false;
+				me.cursor.skillB = false;
+				me.cursor.skillC = false;
+				me.cursor.skillD = true;
+			} else {
+				me.cursor.skillD = false;
+			}
+
+			if (me.game.time.now < me.skillBTimer && me.game.time.now < me.skillCTimer && me.game.time.now < me.skillDTimer) { // all other skills are activated
+				if (me.game.time.now > me.skillETimer && Math.abs(distDiff) < 90) {
+					// use ultimate
+					me.cursor.skillA = false;
+					me.cursor.skillB = false;
+					me.cursor.skillC = false;
+					me.cursor.skillD = false;
+					me.cursor.skillE = true;
+				} else {
+					me.cursor.skillE = false;
+				}
+			}
+
+			// target is within bullet range, start randomly firing
+			if (!me.cursor.skillB && !me.cursor.skillC && !me.cursor.skillD && !me.cursor.skillE ) { // disable normal attack to use skills
+				if (target.x - me.x < 800 && target.x - me.x >= 0) {
+					me.cursor.skillA = true;
+				} else if (target.x - me.x > -800 && target.x - me.x <= 0) {
+					me.cursor.skillA = true;
+				} else {
+					me.cursor.skillA = false;
+				}
+			}
+
+			// jump AI
+			if (target.y < me.y - 40) {
+				// target is above me
+				me.cursor.up = true; // jump
+			} else {
+				// target is below or same level as me
+				me.cursor.up = false;
+			}
+		} else {
+			// target is dead. go back to heal up/rest
+			me.cursor.skillA = false;
+			me.cursor.skillB = false;
+			me.cursor.skillC = false;
+			me.cursor.skillD = false;
+			me.cursor.skillE = false;
 		}
 	}
 
@@ -398,6 +554,7 @@ BasicGame.MainGame.prototype.spawnAI = function(i, x, y, char, nick, team) {
 		if (char == "player_gunner") {
 			var player = new BasicGame.HeroGunnerMP(i, this.game, curX, curY, team, nick, 1);
 		}
+		player.hpTrigger = true;
 		this.playerList[i] = [player, nick, team];
 		// Uncomment for team only
 		//if (team == BasicGame.myTeam) {
@@ -449,7 +606,9 @@ BasicGame.MainGame.prototype.broadcast = function(msg, duration) {
 };
 
 BasicGame.MainGame.prototype.update = function() {
-	this.scriptAI(this.playerList["SoloKid"][0], this.playerList["retard_Bot"][0]); // AI Script activated
+	//this.scriptAIDestroyer(this.playerList["retard_Bot2"][0], this.playerList["retard_Bot1"][0]); // AI Script activated (Destroyer)
+	//this.scriptAIAce(this.playerList["retard_Bot1"][0], this.playerList["retard_Bot2"][0]); // AI Script activated (Ace)
+	this.scriptAIAce(this.playerList["SoloKid"][0], this.playerList["retard_Bot3"][0]); // AI Script activated (Ace)
 	// Enable collision between player and layer and shield
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
 	this.physics.arcade.overlap(BasicGame.playerCG, BasicGame.shieldCG, this.shieldCallback.bind(this));

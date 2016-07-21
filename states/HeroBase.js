@@ -123,7 +123,7 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	BasicGame.playerCG.add(this);
 
 	// Multiplayer stuff
-	if (id == "SoloKid" || id == "retard_Bot") {
+	if (id == "SoloKid" || id.substring(0, 10) == "retard_Bot") {
 		this.refMP = this.game.state.states['MainGame'];
 	} else {
 		this.refMP = this.game.state.states['Multiplayer'];

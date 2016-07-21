@@ -57,7 +57,11 @@ BasicGame.CharSelect.prototype = {
 		var selected = 'player_' + char;
 		//console.log(selected);
 		BasicGame.selectedChar = selected;
-		this.heroName.setText(char.charAt(0).toUpperCase() + char.slice(1));
+		this.heroName.setText((char == null) ? "" : (char == "destroyer") ? "Destroyer"
+												  : (char == "trooper") ? "Ace"
+												  : (char == "walker") ? "Walker"
+												  : (char == "gunner") ? "Disruptor"
+												  : "");
 		this.stats.animations.frameName = char;
 		this.skills.animations.frameName = char;
 
