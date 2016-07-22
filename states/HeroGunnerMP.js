@@ -119,17 +119,17 @@ BasicGame.HeroGunnerMP = function (id, game, x, y, team, nick, initLvl) {
     BasicGame.miteCG = this.mite.bullets;
 
 	// Health pack
-    this.pack = this.game.add.weapon(4, 'grenade');
+    this.pack = this.game.add.weapon(4, 'healthkit');
     this.pack.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;				
     this.pack.bulletLifespan = 10000;
     this.pack.bulletSpeed = 1500;											
     this.pack.bulletGravity = new Phaser.Point(0, -2000);					
-    this.pack.trackSprite(this, 0, -60);										
+    this.pack.trackSprite(this, 20, -80);										
     this.pack.bullets.setAll('scale.x', 1);								
     this.pack.bullets.setAll('scale.y', 1);
     this.pack.bullets.setAll('body.maxVelocity.x', 800);
     this.pack.bullets.setAll('body.drag.x', 1000);
-    this.pack.setBulletBodyOffset(50, 40, 10, 10);
+    this.pack.setBulletBodyOffset(75, 55, 0,0);
 
      // Explosion group
     this.explosionGroup = this.game.add.group(); 
@@ -231,6 +231,7 @@ BasicGame.HeroGunnerMP.prototype.update = function() {
 	//this.weapon.debug(0, 0, true);
 	//this.trap.debug(0, 100, true);
 	//this.mite.debug(0, 200, true);
+	//this.pack.debug(0, 100, true);
 	//this.game.debug.body(this.attackCollider);
 };
 

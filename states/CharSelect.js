@@ -121,28 +121,28 @@ BasicGame.CharSelect.prototype = {
 		this.addCharacter('player_gunner');
 		this.addCharacter('player_trooper');
 
-		this.destroyer = this.game.add.image(910, 120, 'destroyer_portrait');
+		this.destroyer = this.game.add.image(915, 110, 'destroyer_portrait');
 		this.destroyer.anchor.setTo(0.5, 0.5);
 		this.destroyer.inputEnabled = true;
 		this.destroyer.events.onInputUp.add(this.onClick, this);
 		this.destroyer.events.onInputOver.add(this.onOver, this);
 		this.destroyer.events.onInputOut.add(this.onOut, this);
 
-		this.walker = this.game.add.image(1065, 142, 'walker_portrait');
+		this.walker = this.game.add.image(1065, 110, 'walker_portrait');
 		this.walker.anchor.setTo(0.5, 0.5);
 		this.walker.inputEnabled = true;
 		this.walker.events.onInputUp.add(this.onClick, this);
 		this.walker.events.onInputOver.add(this.onOver, this);
 		this.walker.events.onInputOut.add(this.onOut, this);
 
-		this.gunner = this.game.add.image(840, 254, 'gunner_portrait');
+		this.gunner = this.game.add.image(840, 240, 'gunner_portrait');
 		this.gunner.anchor.setTo(0.5, 0.5);
 		this.gunner.inputEnabled = true;
 		this.gunner.events.onInputUp.add(this.onClick, this);
 		this.gunner.events.onInputOver.add(this.onOver, this);
 		this.gunner.events.onInputOut.add(this.onOut, this);
 
-		this.trooper = this.game.add.image(987, 270, 'trooper_portrait');
+		this.trooper = this.game.add.image(990, 240, 'trooper_portrait');
 		this.trooper.anchor.setTo(0.5, 0.5);
 		this.trooper.inputEnabled = true;
 		this.trooper.events.onInputUp.add(this.onClick, this);

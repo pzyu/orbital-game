@@ -211,6 +211,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillC = function() {
     	var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 500, 0);
     	tween.onStart.add(function() {
     		this.smokeEffect.playUntracked('anim_4', this.x - 20 * this.facingRight, this.y - 10);
+    		this.smokeEffect.scale.x = this.facingRight * 0.5;
     	}, this);
 
 		this.applyBuff("BUFF_INVIS", 0, 5000 + (this.heroLevel * 200), 500, BasicGame.myTeam);
@@ -233,7 +234,17 @@ BasicGame.HeroTrooperMP.prototype.handleSkillD = function() {
 		//this.isAttacking = true;
 		this.skillDTimer = this.game.time.now + this.skillDCooldown; 
 		this.skillDSFX.play();
-		console.log('backstab unlocked');
+
+		var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 0, 0);
+		tween.onStart.add(function() {
+			this.body.velocity.x -= 2000 * this.facingRight;
+    		this.smokeEffect.playUntracked('anim_3', this.x - 20 * this.facingRight, this.y - 10);
+    		this.smokeEffect.scale.x = this.facingRight * -0.5;
+		}, this);
+
+    	this.animations.play('anim_thrust');
+    	this.animations.currentAnim.frame = 0;
+		this.isAttacking = true;
 		this.skillsEnabled = false;
 		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
@@ -252,7 +263,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillE = function() {
 			this.skillESFX.play();
     	}, this);
     	tween.onComplete.add(function() {
-    		this.snipeEffect.play('anim_2', this, 100, 30);
+    		this.snipeEffect.play('anim_2', this, 150, 30);
     		this.animations.play('anim_ultimate2');
     		this.animations.currentAnim.frame = 0;
     		
