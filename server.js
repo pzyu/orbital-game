@@ -160,8 +160,8 @@ eurecaServer.exports.chooseHost = function(roomName) {
 
 eurecaServer.exports.startGameTDM = function(roomName) {
 	lobbylist[roomName].status = ' On-going'; // Update Lobby Status
-	//lobbylist[roomName].game = {ScoreGoal: lobbylist[roomName].maxPlayers * 5, TeamScore: [0, 0, 0]};
-	lobbylist[roomName].game = {ScoreGoal: lobbylist[roomName].maxPlayers * 0, TeamScore: [0, 0, 0]};
+	lobbylist[roomName].game = {ScoreGoal: lobbylist[roomName].maxPlayers * 5, TeamScore: [0, 0, 0]};
+	//lobbylist[roomName].game = {ScoreGoal: lobbylist[roomName].maxPlayers * 0, TeamScore: [0, 0, 0]};
 
 	// Interval for lobby games
 	var last = Date.now();
