@@ -38,6 +38,7 @@ BasicGame.MainGame = function (game) {
 
 	this.teamAHUD;
 	this.teamBHUD;
+	this.playerHUD;
 };
 
 BasicGame.MainGame.prototype.init = function() {
@@ -442,11 +443,51 @@ BasicGame.MainGame.prototype.createGame = function() {
 	this.teamB.body.allowGravity = false;
 	this.game.add.existing(this.teamB);
 
-	// HUD
-	this.skillA = this.game.add.image(433, this.game.height - 20, 'skill');
-	this.skillB = this.game.add.image(478, this.game.height - 20, 'skill');
-	this.skillC = this.game.add.image(805, this.game.height - 20, 'skill');
-	this.skillD = this.game.add.image(850, this.game.height - 20, 'skill');
+
+	// Player hud
+	this.hud = this.game.add.image(10, 540, 'player_hud');
+	this.hud.fixedToCamera = true;
+
+	this.healthBar = this.game.add.image(328, 668, 'player_hud_bar');
+	this.healthBar.fixedToCamera = true;
+	this.healthBar.anchor.setTo(0, 1);
+	this.healthRect = new Phaser.Rectangle(0, 0, this.healthBar.width, this.healthBar.height);
+
+	this.healthBarPercentage = this.game.add.text(470, this.game.height - 65, '0%', { font: '14pt myfont', align: 'right', fill: 'white', stroke: 'black', strokeThickness: 2});
+	this.healthBarPercentage.fixedToCamera = true;
+	this.healthBarPercentage.anchor.setTo(0.5, 0.5);
+
+	this.expBar = this.game.add.image(350, 692, 'player_hud_bar');
+	this.expBar.fixedToCamera = true;
+	this.expBar.anchor.setTo(0, 1);
+	this.expRect = new Phaser.Rectangle(0, 0, this.expBar.width, this.expBar.height);
+
+	this.expBarPercentage = this.game.add.text(485, this.game.height - 42, '0%', { font: '14pt myfont', align: 'right', fill: 'white', stroke: 'black', strokeThickness: 2});
+	this.expBarPercentage.fixedToCamera = true;
+	this.expBarPercentage.anchor.setTo(0.5, 0.5);
+
+	// Customized skill and portrait
+	var char = BasicGame.selectedChar.substring(7);
+	console.log(char);
+	this.playerHUD = this.game.add.image(229, 648, char + '_portrait');
+	this.playerHUD.anchor.setTo(0.5, 0.5);
+	this.playerHUD.scale.setTo(0.62, 0.62);
+	this.playerHUD.fixedToCamera = true;
+
+	// Team gui
+	this.logo = this.game.add.image(240, 0, 'score');
+	this.teamAHUD = this.game.add.text(BasicGame.gameWidth/2 - 90, 40, 'TeamA', { font: '16pt myfont', align: 'right', fill: 'white'});
+	this.teamBHUD = this.game.add.text(BasicGame.gameWidth/2 + 50, 40, 'TeamB', { font: '16pt myfont', align: 'left', fill: 'white'});
+
+	this.logo.fixedToCamera = true;
+	this.teamAHUD.fixedToCamera = true;
+	this.teamBHUD.fixedToCamera = true;
+
+	// Skills
+	this.skillA = this.game.add.image(54, 694, char + '_hud_skillA');
+	this.skillB = this.game.add.image(93, 626, char + '_hud_skillB');
+	this.skillC = this.game.add.image(134, 694, char + '_hud_skillC');
+	this.skillD = this.game.add.image(172, 626, char + '_hud_skillD');
 
 	this.skillA.fixedToCamera = true;
 	this.skillB.fixedToCamera = true;
@@ -458,48 +499,50 @@ BasicGame.MainGame.prototype.createGame = function() {
 	this.skillC.anchor.setTo(0.5, 1);
 	this.skillD.anchor.setTo(0.5, 1);
 
-	this.cropRectA = new Phaser.Rectangle(0, 0, this.skillA.width, this.skillA.height);
-	this.cropRectB = new Phaser.Rectangle(0, 0, this.skillB.width, this.skillB.height);
-	this.cropRectC = new Phaser.Rectangle(0, 0, this.skillC.width, this.skillC.height);
-	this.cropRectD = new Phaser.Rectangle(0, 0, this.skillD.width, this.skillD.height);
+	this.skillAHotkey = this.game.add.text(20, 620, '[S]', {font: '12pt myfont', fill: 'white', stroke: 'black', strokeThickness: '2'});
+	this.skillAHotkey.fixedToCamera = true;
 
-	// Healthbar
-	this.healthBarEmpty = this.game.add.image(500, this.game.height - 20, 'hpEmpty');
-	this.healthBarEmpty.fixedToCamera = true;
-	this.healthBarEmpty.anchor.setTo(0, 1);
+	this.skillBHotkey = this.game.add.text(60, 550, '[D]', {font: '12pt myfont', fill: 'white', stroke: 'black', strokeThickness: '2'});
+	this.skillBHotkey.fixedToCamera = true;
 
-	this.healthBar = this.game.add.image(500, this.game.height - 20, 'hpFull');
-	this.healthBar.fixedToCamera = true;
-	this.healthBar.anchor.setTo(0, 1);
-	this.healthRect = new Phaser.Rectangle(0, 0, this.healthBar.width, this.healthBar.height);
+	this.skillCHotkey = this.game.add.text(100, 620, '[F]', {font: '12pt myfont', fill: 'white', stroke: 'black', strokeThickness: '2'});
+	this.skillCHotkey.fixedToCamera = true;
 
-	this.healthBarPercentage = this.game.add.text(680, this.game.height - 40, '0%', { font: '24pt myfont', align: 'right', fill: 'white'});
-	this.healthBarPercentage.fixedToCamera = true;
-	this.healthBarPercentage.anchor.setTo(0.5, 0.5);
+	this.skillDHotkey = this.game.add.text(140, 550, '[SPACE]', {font: '12pt myfont', fill: 'white', stroke: 'black', strokeThickness: '2'});
+	this.skillDHotkey.fixedToCamera = true;
 
-	// Exp bar
-	this.expBarEmpty = this.game.add.image(522, this.game.height - 65, 'expEmpty');
-	this.expBarEmpty.fixedToCamera = true;
-	this.expBarEmpty.anchor.setTo(0, 1);
+	// Input
+	this.skillA.inputEnabled = true;
+	this.skillA.events.onInputDown.add(function() {
+		this.player.skillB.isDown = true;
+	}, this);
+	this.skillA.events.onInputUp.add(function() {
+		this.player.skillB.isDown = false;
+	}, this);
 
-	this.expBar = this.game.add.image(522, this.game.height - 65, 'expFull');
-	this.expBar.fixedToCamera = true;
-	this.expBar.anchor.setTo(0, 1);
-	this.expRect = new Phaser.Rectangle(0, 0, this.expBar.width, this.expBar.height);
+	this.skillB.inputEnabled = true;
+	this.skillB.events.onInputDown.add(function() {
+		this.player.skillC.isDown = true;
+	}, this);
+	this.skillB.events.onInputUp.add(function() {
+		this.player.skillC.isDown = false;
+	}, this);
 
-	this.expBarPercentage = this.game.add.text(680, this.game.height - 72, '0%', { font: '16pt myfont', align: 'right', fill: 'white'});
-	this.expBarPercentage.fixedToCamera = true;
-	this.expBarPercentage.anchor.setTo(0.5, 0.5);
+	this.skillC.inputEnabled = true;
+	this.skillC.events.onInputDown.add(function() {
+		this.player.skillD.isDown = true;
+	}, this);
+	this.skillC.events.onInputUp.add(function() {
+		this.player.skillD.isDown = false;
+	}, this);
 
-	// Team gui
-	this.logo = this.game.add.image(240, 0, 'score');
-	this.teamAHUD = this.game.add.text(BasicGame.gameWidth/2 - 90, 40, 'TeamA', { font: '16pt myfont', align: 'right', fill: 'white'});
-	this.teamBHUD = this.game.add.text(BasicGame.gameWidth/2 + 50, 40, 'TeamB', { font: '16pt myfont', align: 'left', fill: 'white'});
-
-	this.logo.fixedToCamera = true;
-	this.teamAHUD.fixedToCamera = true;
-	this.teamBHUD.fixedToCamera = true;
-
+	this.skillD.inputEnabled = true;
+	this.skillD.events.onInputDown.add(function() {
+		this.player.skillE.isDown = true;
+	}, this);
+	this.skillD.events.onInputUp.add(function() {
+		this.player.skillE.isDown = false;
+	}, this);
 	// Team list
 	this.playerCount = 0;
 	this.playerListHUD = [];
@@ -629,27 +672,25 @@ BasicGame.MainGame.prototype.update = function() {
 
 BasicGame.MainGame.prototype.handleHUD = function() {
 	// Health
-	this.healthBarPercentage.setText(this.game.math.floorTo(this.player.getHP() * 100) + "% HP");
-	this.healthRect.width = 283 * this.player.getHP();
-	this.healthBar.crop(this.healthRect);
+	this.healthBarPercentage.setText(this.game.math.floorTo(this.player.getHP() * 100) + "%");
+	this.healthRect.width = 269 * this.player.getHP();
+	this.healthBar.crop(this.hudRect);
 
 	// Exp
-	this.expBarPercentage.setText(this.game.math.floorTo(this.player.getExp() * 100) + "%   EXP");
-	this.expRect.width = 240 * this.player.getExp();
+	this.expBarPercentage.setText(this.game.math.floorTo(this.player.getExp() * 100) + "%");
+	this.expRect.width = 269 * this.player.getExp();
 	this.expBar.crop(this.expRect);
 
 	// Skills
-	this.cropRectA.height = 66 * (this.player.getSkillB() + 1);
-	this.skillA.crop(this.cropRectA);
+	this.skillA.alpha = this.player.getSkillB() + 1;
+	this.skillB.alpha = this.player.getSkillC() + 1;
+	this.skillC.alpha = this.player.getSkillD() + 1;
+	this.skillD.alpha = this.player.getSkillE() + 1;
 
-	this.cropRectB.height = 66 * (this.player.getSkillC() + 1);
-	this.skillB.crop(this.cropRectB);
-
-	this.cropRectC.height = 66 * (this.player.getSkillD() + 1);
-	this.skillC.crop(this.cropRectC);
-
-	this.cropRectD.height = 66 * (this.player.getSkillE() + 1);
-	this.skillD.crop(this.cropRectD);
+	this.skillAHotkey.fill = this.skillA.alpha == 1 ? "white" : "grey";
+	this.skillBHotkey.fill = this.skillB.alpha == 1 ? "white" : "grey";
+	this.skillCHotkey.fill = this.skillC.alpha == 1 ? "white" : "grey";
+	this.skillDHotkey.fill = this.skillD.alpha == 1 ? "white" : "grey";
 
 	// Update every 500ms so won't be that taxing
 	if (this.winState == false && this.game.time.now > this.textTimer) {

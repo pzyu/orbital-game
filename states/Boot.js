@@ -73,13 +73,8 @@ BasicGame.Boot.prototype = {
         this.load.image('slimeball', 'images/sprites/effects/slimeball.png');
 
         // HUD
-        this.load.image('skill', 'images/sprites/heroes/skill.png');
         this.load.image('player_hud', 'images/player_hud.png');
         this.load.image('player_hud_bar', 'images/player_hud_bar.png');
-        this.load.image('hpEmpty', 'images/sprites/heroes/hpEmpty.png');
-        this.load.image('hpFull', 'images/sprites/heroes/hpFull.png');
-        this.load.image('expEmpty', 'images/sprites/heroes/expEmpty.png');
-        this.load.image('expFull', 'images/sprites/heroes/expFull.png');
         this.load.image('score', 'images/score.png');
         this.load.image('playerName', 'images/playerName.png');
         this.load.image('magicCircle', 'images/magiccircle.png');
