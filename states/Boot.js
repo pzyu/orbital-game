@@ -69,10 +69,13 @@ BasicGame.Boot.prototype = {
         this.load.image('laser_red', 'images/sprites/effects/laser_red.png');
         this.load.image('laser_green', 'images/sprites/effects/laser_green.png');
         this.load.image('grenade', 'images/sprites/effects/grenade.png');
+        this.load.image('healthkit', 'images/sprites/effects/health_kit.png');
         this.load.image('slimeball', 'images/sprites/effects/slimeball.png');
 
         // HUD
         this.load.image('skill', 'images/sprites/heroes/skill.png');
+        this.load.image('player_hud', 'images/player_hud.png');
+        this.load.image('player_hud_bar', 'images/player_hud_bar.png');
         this.load.image('hpEmpty', 'images/sprites/heroes/hpEmpty.png');
         this.load.image('hpFull', 'images/sprites/heroes/hpFull.png');
         this.load.image('expEmpty', 'images/sprites/heroes/expEmpty.png');
@@ -80,6 +83,28 @@ BasicGame.Boot.prototype = {
         this.load.image('score', 'images/score.png');
         this.load.image('playerName', 'images/playerName.png');
         this.load.image('magicCircle', 'images/magiccircle.png');
+        
+        // Player skills
+        this.load.image('destroyer_hud_skillA', 'images/sprites/heroes/skills/destroyer_skillA.png');
+        this.load.image('destroyer_hud_skillB', 'images/sprites/heroes/skills/destroyer_skillB.png');
+        this.load.image('destroyer_hud_skillC', 'images/sprites/heroes/skills/destroyer_skillC.png');
+        this.load.image('destroyer_hud_skillD', 'images/sprites/heroes/skills/destroyer_skillD.png');
+
+        this.load.image('walker_hud_skillA', 'images/sprites/heroes/skills/walker_skillA.png');
+        this.load.image('walker_hud_skillB', 'images/sprites/heroes/skills/walker_skillB.png');
+        this.load.image('walker_hud_skillC', 'images/sprites/heroes/skills/walker_skillC.png');
+        this.load.image('walker_hud_skillD', 'images/sprites/heroes/skills/walker_skillD.png');
+
+        this.load.image('gunner_hud_skillA', 'images/sprites/heroes/skills/gunner_skillA.png');
+        this.load.image('gunner_hud_skillB', 'images/sprites/heroes/skills/gunner_skillB.png');
+        this.load.image('gunner_hud_skillC', 'images/sprites/heroes/skills/gunner_skillC.png');
+        this.load.image('gunner_hud_skillD', 'images/sprites/heroes/skills/gunner_skillD.png');
+
+        this.load.image('trooper_hud_skillA', 'images/sprites/heroes/skills/trooper_skillA.png');
+        this.load.image('trooper_hud_skillB', 'images/sprites/heroes/skills/trooper_skillB.png');
+        this.load.image('trooper_hud_skillC', 'images/sprites/heroes/skills/trooper_skillC.png');
+        this.load.image('trooper_hud_skillD', 'images/sprites/heroes/skills/trooper_skillD.png');
+
 
         // Effect atlas
         this.load.atlas('beam_effect_sprite', 'images/sprites/effects/beam.png', 'images/sprites/effects/beam.json');

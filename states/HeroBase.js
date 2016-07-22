@@ -348,7 +348,8 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 };
 
 BasicGame.HeroBase.prototype.getSkillA = function() {
-	return this.game.math.clamp((this.game.time.now - this.skillATimer) / this.skillACooldown, -1, 0);
+	//return this.game.math.clamp((this.game.time.now - this.skillATimer) / this.skillACooldown, -1, 0);
+	return this.game.math.clamp(this.skillACooldown - (this.game.time.now - this.skillATimer), 0, this.skillACooldown);
 };
 
 BasicGame.HeroBase.prototype.getSkillB = function() {
@@ -397,7 +398,7 @@ BasicGame.HeroBase.prototype.miteCallback = function(obj1, obj2, team) {
 		obj1.key == "grenade" || obj1.key == "laser_blue" || obj1.key == "laser_red" || obj1.key == "slimeball" || obj1.key == "mite_sprite") {
 			obj1.kill();
 		}
-		if (obj1.key != "effects_sprite") {
+		if (obj1.key != "slime_sprite") {
 			obj2.kill();
 		}
 	}
