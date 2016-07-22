@@ -150,7 +150,7 @@ BasicGame.MainGame.prototype.preloadGame = function() {
 	//this.spawnAI("retard_Bot", 500, 1000, "player_trooper", "retard Ace", 2);
 	//this.spawnAI("retard_Bot1", 500, 1000, "player_destroyer", "retard Destroyer", 2);
 	//this.spawnAI("retard_Bot2", 500, 1000, "player_trooper", "retard Ace", 1);
-	this.spawnAI("retard_Bot3", 500, 1000, "player_Destroyer", "Terminator", 2);
+	this.spawnAI("retard_Bot3", 500, 1000, "player_walker", "retard Walker", 2);
 
 };
 
@@ -752,7 +752,7 @@ BasicGame.MainGame.prototype.broadcast = function(msg, duration) {
 BasicGame.MainGame.prototype.update = function() {
 	//this.scriptAIDestroyer(this.playerList["retard_Bot2"][0], this.playerList["retard_Bot1"][0]); // AI Script activated (Destroyer)
 	//this.scriptAIAce(this.playerList["retard_Bot1"][0], this.playerList["retard_Bot2"][0]); // AI Script activated (Ace)
-	this.scriptAIDestroyer(this.playerList["SoloKid"][0], this.playerList["retard_Bot3"][0]); // AI Script activated (Ace)
+	this.scriptAIWalker(this.playerList["SoloKid"][0], this.playerList["retard_Bot3"][0]); // AI Script activated (Ace)
 	// Enable collision between player and layer and shield
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
 	this.physics.arcade.overlap(BasicGame.playerCG, BasicGame.shieldCG, this.shieldCallback.bind(this));
