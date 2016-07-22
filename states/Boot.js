@@ -56,6 +56,9 @@ BasicGame.Boot.prototype = {
         this.load.image('background_tiles', 'images/building_sheet.png');
         this.load.image('tiles_spritesheet', 'images/tiles_spritesheet.png');
 
+        this.load.tilemap('tutorial', 'images/tutorial.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.image('tutorial_tiles', 'images/lab_tilesheet.png');
+
         // Player atlas
         this.load.atlas('player_destroyer', 'images/sprites/heroes/destroyer.png', 'images/sprites/heroes/destroyer.json');
         this.load.atlas('player_trooper', 'images/sprites/heroes/trooper.png', 'images/sprites/heroes/trooper.json');

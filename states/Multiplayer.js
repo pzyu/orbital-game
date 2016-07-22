@@ -502,7 +502,7 @@ BasicGame.Multiplayer.prototype.handleHUD = function() {
 	// Health
 	this.healthBarPercentage.setText(this.game.math.floorTo(this.player.getHP() * 100) + "%");
 	this.healthRect.width = 269 * this.player.getHP();
-	this.healthBar.crop(this.hudRect);
+	this.healthBar.crop(this.healthRect);
 
 	// Exp
 	this.expBarPercentage.setText(this.game.math.floorTo(this.player.getExp() * 100) + "%");

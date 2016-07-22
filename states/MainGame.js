@@ -18,8 +18,8 @@ BasicGame.MainGame = function (game) {
 
 	this.spawnPoints = [				// Array of spawn points, set in each hero class
 		{x: 1000,  y: 250},
-		{x: 250,  y: 1000},				// Team 1 spawn
-		{x: 3200, y: 1000},				// Team 2 spawn
+		{x: 250,  y: 500},				// Team 1 spawn
+		{x: 2000, y: 500},				// Team 2 spawn
 		{x: 2500,  y: 500}
 	];
 
@@ -106,24 +106,20 @@ BasicGame.MainGame.prototype.preloadGame = function() {
 	this.stage.backgroundColor = '#787878';
 
 	// Add tilemap
-	map = this.add.tilemap('map');					// 'map' must be same as the one in Boot.js
-	map.addTilesetImage('sheet', 'tiles');			// 'sheet' must be the same also
-	map.addTilesetImage('building_sheet', 'background_tiles');
-	map.addTilesetImage('tiles_spritesheet', 'tiles_spritesheet');
+	map = this.add.tilemap('tutorial');					// 'map' must be same as the one in Boot.js
+	map.addTilesetImage('lab_tilesheet', 'tutorial_tiles');			// 'sheet' must be the same also
 
-	var background = map.createLayer('Background');	// 'Background' must be the same in the json file
+	var background = map.createLayer('background');	// 'Background' must be the same in the json file
 	background.resizeWorld();
 	background.wrap = true;
 
-	layer = map.createLayer('Level 1');				// 'Level 1' must be the same in the json file
+	layer = map.createLayer('level');				// 'Level 1' must be the same in the json file
 	layer.resizeWorld();
 	layer.wrap = true;
 
 	this.mapLayer = layer;
 
-	map.setCollisionBetween(0, 60, true, layer);	// Set collision layers between json tile representation
-	map.setCollisionBetween(63, 80, true, layer);	
-	map.setCollisionBetween(329, 341, true, layer);	
+	map.setCollisionBetween(17, 38, true, layer);	// Set collision layers between json tile representation
 
 	this.physics.arcade.TILE_BIAS = 60;				// The higher the tile bias, the more unlikely it is the player will fall through
 
@@ -413,7 +409,7 @@ BasicGame.MainGame.prototype.createGame = function() {
 	// Create client's hero
 	if (BasicGame.selectedChar == "player_trooper") {
 		//console.log(this.game.rnd.integerInRange(0, 3));
-		var player = new BasicGame.HeroTrooperMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick, 1);
+		var player = new BasicGame.HeroTrooperMP(BasicGame.myID, this.game, 100, 100, BasicGame.myTeam, BasicGame.myNick, 1);
 	}
 	if (BasicGame.selectedChar == "player_walker") {
 		var player = new BasicGame.HeroWalkerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick, 1);
@@ -674,7 +670,7 @@ BasicGame.MainGame.prototype.handleHUD = function() {
 	// Health
 	this.healthBarPercentage.setText(this.game.math.floorTo(this.player.getHP() * 100) + "%");
 	this.healthRect.width = 269 * this.player.getHP();
-	this.healthBar.crop(this.hudRect);
+	this.healthBar.crop(this.healthRect);
 
 	// Exp
 	this.expBarPercentage.setText(this.game.math.floorTo(this.player.getExp() * 100) + "%");
