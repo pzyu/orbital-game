@@ -15,25 +15,25 @@ BasicGame.HeroDestroyerMP = function (id, game, x, y, team, nick, initLvl) {
 	this.attack = 5; // multiplayer for attack damage
 	this.atkSpeed = 5; // multiplier for attack speed
 	this.movSpeed = 5; // multiplier for movement speed
-	this.skillBLvl = -100;
-	this.skillCLvl = -100;
-	this.skillDLvl = -120;
-	this.skillELvl = -400;
+	this.skillBLvl = 100;
+	this.skillCLvl = 100;
+	this.skillDLvl = 120;
+	this.skillELvl = 400;
 
 	// Base Hero attributes
 	this.jumpStrength = -1500;
-	this.moveSpeed = 600;
+	this.moveSpeed = 600 + (this.movSpeed * initLvl);
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 500;
+	this.maxHealth = 500 + (this.constituition * initLvl * 5);
 	this.curHealth = this.maxHealth;
 	this.knockbackForce = 1000;
 
 	// Skill cooldowns in milliseconds (Min Cool Down time)
-    this.skillACooldown = 1000; // normal attack - shoot bullet (Default 1s)
-	this.skillBCooldown = 5000; // knockback melee (Default 5s)
-	this.skillCCooldown = 4500; // shotgun (Default 4.5s)
-	this.skillDCooldown = 8000;	// grenade (Default 8s)
-	this.skillECooldown = 30000; // Ulti (Default 40s)
+    this.skillACooldown = (1000 - (this.atkSpeed * 2 * initLvl) <= 200) ? 200 : 1000 - (this.atkSpeed * 2 * initLvl); // normal attack - shoot bullet (Default 1s)
+	this.skillBCooldown = 5000  - (this.skillBLvl * initLvl); // knockback melee (Default 5s)
+	this.skillCCooldown = 4500 - (this.skillCLvl * initLvl); // shotgun (Default 4.5s)
+	this.skillDCooldown = 8000 - (this.skillDLvl * initLvl);	// grenade (Default 8s)
+	this.skillECooldown = 30000 - (this.skillELvl * initLvl); // Ulti (Default 40s)
 	this.defaultAS = this.skillACooldown;
 
 	// Attack collider
