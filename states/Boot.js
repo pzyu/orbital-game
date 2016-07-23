@@ -142,6 +142,11 @@ BasicGame.Boot.prototype = {
         this.load.image('lobby_panel', 'images/sprites/lobby_panel.png');
         this.load.image('lobby_big_panel', 'images/sprites/lobby_big_panel.png');
         this.load.image('lobby_team_panel', 'images/sprites/lobby_team.png');
+
+        // Mobile controls
+        this.load.image('arrowLeft', 'images/sprites/arrowLeft.png');
+        this.load.image('arrowRight', 'images/sprites/arrowRight.png');
+        this.load.image('arrowUp', 'images/sprites/arrowUp.png');
     },
 
     loadAudio: function() {

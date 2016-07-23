@@ -706,6 +706,42 @@ BasicGame.MainGame.prototype.createGame = function() {
 	this.playerListHUD = [];
 	this.addPlayerName(BasicGame.myID);
 
+	// Mobile controls
+	if (this.game.device.android || this.game.device.iOS || this.game.device.desktop) {
+		this.leftButton = this.game.add.image(1000, 600, 'arrowLeft');
+		this.leftButton.fixedToCamera = true;
+		this.leftButton.inputEnabled = true;
+
+		this.rightButton = this.game.add.image(1100, 600, 'arrowRight');
+		this.rightButton.fixedToCamera = true;
+		this.rightButton.inputEnabled = true;
+
+		this.upButton = this.game.add.image(240, 520, 'arrowUp');
+		this.upButton.fixedToCamera = true;
+		this.upButton.inputEnabled = true;
+
+		this.leftButton.events.onInputDown.add(function() {
+			this.player.cursors.left.isDown = true;
+		}, this);
+		this.leftButton.events.onInputUp.add(function() {
+			this.player.cursors.left.isDown = false;
+		}, this);
+
+		this.rightButton.events.onInputDown.add(function() {
+			this.player.cursors.right.isDown = true;
+		}, this);
+		this.rightButton.events.onInputUp.add(function() {
+			this.player.cursors.right.isDown = false;
+		}, this);
+
+		this.upButton.events.onInputDown.add(function() {
+			this.player.cursors.up.isDown = true;
+		}, this);
+		this.upButton.events.onInputUp.add(function() {
+			this.player.cursors.up.isDown = false;
+		}, this);
+	}
+
 	// Broadcast messages
 	var style = {font: '32pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 800, align: 'center'};
 	this.message = this.game.add.text(-500, 0, 'Default message', style), 
