@@ -148,8 +148,10 @@ BasicGame.HeroBase.prototype.spawn = function() {
 	if (this.isDead) {
 		this.body.velocity.x = this.body.velocity.y = 0;
 		this.isAttacking = false;
-		if (this.refMP.teamScores[2] >= 5) {
+		if (BasicGame.myID == "SoloKid" && this.refMP.teamScores[2] >= 5) {
 			var spawnTime = 86400000;
+		} else if (BasicGame.myID == "SoloKid" && this.ID == "SoloKid") {
+			var spawnTime = 5000 + (this.heroLevel * 200);
 		} else {
 			var spawnTime = 5000 + (this.heroLevel * 1000);
 		}
@@ -347,15 +349,15 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 					//onLevelUp(this); // bot becomes stronger
 					if (this.refMP.teamScores[1] == 5 && this.refMP.playerList["retard_Bot2"] == null) {
 						// spawn new enemy (Disruptor)
-						this.refMP.spawnAI("retard_Bot2", 500, 1000, "player_gunner", "Enemy Disruptor(AI)", 2, 5);
+						this.refMP.spawnAI("retard_Bot2", 500, 1000, "player_gunner", "Enemy Disruptor(AI)", 2, 3);
 						this.refMP.broadcast("Enemy support has arrived!", 2);
 					} else if (this.refMP.teamScores[1] == 10 && this.refMP.playerList["retard_Bot3"] == null) {
 						// spawn new enemy (Disruptor)
-						this.refMP.spawnAI("retard_Bot3", 500, 1000, "player_destroyer", "Enemy Destroyer(AI)", 2, 10);
+						this.refMP.spawnAI("retard_Bot3", 500, 1000, "player_destroyer", "Enemy Destroyer(AI)", 2, 7);
 						this.refMP.broadcast("Destroyer, incoming!", 2);
 					} else if (this.refMP.teamScores[1] == 15 && this.refMP.playerList["retard_Bot4"] == null) {
 						// spawn new enemy (Disruptor)
-						this.refMP.spawnAI("retard_Bot4", 500, 1000, "player_ace", "Enemy Ace(AI)", 2, 15);
+						this.refMP.spawnAI("retard_Bot4", 500, 1000, "player_ace", "Enemy Ace(AI)", 2, 12);
 						this.refMP.broadcast("The enemy has brought out their Ace, good luck surviving.", 2);
 					}
 				}
