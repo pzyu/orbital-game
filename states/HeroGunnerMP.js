@@ -74,7 +74,7 @@ BasicGame.HeroGunnerMP = function (id, game, x, y, team, nick, initLvl) {
     this.weapon.fireAngle = 0;												
     this.weapon.fireRate = 0;					
     this.weapon.bulletKillType = Phaser.Weapon.KILL_LIFESPAN;		
-    this.weapon.bulletLifespan = 500;	
+    this.weapon.bulletLifespan = 1000;	
     this.weapon.bulletSpeed = 1200;											
     this.weapon.bulletGravity = new Phaser.Point(0, -this.refMP.gravity);	
     this.weapon.trackSprite(this, 0, -50);			
@@ -214,9 +214,9 @@ BasicGame.HeroGunnerMP.prototype.update = function() {
 	this.refMP.physics.arcade.overlap(this.pack.bullets, BasicGame.playerCG, this.healthPackCallback.bind(this));
 
 	// Collide with shield
-	this.refMP.physics.arcade.overlap(this.weapon.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
-	this.refMP.physics.arcade.overlap(this.trap.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
-	this.refMP.physics.arcade.overlap(this.mite.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
+	this.refMP.physics.arcade.collide(this.weapon.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
+	this.refMP.physics.arcade.collide(this.trap.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
+	this.refMP.physics.arcade.collide(this.mite.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
 
 	// Collide with mite
 	this.refMP.physics.arcade.overlap(this.weapon.bullets, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});
@@ -226,7 +226,6 @@ BasicGame.HeroGunnerMP.prototype.update = function() {
 	this.inCircle = false;
 	this.refMP.physics.arcade.overlap(this, this.refMP.magicCircle, this.magicCircleCallback.bind(this));
 
-	this.getChildAt(0).setText(this.nick + " " + this.heroLevel);
 	this.getChildAt(0).scale.x = this.facingRight;
 	//this.weapon.debug(0, 0, true);
 	//this.trap.debug(0, 100, true);

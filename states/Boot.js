@@ -142,6 +142,11 @@ BasicGame.Boot.prototype = {
         this.load.image('lobby_panel', 'images/sprites/lobby_panel.png');
         this.load.image('lobby_big_panel', 'images/sprites/lobby_big_panel.png');
         this.load.image('lobby_team_panel', 'images/sprites/lobby_team.png');
+
+        // Mobile controls
+        this.load.image('arrowLeft', 'images/sprites/arrowLeft.png');
+        this.load.image('arrowRight', 'images/sprites/arrowRight.png');
+        this.load.image('arrowUp', 'images/sprites/arrowUp.png');
     },
 
     loadAudio: function() {
@@ -167,7 +172,7 @@ BasicGame.Boot.prototype = {
         this.load.audio('trooper_skillA', 'audio/heroes/trooper/default.ogg');
         this.load.audio('trooper_skillB', 'audio/heroes/trooper/haste.ogg');
         this.load.audio('trooper_skillC', 'audio/heroes/trooper/invis.ogg');
-        this.load.audio('trooper_skillD', 'audio/heroes/trooper/haste.ogg');
+        this.load.audio('trooper_skillD', 'audio/heroes/trooper/backtrack.ogg');
         this.load.audio('trooper_skillE', 'audio/heroes/trooper/snipe.ogg');
 
         this.load.audio('walker_skillA', 'audio/heroes/walker/default.ogg');

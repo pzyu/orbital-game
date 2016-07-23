@@ -315,7 +315,7 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.healthBar.anchor.setTo(0, 1);
 	this.healthRect = new Phaser.Rectangle(0, 0, this.healthBar.width, this.healthBar.height);
 
-	this.healthBarPercentage = this.game.add.text(505, this.game.height - 65, '0%', { font: '14pt myfont', align: 'right', fill: 'white', stroke: 'black', strokeThickness: 2});
+	this.healthBarPercentage = this.game.add.text(505, this.game.height - 65, '0%', { font: '14pt myfont', align: 'right', fill: 'white', stroke: '#7cabd5', strokeThickness: 2});
 	this.healthBarPercentage.fixedToCamera = true;
 	this.healthBarPercentage.anchor.setTo(0.5, 0.5);
 
@@ -324,9 +324,13 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.expBar.anchor.setTo(0, 1);
 	this.expRect = new Phaser.Rectangle(0, 0, this.expBar.width, this.expBar.height);
 
-	this.expBarPercentage = this.game.add.text(520, this.game.height - 42, '0%', { font: '14pt myfont', align: 'right', fill: 'white', stroke: 'black', strokeThickness: 2});
+	this.expBarPercentage = this.game.add.text(520, this.game.height - 42, '0%', { font: '14pt myfont', align: 'right', fill: 'white', stroke: '#7cabd5', strokeThickness: 2});
 	this.expBarPercentage.fixedToCamera = true;
 	this.expBarPercentage.anchor.setTo(0.5, 0.5);
+
+	this.playerLevel = this.game.add.text(360, this.game.height - 98, '[25]', {font: '16pt myfont', align:'right', fill:'white', stroke:'#7cabd5', strokeThickness: 2});
+	this.playerLevel.fixedToCamera = true;
+	this.playerLevel.anchor.setTo(0, 0.5);
 
 	// Customized skill and portrait
 	var char = BasicGame.selectedChar.substring(7);
@@ -425,6 +429,42 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.playerListHUD = [];
 	this.addPlayerName(BasicGame.myID);
 
+	// Mobile controls
+	if (this.game.device.android || this.game.device.iOS || this.game.device.desktop) {
+		this.leftButton = this.game.add.image(1000, 600, 'arrowLeft');
+		this.leftButton.fixedToCamera = true;
+		this.leftButton.inputEnabled = true;
+
+		this.rightButton = this.game.add.image(1100, 600, 'arrowRight');
+		this.rightButton.fixedToCamera = true;
+		this.rightButton.inputEnabled = true;
+
+		this.upButton = this.game.add.image(240, 520, 'arrowUp');
+		this.upButton.fixedToCamera = true;
+		this.upButton.inputEnabled = true;
+
+		this.leftButton.events.onInputDown.add(function() {
+			this.player.cursors.left.isDown = true;
+		}, this);
+		this.leftButton.events.onInputUp.add(function() {
+			this.player.cursors.left.isDown = false;
+		}, this);
+
+		this.rightButton.events.onInputDown.add(function() {
+			this.player.cursors.right.isDown = true;
+		}, this);
+		this.rightButton.events.onInputUp.add(function() {
+			this.player.cursors.right.isDown = false;
+		}, this);
+
+		this.upButton.events.onInputDown.add(function() {
+			this.player.cursors.up.isDown = true;
+		}, this);
+		this.upButton.events.onInputUp.add(function() {
+			this.player.cursors.up.isDown = false;
+		}, this);
+	}
+
 	// Broadcast messages
 	var style = {font: '32pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 800, align: 'center'};
 	this.message = this.game.add.text(-500, 0, 'Default message', style), 
@@ -449,8 +489,6 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 		0,
 		0
 	];
-
-	console.log("my team: " + BasicGame.myTeam);
 };
 
 BasicGame.Multiplayer.prototype.addPlayerName = function(id) {
@@ -513,6 +551,9 @@ BasicGame.Multiplayer.prototype.update = function() {
 };
 
 BasicGame.Multiplayer.prototype.handleHUD = function() {
+	// Level
+	this.playerLevel.setText("[" + this.player.heroLevel + "]");
+
 	// Health
 	this.healthBarPercentage.setText(this.game.math.floorTo(this.player.getHP() * 100) + "%");
 	this.healthRect.width = 269 * this.player.getHP();

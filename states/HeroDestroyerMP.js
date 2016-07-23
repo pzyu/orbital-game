@@ -151,8 +151,8 @@ BasicGame.HeroDestroyerMP.prototype.update = function() {
 	this.refMP.physics.arcade.overlap(this.grenade.bullets, BasicGame.playerCG, this.grenadeCallback.bind(this));
 
 	// Collide with shield
-	this.refMP.physics.arcade.overlap(this.weapon.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
-	this.refMP.physics.arcade.overlap(this.grenade.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
+	this.refMP.physics.arcade.collide(this.weapon.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
+	this.refMP.physics.arcade.collide(this.grenade.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
 
 	// Collide with mite
 	this.refMP.physics.arcade.overlap(this.attackCollider, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});
@@ -162,7 +162,6 @@ BasicGame.HeroDestroyerMP.prototype.update = function() {
 	this.inCircle = false;
 	this.refMP.physics.arcade.overlap(this, this.refMP.magicCircle, this.magicCircleCallback.bind(this));
 
-	this.getChildAt(0).setText(this.nick + " " + this.heroLevel);
 	this.getChildAt(0).scale.x = this.facingRight;
 	//this.game.debug.body(this.attackCollider);
 	//this.weapon.debug(0, 0, true);
