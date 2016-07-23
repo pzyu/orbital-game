@@ -9,6 +9,8 @@ var BasicGame = {
   playerCG: null,
   selectedChar: null,
   musicPlayer: null,
+  buttonOver: null,
+  buttonClick: null,
   eurecaServer: null,
   eurecaClient: null,
   myID: null,
@@ -21,6 +23,7 @@ var BasicGame = {
     target.fill = "#CCE8FF";
     target.stroke = "rgba(0,0,0,255)";
     target.scale.setTo(1.01);
+    BasicGame.buttonOver.play();
   },
 
   // On out style
@@ -28,6 +31,10 @@ var BasicGame = {
     target.fill = "white";
     target.stroke = "rgba(0,0,0,255)";
     target.scale.setTo(1.0);
+  },
+
+  onDown: function(target) {
+    BasicGame.buttonClick.play();
   },
 
   disconnectClient: function () {

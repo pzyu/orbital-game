@@ -116,7 +116,7 @@ BasicGame.HeroWalkerMP = function (id, game, x, y, team, nick, initLvl) {
 
     // Explosion group
     this.explosionGroup = this.game.add.group(); 
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < 20; i++) {
     	var proj = new BasicGame.Effect(this.game, 'explosion', 1, 0.8, false);
     	this.explosionGroup.add(proj);
     }
@@ -190,7 +190,7 @@ BasicGame.HeroWalkerMP.prototype.update = function() {
 BasicGame.HeroWalkerMP.prototype.attCallback = function(obj1, obj2) {
 	// If not colliding with yourself
 	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
-		console.log(this.myTeam, obj2.myTeam);
+		//console.log(this.myTeam, obj2.myTeam);
 		// Kill collider
 		this.isAttacking = false;
 		this.attackCollider.deactivate();

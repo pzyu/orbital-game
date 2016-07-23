@@ -151,8 +151,8 @@ BasicGame.HeroDestroyerMP.prototype.update = function() {
 	this.refMP.physics.arcade.overlap(this.grenade.bullets, BasicGame.playerCG, this.grenadeCallback.bind(this));
 
 	// Collide with shield
-	this.refMP.physics.arcade.collide(this.weapon.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
-	this.refMP.physics.arcade.collide(this.grenade.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
+	this.refMP.physics.arcade.overlap(this.weapon.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
+	this.refMP.physics.arcade.overlap(this.grenade.bullets, BasicGame.shieldCG, this.collideCallback.bind(this));
 
 	// Collide with mite
 	this.refMP.physics.arcade.overlap(this.attackCollider, BasicGame.miteCG, this.miteCallback, null, { this: this, team: this.myTeam});

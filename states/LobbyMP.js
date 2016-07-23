@@ -125,6 +125,7 @@ BasicGame.LobbyMulti.prototype = {
 		this.returnMenu.inputEnabled = true;
 		this.returnMenu.events.onInputOver.add(BasicGame.onOver);
 		this.returnMenu.events.onInputOut.add(BasicGame.onOut);
+		this.returnMenu.events.onInputDown.add(BasicGame.onDown);
 
 		// Back button clicked
 		this.returnMenu.events.onInputUp.add(function() {
@@ -201,12 +202,16 @@ BasicGame.LobbyMulti.prototype = {
 		this.joinLobby4.inputEnabled = true;
 		this.joinLobby1.events.onInputOver.add(BasicGame.onOver);
 		this.joinLobby1.events.onInputOut.add(BasicGame.onOut);
+		this.joinLobby1.events.onInputDown.add(BasicGame.onDown);
 		this.joinLobby2.events.onInputOver.add(BasicGame.onOver);
 		this.joinLobby2.events.onInputOut.add(BasicGame.onOut);
+		this.joinLobby2.events.onInputDown.add(BasicGame.onDown);
 		this.joinLobby3.events.onInputOver.add(BasicGame.onOver);
 		this.joinLobby3.events.onInputOut.add(BasicGame.onOut);
+		this.joinLobby3.events.onInputDown.add(BasicGame.onDown);
 		this.joinLobby4.events.onInputOver.add(BasicGame.onOver);
 		this.joinLobby4.events.onInputOut.add(BasicGame.onOut);
+		this.joinLobby4.events.onInputDown.add(BasicGame.onDown);
 
 		this.joinLobby1.events.onInputUp.add(function() {
 			this.game.state.start('LobbyRoom', true, false, 'publicLobby1', '');
@@ -227,6 +232,7 @@ BasicGame.LobbyMulti.prototype = {
 		this.resetServer.inputEnabled = true;
 		this.resetServer.events.onInputOver.add(BasicGame.onOver);
 		this.resetServer.events.onInputOut.add(BasicGame.onOut);
+		this.resetServer.events.onInputDown.add(BasicGame.onDown);
 		this.resetServer.events.onInputUp.add(function() {
 			BasicGame.eurecaServer.initializeLobby();
 			BasicGame.eurecaServer.requestClientInfo();

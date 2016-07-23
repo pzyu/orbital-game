@@ -18,8 +18,8 @@ BasicGame.MainGame = function (game) {
 
 	this.spawnPoints = [				// Array of spawn points, set in each hero class
 		{x: 1000,  y: 250},
-		{x: 250,  y: 500},				// Team 1 spawn
-		{x: 2000, y: 500},				// Team 2 spawn
+		{x: 360,  y: 500},				// Team 1 spawn
+		{x: 2800, y: 500},				// Team 2 spawn
 		{x: 2500,  y: 500}
 	];
 
@@ -87,11 +87,11 @@ BasicGame.MainGame.prototype.preload = function() {
 
 	BasicGame.MainGame.prototype.setIndex = function(index) {
 		// Return player's selected character
-		if (ref.magicCircle != null) {
-			ref.magicCircle.position = ref.magicSpawnPoints[index];
-			console.log('setting magic circle to: ' + ref.magicCircle.position.x + ' ' + ref.magicCircle.position.y);
-			ref.broadcast("The sigil of Antares has appeared", 2);
-		}
+		// if (ref.magicCircle != null) {
+		// 	ref.magicCircle.position = ref.magicSpawnPoints[index];
+		// 	console.log('setting magic circle to: ' + ref.magicCircle.position.x + ' ' + ref.magicCircle.position.y);
+		// 	ref.broadcast("The sigil of Antares has appeared", 2);
+		// }
 	};
 
 	this.preloadGame();
@@ -106,8 +106,8 @@ BasicGame.MainGame.prototype.preloadGame = function() {
 	this.stage.backgroundColor = '#787878';
 
 	// Add tilemap
-	map = this.add.tilemap('tutorial');					// 'map' must be same as the one in Boot.js
-	map.addTilesetImage('lab_tilesheet', 'tutorial_tiles');			// 'sheet' must be the same also
+	map = this.add.tilemap('single_player');					// 'map' must be same as the one in Boot.js
+	map.addTilesetImage('lab_tilesheet', 'lab_tiles');			// 'sheet' must be the same also
 
 	var background = map.createLayer('background');	// 'Background' must be the same in the json file
 	background.resizeWorld();
@@ -571,49 +571,42 @@ BasicGame.MainGame.prototype.createGame = function() {
 	this.player = player;
 
 	// Add collider for spawns
-	this.teamA = this.game.add.sprite(80, 950, '');
+	this.teamA = this.game.add.sprite(140, 700, 'fence');
 	this.game.physics.arcade.enableBody(this.teamA);
-	this.teamA.body.setSize(500, 300, 0, 0);
+	this.teamA.body.setSize(350, 100, 0, -40);
 	this.teamA.body.allowGravity = false;
 	this.game.add.existing(this.teamA);
 
-	this.teamB = this.game.add.sprite(2900, 950, '');
+	this.teamB = this.game.add.sprite(2660, 700, 'fence');
 	this.game.physics.arcade.enableBody(this.teamB);
-	this.teamB.body.setSize(500, 300, 0, 0);
+	this.teamB.body.setSize(350, 100, 0, -40);
 	this.teamB.body.allowGravity = false;
 	this.game.add.existing(this.teamB);
-
 
 	// Player hud
 	this.hud = this.game.add.image(10, 540, 'player_hud');
 	this.hud.fixedToCamera = true;
 
-	this.healthBar = this.game.add.image(328, 668, 'player_hud_bar');
+	this.healthBar = this.game.add.image(363, 668, 'player_hud_bar');
 	this.healthBar.fixedToCamera = true;
 	this.healthBar.anchor.setTo(0, 1);
 	this.healthRect = new Phaser.Rectangle(0, 0, this.healthBar.width, this.healthBar.height);
 
-	this.healthBarPercentage = this.game.add.text(470, this.game.height - 65, '0%', { font: '14pt myfont', align: 'right', fill: 'white', stroke: 'black', strokeThickness: 2});
+	this.healthBarPercentage = this.game.add.text(505, this.game.height - 65, '0%', { font: '14pt myfont', align: 'right', fill: 'white', stroke: 'black', strokeThickness: 2});
 	this.healthBarPercentage.fixedToCamera = true;
 	this.healthBarPercentage.anchor.setTo(0.5, 0.5);
 
-	this.expBar = this.game.add.image(350, 692, 'player_hud_bar');
+	this.expBar = this.game.add.image(385, 692, 'player_hud_bar');
 	this.expBar.fixedToCamera = true;
 	this.expBar.anchor.setTo(0, 1);
 	this.expRect = new Phaser.Rectangle(0, 0, this.expBar.width, this.expBar.height);
 
-	this.expBarPercentage = this.game.add.text(485, this.game.height - 42, '0%', { font: '14pt myfont', align: 'right', fill: 'white', stroke: 'black', strokeThickness: 2});
+	this.expBarPercentage = this.game.add.text(520, this.game.height - 42, '0%', { font: '14pt myfont', align: 'right', fill: 'white', stroke: 'black', strokeThickness: 2});
 	this.expBarPercentage.fixedToCamera = true;
 	this.expBarPercentage.anchor.setTo(0.5, 0.5);
 
 	// Customized skill and portrait
 	var char = BasicGame.selectedChar.substring(7);
-	console.log(char);
-	this.playerHUD = this.game.add.image(229, 648, char + '_portrait');
-	this.playerHUD.anchor.setTo(0.5, 0.5);
-	this.playerHUD.scale.setTo(0.62, 0.62);
-	this.playerHUD.fixedToCamera = true;
-
 	// Team gui
 	this.logo = this.game.add.image(240, 0, 'score');
 	this.teamAHUD = this.game.add.text(BasicGame.gameWidth/2 - 90, 40, 'TeamA', { font: '16pt myfont', align: 'right', fill: 'white'});
@@ -624,65 +617,86 @@ BasicGame.MainGame.prototype.createGame = function() {
 	this.teamBHUD.fixedToCamera = true;
 
 	// Skills
-	this.skillA = this.game.add.image(54, 694, char + '_hud_skillA');
-	this.skillB = this.game.add.image(93, 626, char + '_hud_skillB');
-	this.skillC = this.game.add.image(134, 694, char + '_hud_skillC');
-	this.skillD = this.game.add.image(172, 626, char + '_hud_skillD');
+	this.skillA = this.game.add.image(52, 626, char + '_hud_skillA');
+	this.skillB = this.game.add.image(89, 694, char + '_hud_skillB');
+	this.skillC = this.game.add.image(128, 626, char + '_hud_skillC');
+	this.skillD = this.game.add.image(169, 694, char + '_hud_skillD');
+	this.skillE = this.game.add.image(207, 626, char + '_hud_skillE');
 
 	this.skillA.fixedToCamera = true;
 	this.skillB.fixedToCamera = true;
 	this.skillC.fixedToCamera = true;
 	this.skillD.fixedToCamera = true;
+	this.skillE.fixedToCamera = true;
 
 	this.skillA.anchor.setTo(0.5, 1);
 	this.skillB.anchor.setTo(0.5, 1);
 	this.skillC.anchor.setTo(0.5, 1);
 	this.skillD.anchor.setTo(0.5, 1);
+	this.skillE.anchor.setTo(0.5, 1);
 
-	this.skillAHotkey = this.game.add.text(20, 620, '[S]', {font: '12pt myfont', fill: 'white', stroke: 'black', strokeThickness: '2'});
+	this.skillAHotkey = this.game.add.text(15, 550, '[A]', {font: '12pt myfont', fill: 'white', stroke: 'black', strokeThickness: '2'});
 	this.skillAHotkey.fixedToCamera = true;
 
-	this.skillBHotkey = this.game.add.text(60, 550, '[D]', {font: '12pt myfont', fill: 'white', stroke: 'black', strokeThickness: '2'});
+	this.skillBHotkey = this.game.add.text(55, 620, '[S]', {font: '12pt myfont', fill: 'white', stroke: 'black', strokeThickness: '2'});
 	this.skillBHotkey.fixedToCamera = true;
 
-	this.skillCHotkey = this.game.add.text(100, 620, '[F]', {font: '12pt myfont', fill: 'white', stroke: 'black', strokeThickness: '2'});
+	this.skillCHotkey = this.game.add.text(95, 550, '[D]', {font: '12pt myfont', fill: 'white', stroke: 'black', strokeThickness: '2'});
 	this.skillCHotkey.fixedToCamera = true;
 
-	this.skillDHotkey = this.game.add.text(140, 550, '[SPACE]', {font: '12pt myfont', fill: 'white', stroke: 'black', strokeThickness: '2'});
+	this.skillDHotkey = this.game.add.text(135, 620, '[F]', {font: '12pt myfont', fill: 'white', stroke: 'black', strokeThickness: '2'});
 	this.skillDHotkey.fixedToCamera = true;
+
+	this.skillEHotkey = this.game.add.text(175, 550, '[SPACE]', {font: '12pt myfont', fill: 'white', stroke: 'black', strokeThickness: '2'});
+	this.skillEHotkey.fixedToCamera = true;
 
 	// Input
 	this.skillA.inputEnabled = true;
 	this.skillA.events.onInputDown.add(function() {
-		this.player.skillB.isDown = true;
+		this.player.skillA.isDown = true;
 	}, this);
 	this.skillA.events.onInputUp.add(function() {
-		this.player.skillB.isDown = false;
+		this.player.skillA.isDown = false;
 	}, this);
 
 	this.skillB.inputEnabled = true;
 	this.skillB.events.onInputDown.add(function() {
-		this.player.skillC.isDown = true;
+		this.player.skillB.isDown = true;
 	}, this);
 	this.skillB.events.onInputUp.add(function() {
-		this.player.skillC.isDown = false;
+		this.player.skillB.isDown = false;
 	}, this);
 
 	this.skillC.inputEnabled = true;
 	this.skillC.events.onInputDown.add(function() {
-		this.player.skillD.isDown = true;
+		this.player.skillC.isDown = true;
 	}, this);
 	this.skillC.events.onInputUp.add(function() {
-		this.player.skillD.isDown = false;
+		this.player.skillC.isDown = false;
 	}, this);
 
 	this.skillD.inputEnabled = true;
 	this.skillD.events.onInputDown.add(function() {
-		this.player.skillE.isDown = true;
+		this.player.skillD.isDown = true;
 	}, this);
 	this.skillD.events.onInputUp.add(function() {
+		this.player.skillD.isDown = false;
+	}, this);
+
+	this.skillE.inputEnabled = true;
+	this.skillE.events.onInputDown.add(function() {
+		this.player.skillE.isDown = true;
+	}, this);
+	this.skillE.events.onInputUp.add(function() {
 		this.player.skillE.isDown = false;
 	}, this);
+
+	// Portrait
+	this.playerHUD = this.game.add.image(264, 648, char + '_portrait');
+	this.playerHUD.anchor.setTo(0.5, 0.5);
+	this.playerHUD.scale.setTo(0.62, 0.62);
+	this.playerHUD.fixedToCamera = true;
+
 	// Team list
 	this.playerCount = 0;
 	this.playerListHUD = [];
@@ -803,8 +817,8 @@ BasicGame.MainGame.prototype.update = function() {
 	this.updatePlayerList();
 	//this.showPlayerList();
 	//this.updatePlayerList();
-	//this.game.debug.body(this.teamA);
-	//this.game.debug.body(this.teamB);
+	// this.game.debug.body(this.teamA);
+	// this.game.debug.body(this.teamB);
 	//this.chat();
 	//this.game.debug.spriteInfo(this.magicCircle, 0, 100);
 	//this.game.debug.body(this.magicCircle, 0, 200);
@@ -822,15 +836,17 @@ BasicGame.MainGame.prototype.handleHUD = function() {
 	this.expBar.crop(this.expRect);
 
 	// Skills
-	this.skillA.alpha = this.player.getSkillB() + 1;
-	this.skillB.alpha = this.player.getSkillC() + 1;
-	this.skillC.alpha = this.player.getSkillD() + 1;
-	this.skillD.alpha = this.player.getSkillE() + 1;
+	this.skillA.alpha = this.player.getSkillA() + 1;
+	this.skillB.alpha = this.player.getSkillB() + 1;
+	this.skillC.alpha = this.player.getSkillC() + 1;
+	this.skillD.alpha = this.player.getSkillD() + 1;
+	this.skillE.alpha = this.player.getSkillE() + 1;
 
 	this.skillAHotkey.fill = this.skillA.alpha == 1 ? "white" : "grey";
 	this.skillBHotkey.fill = this.skillB.alpha == 1 ? "white" : "grey";
 	this.skillCHotkey.fill = this.skillC.alpha == 1 ? "white" : "grey";
 	this.skillDHotkey.fill = this.skillD.alpha == 1 ? "white" : "grey";
+	this.skillEHotkey.fill = this.skillE.alpha == 1 ? "white" : "grey";
 
 	// Update every 500ms so won't be that taxing
 	if (this.winState == false && this.game.time.now > this.textTimer) {

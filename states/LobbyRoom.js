@@ -106,6 +106,7 @@ BasicGame.LobbyRoom.prototype = {
 				ref.PlayerText['headerTeamA'].inputEnabled = !playerList[BasicGame.myID].ready;
 				ref.PlayerText['headerTeamA'].events.onInputOver.add(BasicGame.onOver);
 				ref.PlayerText['headerTeamA'].events.onInputOut.add(BasicGame.onOut);
+				ref.PlayerText['headerTeamA'].events.onInputDown.add(BasicGame.onDown);
 				ref.PlayerText['headerTeamA'].events.onInputUp.add(function() {
 					BasicGame.myTeam = 1;
 					BasicGame.eurecaServer.setClientTeam(ref.roomID, BasicGame.myID, 1);
@@ -115,6 +116,7 @@ BasicGame.LobbyRoom.prototype = {
 				ref.PlayerText['headerTeamB'].inputEnabled = !playerList[BasicGame.myID].ready;
 				ref.PlayerText['headerTeamB'].events.onInputOver.add(BasicGame.onOver);
 				ref.PlayerText['headerTeamB'].events.onInputOut.add(BasicGame.onOut);
+				ref.PlayerText['headerTeamB'].events.onInputDown.add(BasicGame.onDown);
 				ref.PlayerText['headerTeamB'].events.onInputUp.add(function() {
 					BasicGame.myTeam = 2;
 					BasicGame.eurecaServer.setClientTeam(ref.roomID, BasicGame.myID, 2);
@@ -124,6 +126,7 @@ BasicGame.LobbyRoom.prototype = {
 				ref.PlayerText['headerPL'].inputEnabled = !playerList[BasicGame.myID].ready;
 				ref.PlayerText['headerPL'].events.onInputOver.add(BasicGame.onOver);
 				ref.PlayerText['headerPL'].events.onInputOut.add(BasicGame.onOut);
+				ref.PlayerText['headerPL'].events.onInputDown.add(BasicGame.onDown);
 				ref.PlayerText['headerPL'].events.onInputUp.add(function() {
 					BasicGame.myTeam = null;
 					BasicGame.eurecaServer.setClientTeam(ref.roomID, BasicGame.myID, null);
@@ -136,6 +139,7 @@ BasicGame.LobbyRoom.prototype = {
 						// Player has announced they are ready
 						ref.PlayerText["readyButton"] = ref.add.text(ref.game.width/10 * 7 + 20, ref.game.height/7 * 6,  'READY!', ref.headerTextGreen);
 						ref.PlayerText["readyButton"].events.onInputOver.add(ref.readyOnOver);
+						ref.PlayerText['readyButton'].events.onInputDown.add(BasicGame.onDown);
 						ref.PlayerText["readyButton"].events.onInputOut.add(ref.readyOnOut);
 
 						// Status message
@@ -147,6 +151,7 @@ BasicGame.LobbyRoom.prototype = {
 								// START GAME BUTTON
 								ref.PlayerText["startButton"] = ref.add.text(ref.game.width/10 * 7 + 170, ref.game.height/7 * 6,  'START', ref.headerTextGreen);
 								ref.PlayerText["startButton"].events.onInputOver.add(ref.readyOnOver);
+								ref.PlayerText['startButton'].events.onInputDown.add(BasicGame.onDown);
 								ref.PlayerText["startButton"].events.onInputOut.add(ref.readyOnOut);
 								ref.PlayerText["startButton"].inputEnabled = true;
 								ref.PlayerText["startButton"].events.onInputUp.add(function() {
@@ -165,6 +170,7 @@ BasicGame.LobbyRoom.prototype = {
 						// Player has not announced they are ready, give ready button
 						ref.PlayerText["readyButton"] = ref.add.text(ref.game.width/10 * 7 + 20, ref.game.height/7 * 6,  'READY!', ref.headerTextDefault);
 						ref.PlayerText["readyButton"].events.onInputOver.add(ref.readyOnOver);
+						ref.PlayerText['readyButton'].events.onInputDown.add(BasicGame.onDown);
 						ref.PlayerText["readyButton"].events.onInputOut.add(BasicGame.onOut);
 					}
 					ref.PlayerText["readyButton"].inputEnabled = true;
@@ -225,6 +231,7 @@ BasicGame.LobbyRoom.prototype = {
 		this.returnMenu.inputEnabled = true;
 		this.returnMenu.events.onInputOver.add(BasicGame.onOver);
 		this.returnMenu.events.onInputOut.add(BasicGame.onOut);
+		this.returnMenu.events.onInputDown.add(BasicGame.onDown);
 		
 		// Back button clicked
 		this.returnMenu.events.onInputUp.add(function() {
@@ -241,6 +248,7 @@ BasicGame.LobbyRoom.prototype = {
 		this.returnLobby.inputEnabled = true;
 		this.returnLobby.events.onInputOver.add(BasicGame.onOver);
 		this.returnLobby.events.onInputOut.add(BasicGame.onOut);
+		this.returnLobby.events.onInputDown.add(BasicGame.onDown);
 		
 		// return lobby button clicked
 		this.returnLobby.events.onInputUp.add(function() {

@@ -11,6 +11,11 @@ BasicGame.MainMenu.prototype = {
 			BasicGame.musicPlayer.loop = true;						// Loop
 			BasicGame.musicPlayer.play();							// Play the music
 		}
+		BasicGame.buttonOver = this.add.audio('buttonOver');
+		BasicGame.buttonOver.volume = 0.1;
+
+		BasicGame.buttonClick = this.add.audio('buttonClick');
+		BasicGame.buttonClick.volume = 0.1;
 
 		this.world.setBounds(0, 0, BasicGame.gameWidth, BasicGame.gameHeight);
 
@@ -110,6 +115,7 @@ BasicGame.MainMenu.prototype = {
 		txt.strokeThickness = 4;
 		txt.inputEnabled = true;
 		txt.events.onInputUp.add(callback);
+		txt.events.onInputDown.add(BasicGame.onDown);
 		txt.events.onInputOver.add(BasicGame.onOver);
 		txt.events.onInputOut.add(BasicGame.onOut);
 		this.optionCount ++;

@@ -33,6 +33,7 @@ BasicGame.CharSelect.prototype = {
 	onOver: function(target) {
 		//target.filters = null;
 		target.scale.setTo(1.1);
+		BasicGame.buttonOver.play();
 	},
  
 	// On out style
@@ -67,6 +68,7 @@ BasicGame.CharSelect.prototype = {
 
 		this.highlight = this.charArr[selected];
 		this.highlight.position.setTo(250, 140);
+		BasicGame.buttonClick.play();
 		//console.log(this.highlight);
 		BasicGame.eurecaServer.getTeamSelection(BasicGame.roomID, BasicGame.myTeam, selected, BasicGame.myID);
 	},
@@ -169,8 +171,10 @@ BasicGame.CharSelect.prototype = {
 
 		this.startGame.inputEnabled = true; 
 		this.returnMenu.inputEnabled = true;
+		this.returnMenu.events.onInputDown.add(BasicGame.onDown);
 		this.returnMenu.events.onInputOver.add(BasicGame.onOver);
 		this.returnMenu.events.onInputOut.add(BasicGame.onOut);
+		this.startGame.events.onInputDown.add(BasicGame.onDown);
 		this.startGame.events.onInputOver.add(BasicGame.onOver);
 		this.startGame.events.onInputOut.add(BasicGame.onOut);
 

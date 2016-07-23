@@ -94,6 +94,10 @@ BasicGame.HeroTrooperMP = function (id, game, x, y, team, nick, initLvl) {
 	this.skillCSFX = this.game.add.audio('trooper_skillC', volume);
 	this.skillDSFX = this.game.add.audio('trooper_skillD', volume);	
 	this.skillESFX = this.game.add.audio('trooper_skillE', volume);
+
+	this.positionQueue = [];
+	this.queueTimer = 0;
+	this.queueCooldown = 1000;
 };
 
 // Inherit HeroBase
@@ -229,17 +233,30 @@ BasicGame.HeroTrooperMP.prototype.handleSkillC = function() {
 
 
 BasicGame.HeroTrooperMP.prototype.handleSkillD = function() {
-	if (this.cursor.skillD && this.game.time.now > this.skillDTimer && this.skillsEnabled) {
-		// Passive
+	// Travel back in time 
+	if (this.game.time.now > this.queueTimer) {
+		this.queueTimer = this.game.time.now + this.queueCooldown;
+		var pos = {x: this.position.x, y: this.position.y};
+		this.positionQueue.push(pos);
+
+		// Shift if exceeds 2 
+		if (this.positionQueue.length > 2) {
+			var i = this.positionQueue.shift();
+		}
+	}
+
+	if (this.cursor.skillD && this.game.time.now > this.skillDTimer && this.skillsEnabled && this.positionQueue.length > 1) {
 		//this.isAttacking = true;
 		this.skillDTimer = this.game.time.now + this.skillDCooldown; 
 		this.skillDSFX.play();
 
 		var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 0, 0);
 		tween.onStart.add(function() {
-			this.body.velocity.x -= 2000 * this.facingRight;
     		this.smokeEffect.playUntracked('anim_3', this.x - 20 * this.facingRight, this.y - 10);
     		this.smokeEffect.scale.x = this.facingRight * -0.5;
+
+			this.x = this.positionQueue[0].x;
+			this.y = this.positionQueue[0].y;
 		}, this);
 
     	this.animations.play('anim_thrust');
