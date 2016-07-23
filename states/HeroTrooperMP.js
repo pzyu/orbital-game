@@ -98,6 +98,7 @@ BasicGame.HeroTrooperMP = function (id, game, x, y, team, nick, initLvl) {
 	this.positionQueue = [];
 	this.queueTimer = 0;
 	this.queueCooldown = 1000;
+	this.targetPos;
 };
 
 // Inherit HeroBase
@@ -133,7 +134,6 @@ BasicGame.HeroTrooperMP.prototype.update = function() {
 	this.inCircle = false;
 	this.refMP.physics.arcade.overlap(this, this.refMP.magicCircle, this.magicCircleCallback.bind(this));
 
-	this.getChildAt(0).setText(this.nick + " " + this.heroLevel);
 	this.getChildAt(0).scale.x = this.facingRight;
 	//this.snipe.debug(0, 0, true);
 };
@@ -243,6 +243,11 @@ BasicGame.HeroTrooperMP.prototype.handleSkillD = function() {
 		if (this.positionQueue.length > 2) {
 			var i = this.positionQueue.shift();
 		}
+
+	}
+	if (this.targetPos != null) {
+		//console.log("moving to: ", this.targetPos.x, this.targetPos.y);
+		this.game.physics.arcade.moveToXY(this, this.targetPos.x, this.targetPos.y, 2000, 250);
 	}
 
 	if (this.cursor.skillD && this.game.time.now > this.skillDTimer && this.skillsEnabled && this.positionQueue.length > 1) {
@@ -250,16 +255,20 @@ BasicGame.HeroTrooperMP.prototype.handleSkillD = function() {
 		this.skillDTimer = this.game.time.now + this.skillDCooldown; 
 		this.skillDSFX.play();
 
-		var tween = this.game.add.tween(this).to({0: 0}, 100, Phaser.Easing.Linear.None, true, 0, 0);
+		this.targetPos = this.positionQueue[0];
+		this.body.setSize(0, 0, 40, 10);
+		var tween = this.game.add.tween(this).to({0: 0}, 250, Phaser.Easing.Linear.None, true, 0, 0);
 		tween.onStart.add(function() {
     		this.smokeEffect.playUntracked('anim_3', this.x - 20 * this.facingRight, this.y - 10);
     		this.smokeEffect.scale.x = this.facingRight * -0.5;
-
-			this.x = this.positionQueue[0].x;
-			this.y = this.positionQueue[0].y;
 		}, this);
 
-    	this.animations.play('anim_thrust');
+		tween.onComplete.add(function() {
+			this.targetPos = null;
+			this.body.setSize(70, 140, 40, 10);
+		}, this);
+
+    	this.animations.play('anim_haste');
     	this.animations.currentAnim.frame = 0;
 		this.isAttacking = true;
 		this.skillsEnabled = false;

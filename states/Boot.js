@@ -167,7 +167,7 @@ BasicGame.Boot.prototype = {
         this.load.audio('trooper_skillA', 'audio/heroes/trooper/default.ogg');
         this.load.audio('trooper_skillB', 'audio/heroes/trooper/haste.ogg');
         this.load.audio('trooper_skillC', 'audio/heroes/trooper/invis.ogg');
-        this.load.audio('trooper_skillD', 'audio/heroes/trooper/haste.ogg');
+        this.load.audio('trooper_skillD', 'audio/heroes/trooper/backtrack.ogg');
         this.load.audio('trooper_skillE', 'audio/heroes/trooper/snipe.ogg');
 
         this.load.audio('walker_skillA', 'audio/heroes/walker/default.ogg');
