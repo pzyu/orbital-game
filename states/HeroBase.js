@@ -152,7 +152,7 @@ BasicGame.HeroBase.prototype.spawn = function() {
 		this.isAttacking = false;
 		if (BasicGame.myID == "SoloKid" && this.refMP.teamScores[2] >= 5) {
 			var spawnTime = 86400000;
-		} else if (BasicGame.myID == "SoloKid" && this.ID == "SoloKid") {
+		} else if (BasicGame.myID == "SoloKid" && this.ID == "SoloKid" || this.ID == "TutorialPlayer") {
 			var spawnTime = 5000 + (this.heroLevel * 200);
 		} else {
 			var spawnTime = 5000 + (this.heroLevel * 1000);
@@ -331,7 +331,7 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 			// otherwise every client will be incrementing score 
 			if (BasicGame.myID == killerInfo.ID || BasicGame.myID == "SoloKid") {
 				// credit kill to killerID
-				if (BasicGame.myID == "SoloKid") {
+				if (BasicGame.myID == "SoloKid" || BasicGame.myID == "TutorialPlayer") {
 					// Single Player kill handling
 					this.refMP.teamScores[killerInfo.myTeam]++; // add to teamscore
 					if (killerInfo.myTeam == 2 && this.refMP.teamScores[2] <= 5) {
@@ -441,7 +441,7 @@ BasicGame.HeroBase.prototype.miteCallback = function(obj1, obj2, team) {
 };
 
 BasicGame.HeroBase.prototype.magicCircleCallback = function() {
-	console.log('in circle');
+	//console.log('in circle');
 	this.inCircle = true;
 };
 
