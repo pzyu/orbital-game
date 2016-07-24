@@ -150,7 +150,13 @@ BasicGame.HeroBase.prototype.spawn = function() {
 	if (this.isDead) {
 		this.body.velocity.x = this.body.velocity.y = 0;
 		this.isAttacking = false;
-		var spawnTime = 5000 + (this.heroLevel * 1000);
+		if (BasicGame.myID == "SoloKid" && this.refMP.teamScores[2] >= 5) {
+			var spawnTime = 86400000;
+		} else if (BasicGame.myID == "SoloKid" && this.ID == "SoloKid") {
+			var spawnTime = 5000 + (this.heroLevel * 200);
+		} else {
+			var spawnTime = 5000 + (this.heroLevel * 1000);
+		}
 		var tween = this.game.add.tween(this).to({0: 0}, spawnTime, Phaser.Easing.Linear.None, true, 0, 0);
 		tween.onStart.add(function(){
 			this.animations.play('anim_dead');
@@ -326,28 +332,53 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 				// credit kill to killerID
 				if (BasicGame.myID == "SoloKid") {
 					// Single Player kill handling
-					if(killerInfo.ID == "SoloKid") {
-						this.refMP.teamScores[1]++; // add to teamscore
-					} else {
-						this.refMP.teamScores[2]++; // add to teamscore
+					this.refMP.teamScores[killerInfo.myTeam]++; // add to teamscore
+					if (killerInfo.myTeam == 2 && this.refMP.teamScores[2] <= 5) {
+						this.refMP.broadcast("You have " + (5 - this.refMP.teamScores[2]) + " lives left. Your allies have improved your abilities", 2);
+						for (var i=0; i<this.refMP.teamScores[2]; i++) {
+							onLevelUp(this.refMP.playerList["SoloKid"][0]); // give 1 level per life lost
+						}
 					}
 				} else {
 					BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
 				}
 			}
 
-			// Calculate exp to credit to the killer based on killer's hero level and level difference. if level difference is more than 10
-			// credit a base 100 exp. else change exp given by 0.1x per level difference
+			// broadcast kill feed
+			if (BasicGame.myID == "SoloKid") {
+				// control stage setting
+				if (this.refMP.teamScores[2] >= 5) {
+					// player has been defeated.
+					this.refMP.winGame();
+				} else {
+					//onLevelUp(this); // bot becomes stronger
+					if (this.refMP.teamScores[1] == 5 && this.refMP.playerList["retard_Bot2"] == null) {
+						// spawn new enemy (Disruptor)
+						this.refMP.spawnAI("retard_Bot2", 500, 1000, "player_gunner", "Enemy Disruptor(AI)", 2, 3);
+						this.refMP.broadcast("Enemy support has arrived!", 2);
+					} else if (this.refMP.teamScores[1] == 10 && this.refMP.playerList["retard_Bot3"] == null) {
+						// spawn new enemy (Disruptor)
+						this.refMP.spawnAI("retard_Bot3", 500, 1000, "player_destroyer", "Enemy Destroyer(AI)", 2, 7);
+						this.refMP.broadcast("Destroyer, incoming!", 2);
+					} else if (this.refMP.teamScores[1] == 15 && this.refMP.playerList["retard_Bot4"] == null) {
+						// spawn new enemy (Disruptor)
+						this.refMP.spawnAI("retard_Bot4", 500, 1000, "player_ace", "Enemy Ace(AI)", 2, 12);
+						this.refMP.broadcast("The enemy has brought out their Ace, good luck surviving.", 2);
+					}
+				}
+			} else {
+				this.refMP.broadcast(this.nick + " has been killed by " + killerInfo.nick, 2);
+			}
+
+			// Calculate exp to credit to the killer based on killer's hero level and level difference.
 			var levelDiff = this.heroLevel - killerInfo.heroLevel;
-			var expToGive = (levelDiff >= 10) ? 100 : (50 * killerInfo.heroLevel * (1 + (levelDiff / 10)));
+			//var expToGive = (levelDiff >= 10) ? 100 : (50 * killerInfo.heroLevel * (1 + (levelDiff / 10)));
+			var expToGive = (levelDiff >= 10) ? 100 : (50 * this.heroLevel);
 
 			creditExp(killerInfo, Math.round(expToGive)); // give exp to killer
 
 			console.log("Dead");
 			this.spawn();
-
-			// broadcast kill feed
-			this.refMP.broadcast(this.nick + " has been killed by " + killerInfo.nick, 2);
 		}
 	}
 };

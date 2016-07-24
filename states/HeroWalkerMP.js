@@ -15,25 +15,25 @@ BasicGame.HeroWalkerMP = function (id, game, x, y, team, nick, initLvl) {
 	this.attack = 10; // multiplayer for attack damage
 	this.atkSpeed = 4; // multiplier for attack speed
 	this.movSpeed = 3; // multiplier for movement speed
-	this.skillBLvl = -20;
-	this.skillCLvl = -100;
-	this.skillDLvl = -60;
-	this.skillELvl = -200;
+	this.skillBLvl = 20;
+	this.skillCLvl = 100;
+	this.skillDLvl = 60;
+	this.skillELvl = 200;
 
 	// Hero attributes
 	this.jumpLimit = 1;
 	this.jumpStrength = -2000;
-	this.moveSpeed = 550;
+	this.moveSpeed = 550 + (this.movSpeed * initLvl);
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 500;
+	this.maxHealth = 500 + (this.constituition * initLvl * 5);
 	this.curHealth = this.maxHealth;
 
 	// Skill cooldowns in milliseconds
-    this.skillACooldown = 1500; // normal attack - punch (Default 1.5s)
-	this.skillBCooldown = 6000; // shield (Default 2s)
-	this.skillCCooldown = 8000; // rocket (Default 4.5s)
-	this.skillDCooldown = 3000; // backdash (Default 3s)
-	this.skillECooldown = 15000; // Ulti - missile barrage (Default 15s)
+    this.skillACooldown = (1500 - (this.atkSpeed * 2 * initLvl) <= 200) ? 200 : 1500 - (this.atkSpeed * 2 * initLvl); // normal attack - punch (Default 1.5s)
+	this.skillBCooldown = 6000 - (this.skillBLvl * initLvl); // shield (Default 2s)
+	this.skillCCooldown = 8000 - (this.skillCLvl * initLvl); // rocket (Default 4.5s)
+	this.skillDCooldown = 3000 - (this.skillDLvl * initLvl); // backdash (Default 3s)
+	this.skillECooldown = 15000 - (this.skillELvl * initLvl); // Ulti - missile barrage (Default 15s)
 	this.defaultAS = this.skillACooldown;
 
 	// Attack collider

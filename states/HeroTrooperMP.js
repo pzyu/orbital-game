@@ -15,25 +15,25 @@ BasicGame.HeroTrooperMP = function (id, game, x, y, team, nick, initLvl) {
 	this.attack = 7; // multiplayer for attack damage
 	this.atkSpeed = 10; // multiplier for attack speed
 	this.movSpeed = 10; // multiplier for movement speed
-	this.skillBLvl = -200;
-	this.skillCLvl = -200;
+	this.skillBLvl = 200;
+	this.skillCLvl = 200;
 	this.skillDLvl = 0;
-	this.skillELvl = -400;
+	this.skillELvl = 400;
 
 	// Base Hero attributes
 	this.jumpStrength = -1500;
-	this.moveSpeed = 720;
+	this.moveSpeed = 720 + (this.movSpeed * initLvl);
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 450;
+	this.maxHealth = 450 + (this.constituition * initLvl * 5);
 	this.curHealth = this.maxHealth;
 	this.knockbackForce = 750;
 
     // Skill cooldowns in milliseconds
-    this.skillACooldown = 800; // normal attack - dagger (Default 0.8s)
-	this.skillBCooldown = 15000; // haste (Default 15s)
-	this.skillCCooldown = 20000; // invis (Default 20s)
-	this.skillDCooldown = 5000; // backstab (Passive)
-	this.skillECooldown = 25000; // Ulti - snipe (Default 25s)
+    this.skillACooldown = (800 - (this.atkSpeed * 2 * initLvl) <= 200) ? 200 : 800 - (this.atkSpeed * 2 * initLvl);; // normal attack - dagger (Default 0.8s)
+	this.skillBCooldown = 15000  - (this.skillBLvl * initLvl); // haste (Default 15s)
+	this.skillCCooldown = 20000 - (this.skillCLvl * initLvl); // invis (Default 20s)
+	this.skillDCooldown = 5000 - (this.skillDLvl * initLvl); // backstab (Passive)
+	this.skillECooldown = 25000 - (this.skillELvl * initLvl); // Ulti - snipe (Default 25s)
 	this.defaultAS = this.skillACooldown;
 
 	// Attack collider

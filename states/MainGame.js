@@ -148,16 +148,12 @@ BasicGame.MainGame.prototype.preloadGame = function() {
 	this.textTimer = 0;
 
 	this.createGame(); // preload complete, start to create game
-	//this.spawnAI("retard_Bot", 500, 1000, "player_trooper", "retard Ace", 2);
-	//this.spawnAI("retard_Bot1", 500, 1000, "player_destroyer", "retard Destroyer", 2);
-	//this.spawnAI("retard_Bot2", 500, 1000, "player_trooper", "retard Ace", 1);
-	this.spawnAI("retard_Bot3", 500, 1000, "player_walker", "retard Walker", 2);
-
+	this.spawnAI("retard_Bot1", 500, 1000, "player_walker", "Enemy Walker(AI)", 2, 1);
 };
 
 BasicGame.MainGame.prototype.scriptAIAce = function(target, me) {
 	// function script which react base on target's behaviour
-	if (me.curHealth / me.maxHealth < 0.1 || target.isDead) {
+	if (me.curHealth / me.maxHealth < 0.15 || target.isDead) {
 		// low hp, go heal
 		me.hpTrigger = true;
 	} else if (me.curHealth / me.maxHealth > 0.85) {
@@ -249,6 +245,13 @@ BasicGame.MainGame.prototype.scriptAIAce = function(target, me) {
 					me.cursor.skillE = false;
 				}
 			}
+
+			if (me.game.time.now > me.skillDTimer && me.curHealth / me.maxHealth < 0.7) {
+				// second skill is available. use skill first
+				me.cursor.skillD = true;
+			} else {
+				me.cursor.skillD = false;
+			}
 		} else {
 			// target is dead. go back to heal up/rest
 			me.cursor.skillA = false;
@@ -262,7 +265,7 @@ BasicGame.MainGame.prototype.scriptAIAce = function(target, me) {
 
 BasicGame.MainGame.prototype.scriptAIWalker = function(target, me) {
 	// function script which react base on target's behaviour
-	if (me.curHealth / me.maxHealth < 0.1 || target.isDead) {
+	if (me.curHealth / me.maxHealth < 0.15 || target.isDead) {
 		// low hp, go heal
 		me.hpTrigger = true;
 	} else if (me.curHealth / me.maxHealth > 0.85) {
@@ -297,7 +300,7 @@ BasicGame.MainGame.prototype.scriptAIWalker = function(target, me) {
 		if (!target.isDead && !me.isDead) {
 			var distDiff = target.x - me.x;
 			// hunt down the target
-			if(distDiff > 70) {
+			if(distDiff > 150) {
 				// target is on the right
 				me.cursor.skillA = false;
 				me.cursor.left = false;
@@ -404,7 +407,7 @@ BasicGame.MainGame.prototype.scriptAIWalker = function(target, me) {
 
 BasicGame.MainGame.prototype.scriptAIDestroyer = function(target, me) {
 	// function script which react base on target's behaviour
-	if (me.curHealth / me.maxHealth < 0.1 || target.isDead) {
+	if (me.curHealth / me.maxHealth < 0.15 || target.isDead) {
 		// low hp, go heal
 		me.hpTrigger = true;
 	} else if (me.curHealth / me.maxHealth > 0.85) {
@@ -539,6 +542,194 @@ BasicGame.MainGame.prototype.scriptAIDestroyer = function(target, me) {
 		}
 	}
 
+};
+
+BasicGame.MainGame.prototype.scriptAIDisruptor = function(target, me) {
+	// function script which react base on target's behaviour
+	if (me.curHealth / me.maxHealth < 0.15 || target.isDead) {
+		// low hp, go heal
+		me.hpTrigger = true;
+	} else if (me.curHealth / me.maxHealth > 0.85) {
+		me.hpTrigger = false;
+	}
+
+	for (var idx in this.playerList) {
+		if (this.playerList[idx][2] == 2) {
+			// same team
+			if (this.playerList[idx][0].isDead && me.game.time.now > me.skillETimer) {
+				// can use revive, use it
+				me.reviveAlly = this.playerList[idx][0];
+				break;
+			}
+		}
+		me.reviveAlly = null;
+	}
+
+	// reset ulti button incase
+	me.cursor.skillE = false;
+
+	if (me.hpTrigger) {
+		// go back base to heal
+		me.cursor.skillA = false; // disable all combat
+		me.cursor.skillB = false;
+		me.cursor.skillC = false;
+		me.cursor.skillD = false;
+		me.cursor.skillE = false;
+		if (me.x >= this.spawnPoints[me.myTeam].x && me.y >= this.spawnPoints[me.myTeam].y && me.myTeam == 2) {
+			me.cursor.right = false;
+			me.cursor.up = false;
+			me.cursor.left = false;
+			me.cursor.skillA = false;
+		} else if (me.x <= this.spawnPoints[me.myTeam].x && me.y >= this.spawnPoints[me.myTeam].y && me.myTeam == 1) {
+			me.cursor.right = false;
+			me.cursor.up = false;
+			me.cursor.left = false;
+			me.cursor.skillA = false;
+		} else {
+			if (me.myTeam == 1) {
+				me.cursor.right = false;
+				me.cursor.left = true;
+			} else if (me.myTeam == 2) {
+				me.cursor.right = true;
+				me.cursor.left = false;
+			}
+			me.cursor.up = true;
+		}
+	} else if (me.reviveAlly != null) {
+		// go to ally and revive
+		var allyDistDiff = me.reviveAlly.x - me.x;
+		if (allyDistDiff > 220) {
+			me.cursor.left = false;
+			me.cursor.right =  true;
+			me.cursor.up = true;
+		} else if (allyDistDiff < -220) {
+			me.cursor.right = false;
+			me.cursor.left  = true;
+			me.cursor.up = true;
+		} else {
+			me.cursor.up = false
+			me.cursor.right = false;
+			me.cursor.left  = false;
+			me.cursor.skillA = false;
+			me.cursor.skillB = false;
+			me.cursor.skillC = false;
+			me.cursor.skillD = false;
+			me.cursor.skillE = true;
+			if (allyDistDiff > 0) {
+				me.facingRight = 1;
+	    		me.scale.x = me.scaleX;
+			} else {
+				me.facingRight = -1;
+	    		me.scale.x = -me.scaleX;
+			}
+		}
+	} else {
+		// Go and fight the target
+		if (!target.isDead && !me.isDead) {
+			var distDiff = target.x - me.x;
+			me.cursor.skillA = false;
+			me.cursor.skillB = false;
+			me.cursor.skillC = false;
+			me.cursor.skillD = false;
+			me.cursor.skillE = false;
+			// hunt down the target
+			if(distDiff > 550) {
+				// target is on the right
+				me.cursor.left = false;
+				me.cursor.right =  true;
+			} else if(distDiff < -550) {
+				// target is on the left
+				me.cursor.right = false;
+				me.cursor.left  = true;
+			} else {
+				// jump AI (to match target's height)
+				if (target.y < me.y - 40) {
+					// target is above me
+					me.cursor.up = true; // jump
+				} else {
+					// target is below or same level as me
+					me.cursor.up = false;
+				}
+
+				// target is within critical range
+				if (Math.abs(distDiff) < 400 && me.x < this.spawnPoints[me.myTeam].x) {
+					// target can hit in melee range, retreat
+					if (Math.abs(distDiff) < 250) {
+						// add code to trigger panic jump in case a higher ground is available.
+						me.cursor.up = true;
+					} else {
+						me.cursor.up = false;
+					}
+
+					if (target.x > me.x) {
+						me.cursor.right = false;
+						me.cursor.left  = true;
+					} else {
+						me.cursor.right = true;
+						me.cursor.left  = false;
+					}
+					me.cursor.skillA = false
+				} else {
+					// combat movement
+					me.cursor.right = false;
+					me.cursor.left  = false;
+					if (target.x > me.x) {
+						// target is at the right, face right
+						me.facingRight = 1;
+	    				me.scale.x = me.scaleX;
+					} else {
+						// target is at the left, face left
+						me.facingRight = -1;
+	    				me.scale.x = -me.scaleX;
+					}
+					if (target.x <= this.spawnPoints[target.myTeam].x + 200) {
+						// target is at spawn. invade base
+						if (me.x > this.spawnPoints[target.myTeam].x + 250) {
+							me.cursor.left = true;
+						}	
+					}
+
+					me.cursor.skillA = true; // keep attacking in combat
+					
+					// use mite when available
+					if (me.game.time.now > me.skillBTimer) {
+						me.cursor.skillA = false;
+						me.cursor.skillB = true;
+					} else {
+						me.cursor.skillB = false;
+					}
+					
+					// use goo when available
+					if (me.game.time.now > me.skillCTimer) {
+						me.cursor.skillA = false;
+						me.cursor.skillB = false;
+						me.cursor.skillC = true;
+					} else {
+						me.cursor.skillC = false;
+					}
+
+				}
+			}
+		} else {
+			// target is dead. go back to heal up/rest
+			me.cursor.skillA = false;
+			me.cursor.skillB = false;
+			me.cursor.skillC = false;
+			me.cursor.skillD = false;
+			me.cursor.skillE = false;
+		}
+
+		// use healthpack whenever disruptor can
+		if (me.game.time.now > me.skillDTimer) {
+			me.cursor.skillA = false;
+			me.cursor.skillB = false;
+			me.cursor.skillC = false;
+			me.cursor.skillD = true;
+			me.cursor.skillE = false;
+		} else {
+			me.cursor.skillD = false;
+		}
+	}
 };
 
 
@@ -769,7 +960,7 @@ BasicGame.MainGame.prototype.createGame = function() {
 	];
 };
 
-BasicGame.MainGame.prototype.spawnAI = function(i, x, y, char, nick, team) {
+BasicGame.MainGame.prototype.spawnAI = function(i, x, y, char, nick, team, defLVL) {
 	// Spawn enemy at location
 	var curX = x;
 	var curY = y;
@@ -784,16 +975,17 @@ BasicGame.MainGame.prototype.spawnAI = function(i, x, y, char, nick, team) {
 	// If doesn't already exist
 	if (this.playerList[i] == null) {
 		if (char == "player_trooper") {
-			var player = new BasicGame.HeroTrooperMP(i, this.game, curX, curY, team, nick, 1);
+			var player = new BasicGame.HeroTrooperMP(i, this.game, curX, curY, team, nick, defLVL);
 		} 
 		if (char == "player_walker") {
-			var player = new BasicGame.HeroWalkerMP(i, this.game, curX, curY, team, nick, 1);
+			var player = new BasicGame.HeroWalkerMP(i, this.game, curX, curY, team, nick, defLVL);
 		}
 		if (char == "player_destroyer") {
-			var player = new BasicGame.HeroDestroyerMP(i, this.game, curX, curY, team, nick, 1);
+			var player = new BasicGame.HeroDestroyerMP(i, this.game, curX, curY, team, nick, defLVL);
 		}
 		if (char == "player_gunner") {
-			var player = new BasicGame.HeroGunnerMP(i, this.game, curX, curY, team, nick, 1);
+			var player = new BasicGame.HeroGunnerMP(i, this.game, curX, curY, team, nick, defLVL);
+			player.reviveAlly = null;
 		}
 		player.hpTrigger = true;
 		this.playerList[i] = [player, nick, team];
@@ -847,9 +1039,18 @@ BasicGame.MainGame.prototype.broadcast = function(msg, duration) {
 };
 
 BasicGame.MainGame.prototype.update = function() {
-	//this.scriptAIDestroyer(this.playerList["retard_Bot2"][0], this.playerList["retard_Bot1"][0]); // AI Script activated (Destroyer)
-	//this.scriptAIAce(this.playerList["retard_Bot1"][0], this.playerList["retard_Bot2"][0]); // AI Script activated (Ace)
-	this.scriptAIWalker(this.playerList["SoloKid"][0], this.playerList["retard_Bot3"][0]); // AI Script activated (Ace)
+	// run AI scripts
+	this.scriptAIWalker(this.playerList["SoloKid"][0], this.playerList["retard_Bot1"][0]); // AI Script activated (Walker - Default)
+	if (this.playerList["retard_Bot2"] != null) {
+		this.scriptAIDisruptor(this.playerList["SoloKid"][0], this.playerList["retard_Bot2"][0]); // AI Script activated (Disruptor - 2nd)
+	}
+	if (this.playerList["retard_Bot3"] != null) {
+		this.scriptAIDestroyer(this.playerList["SoloKid"][0], this.playerList["retard_Bot3"][0]); // AI Script activated (Disruptor - 2nd)
+	}
+	if (this.playerList["retard_Bot4"] != null) {
+		this.scriptAIAce(this.playerList["SoloKid"][0], this.playerList["retard_Bot4"][0]); // AI Script activated (Disruptor - 2nd)
+	}
+
 	// Enable collision between player and layer and shield
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
 	this.physics.arcade.overlap(BasicGame.playerCG, BasicGame.shieldCG, this.shieldCallback.bind(this));
@@ -866,6 +1067,12 @@ BasicGame.MainGame.prototype.update = function() {
 	//this.chat();
 	//this.game.debug.spriteInfo(this.magicCircle, 0, 100);
 	//this.game.debug.body(this.magicCircle, 0, 200);
+
+	// single player win
+	if (this.winState && this.game.time.now > this.winTime + 30000) {
+		BasicGame.disconnectClient();
+		this.game.state.start("MainMenu", true);
+	}
 };
 
 BasicGame.MainGame.prototype.handleHUD = function() {
@@ -901,6 +1108,37 @@ BasicGame.MainGame.prototype.handleHUD = function() {
 		this.teamAHUD.setText(this.teamScores[1]);
 		this.teamBHUD.setText(this.teamScores[2]);
 	}
+};
+
+BasicGame.MainGame.prototype.winGame = function() {
+	// Apply forced disconnection to lobby to "freeze" game state
+	this.winState = true;
+	this.winTime = this.game.time.now;
+	var winText = "You are defeated!"
+
+	// Show win/lose message
+	var winLoseMsg = game.add.text(this.game.width / 2, this.game.height / 4, winText, 
+		{font: '64pt myfont', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", boundsAlignH: "center", boundsAlignV: "middle"}); 
+	winLoseMsg.fixedToCamera = true;
+	winLoseMsg.anchor.setTo(0.5, 0.5);
+	winLoseMsg.alpha = 0.1;
+	game.add.tween(winLoseMsg).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true);
+
+	// Add return to menu button
+	var returnMenu = game.add.text(this.game.width / 2, this.game.height / 4 + 235,  "Back to Main Menu", 
+		{font: '25pt myfont', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", boundsAlignH: "center", boundsAlignV: "middle"}); 
+	returnMenu.inputEnabled = true;
+	returnMenu.fixedToCamera = true;
+	returnMenu.anchor.setTo(0.5, 0.5);
+	returnMenu.events.onInputOver.add(BasicGame.onOver);
+	returnMenu.events.onInputOut.add(BasicGame.onOut);
+
+	// Back button clicked
+	returnMenu.events.onInputUp.add(function() {
+		returnMenu.destroy();
+		BasicGame.disconnectClient();
+		this.game.state.start("MainMenu", true);
+	});
 };
 
 BasicGame.MainGame.prototype.chat = function() {

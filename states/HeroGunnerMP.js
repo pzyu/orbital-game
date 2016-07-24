@@ -15,25 +15,25 @@ BasicGame.HeroGunnerMP = function (id, game, x, y, team, nick, initLvl) {
 	this.attack = 3; // multiplayer for attack damage
 	this.atkSpeed = 7; // multiplier for attack speed
 	this.movSpeed = 7; // multiplier for movement speed
-	this.skillBLvl = -100;
-	this.skillCLvl = -100;
-	this.skillDLvl = -800;
-	this.skillELvl = -400;
+	this.skillBLvl = 100;
+	this.skillCLvl = 100;
+	this.skillDLvl = 800;
+	this.skillELvl = 400;
 
 	// Base Hero attributes
 	this.jumpStrength = -1500;
-	this.moveSpeed = 600;
+	this.moveSpeed = 600 + (this.movSpeed * initLvl);
 	this.defaultMoveSpeed = this.moveSpeed;
-	this.maxHealth = 400;
+	this.maxHealth = 400 + (this.constituition * initLvl * 5);
 	this.curHealth = this.maxHealth;
 	this.healthAmt = 100;
-	
+
 	// Skill cooldowns in milliseconds
-    this.skillACooldown = 1000; // normal attack - shoot bullet (Default 1s)
-	this.skillBCooldown = 5000; // mite (Default 5s)
-	this.skillCCooldown = 4500; // trap (Default 4.5s)
-	this.skillDCooldown = 30000; // health pack (Default 30s)
-	this.skillECooldown = 30000; // Ulti - revive (Default 40s)
+    this.skillACooldown = (1000 - (this.atkSpeed * 2 * initLvl) <= 200) ? 200 : 1000 - (this.atkSpeed * 2 * initLvl); // normal attack - shoot bullet (Default 1s)
+	this.skillBCooldown = 5000  - (this.skillBLvl * initLvl); // mite (Default 5s)
+	this.skillCCooldown = 4500 - (this.skillCLvl * initLvl); // trap (Default 4.5s)
+	this.skillDCooldown = 30000 - (this.skillDLvl * initLvl); // health pack (Default 30s)
+	this.skillECooldown = 30000 - (this.skillELvl * initLvl); // Ulti - revive (Default 40s)
 	this.defaultAS = this.skillACooldown;
 
 	// Revive collider
@@ -274,7 +274,7 @@ BasicGame.HeroGunnerMP.prototype.bulletCallback = function(obj1, obj2) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
-		obj2.getHit(70 + (this.heroLevel * this.attack), 700, 40, this);	
+		obj2.getHit(70 + (this.heroLevel * this.attack), 700 * this.facingRight, 40, this);	
 	}
 };
 
