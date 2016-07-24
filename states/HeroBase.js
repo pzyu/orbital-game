@@ -54,6 +54,7 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	this.isBuffed = false;
 	this.inCircle = false;
 	this.inShield = false;
+	this.dmgMultiplier = 1; // receives 100% damage
 	
 	// Hero Levels
 	this.heroLevel = 1;
@@ -123,7 +124,7 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	BasicGame.playerCG.add(this);
 
 	// Multiplayer stuff
-	if (id == "SoloKid" || id.substring(0, 10) == "retard_Bot") {
+	if (id == "SoloKid" || id.substring(0, 6) == "AI_Bot") {
 		this.refMP = this.game.state.states['MainGame'];
 	} else if (id == "TutorialPlayer" || id.substring(0, 12) == "tutorial_Bot") {
 		this.refMP = this.game.state.states['Tutorial'];
@@ -320,7 +321,7 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 
 		this.body.velocity.x += knockbackX;
 		this.body.velocity.y -= knockbackY;
-		this.curHealth -= Math.round(damage);
+		this.curHealth -= Math.round(damage * this.dmgMultiplier);
 
 		// If dead, respawn
 		if (this.curHealth <= 0) {
@@ -355,33 +356,42 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 					// player has been defeated.
 					this.refMP.winGame();
 				} else {
-					//onLevelUp(this); // bot becomes stronger
-					if (this.refMP.teamScores[1] == 5 && this.refMP.playerList["retard_Bot2"] == null) {
-						// spawn new enemy (Disruptor)
-						this.refMP.spawnAI("retard_Bot2", 500, 1000, "player_gunner", "Enemy Disruptor(AI)", 2, 3);
-						this.refMP.broadcast("Enemy support has arrived!", 2);
-					} else if (this.refMP.teamScores[1] == 10 && this.refMP.playerList["retard_Bot3"] == null) {
-						// spawn new enemy (Disruptor)
-						this.refMP.spawnAI("retard_Bot3", 500, 1000, "player_destroyer", "Enemy Destroyer(AI)", 2, 5);
-						this.refMP.broadcast("Destroyer, incoming!", 2);
-					} else if (this.refMP.teamScores[1] == 15 && this.refMP.playerList["retard_Bot4"] == null) {
-						// spawn new enemy (Disruptor)
-						this.refMP.spawnAI("retard_Bot4", 500, 1000, "player_trooper", "Enemy Ace(AI)", 2, 7);
-						this.refMP.broadcast("The enemy has brought out their Ace, good luck surviving.", 2);
+					var enemyCount = 0;
+					for (var idx in this.refMP.playerList) {
+						if (this.refMP.playerList[idx][2] == 2) {
+							enemyCount++;
+						}
+					}
+					if (this.refMP.teamScores[1] == 5 && enemyCount == 1) {
+						// spawn new enemy (2nd)
+						this.refMP.spawnRandomAIFromList(3);
+						//this.refMP.spawnAI("AI_Bot2", 500, 1000, "player_gunner", "Enemy Disruptor(AI)", 2, 3);
+						//this.refMP.broadcast("Enemy support has arrived!", 2);
+					} else if (this.refMP.teamScores[1] == 10 && enemyCount == 2) {
+						// spawn new enemy (3rd)
+						this.refMP.spawnRandomAIFromList(5);
+						//this.refMP.spawnAI("AI_Bot3", 500, 1000, "player_destroyer", "Enemy Destroyer(AI)", 2, 5);
+						//this.refMP.broadcast("Destroyer, incoming!", 2);
+					} else if (this.refMP.teamScores[1] == 15 && enemyCount == 3) {
+						// spawn new enemy (4th)
+						this.refMP.spawnRandomAIFromList(7);
+						//this.refMP.spawnAI("AI_Bot4", 500, 1000, "player_trooper", "Enemy Ace(AI)", 2, 7);
+						//this.refMP.broadcast("The enemy has brought out their Ace, good luck surviving.", 2);
 					}
 				}
+				// Calculate exp to credit to the killer based on killer's hero level and level difference.
+				var levelDiff = this.heroLevel - killerInfo.heroLevel;
+				var expToGive = (levelDiff >= 10) ? 100 : (100 * this.heroLevel);
+				creditExp(killerInfo, Math.round(expToGive)); // give exp to killer
 			} else {
 				this.refMP.broadcast(this.nick + " has been killed by " + killerInfo.nick, 2);
+				// Calculate exp to credit to the killer based on killer's hero level and level difference.
+				var levelDiff = this.heroLevel - killerInfo.heroLevel;
+				var expToGive = (levelDiff >= 10) ? 100 : (50 * this.heroLevel);
+				creditExp(killerInfo, Math.round(expToGive)); // give exp to killer
 			}
 
-			// Calculate exp to credit to the killer based on killer's hero level and level difference.
-			var levelDiff = this.heroLevel - killerInfo.heroLevel;
-			//var expToGive = (levelDiff >= 10) ? 100 : (50 * killerInfo.heroLevel * (1 + (levelDiff / 10)));
-			var expToGive = (levelDiff >= 10) ? 100 : (50 * this.heroLevel);
-
-			creditExp(killerInfo, Math.round(expToGive)); // give exp to killer
-
-			console.log("Dead");
+			// hero is dead, respawn it
 			this.spawn();
 		}
 	}
@@ -477,6 +487,18 @@ BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, de
 		fury.onComplete.add(function() {
 			this.isBuffed = false;
 			this.skillACooldown = this.defaultAS;
+		}, this);
+	}
+
+	if (buffName == "BUFF_DAMAGE_RECEIVE_MODIFIER") {
+		var dmgDown = this.game.add.tween(this).to({0: 0}, duration, Phaser.Easing.Linear.None, true, delay);
+		dmgDown.onStart.add(function() {
+			this.isBuffed = true;
+			this.dmgMultiplier = this.dmgMultiplier - amount;
+		}, this);
+		dmgDown.onComplete.add(function() {
+			this.isBuffed = false;
+			this.dmgMultiplier = 1; // default 100% damage
 		}, this);
 	}
 
