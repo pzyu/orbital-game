@@ -43,7 +43,11 @@ BasicGame.MainMenu.prototype = {
 		var ref = this;
 		this.addMenuOption('Start Game', function (target) {
 			// Move to character select screen, last parameter is to determine if it's multiplayer or not
-			this.game.state.start('CharSelect', true, false, false);
+			this.game.state.start('CharSelect', true, false, false, false);
+		});
+		this.addMenuOption('Tutorial', function (target) {
+			// Move to character select screen, last parameter is to determine if it's multiplayer or not
+			this.game.state.start('CharSelect', true, false, false, true);
 		});
 		this.addMenuOption('Multiplayer', function (target) {
 			if (nicknameInput.value == '') {

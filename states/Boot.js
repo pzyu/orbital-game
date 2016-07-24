@@ -13,6 +13,7 @@ BasicGame.Boot.prototype = {
         // Load whatever scripts we need
         this.load.script('mainmenu_scr', 'states/MainMenu.js');
         this.load.script('game_scr', 'states/MainGame.js');
+        this.load.script('tutorial_scr', 'states/Tutorial.js');
         this.load.script('charselect_scr', 'states/CharSelect.js');
         this.load.script('options_scr', 'states/Options.js');
         this.load.script('lobbymulti_scr', 'states/LobbyMP.js');
@@ -60,6 +61,10 @@ BasicGame.Boot.prototype = {
         this.load.image('lab_tiles', 'images/lab_tilesheet.png');
         this.load.tilemap('single_player', 'images/single_player.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.image('fence', 'images/sprites/fence.png');
+
+        this.load.tilemap('graveyard', 'images/graveyard.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.image('graveyard_tiles', 'images/graveyard_tilesheet.png');
+        this.load.image('graveyard_background', 'images/graveyard_bg.png');
 
         // Player atlas
         this.load.atlas('player_destroyer', 'images/sprites/heroes/destroyer.png', 'images/sprites/heroes/destroyer.json');
@@ -250,6 +255,7 @@ BasicGame.Boot.prototype = {
         this.state.add('Multiplayer', BasicGame.Multiplayer);
         this.state.add('Options', BasicGame.Options);
         this.state.add('Credits', BasicGame.Credits);
+        this.state.add('Tutorial', BasicGame.Tutorial);
     },
 
     // Create function to start the actual preloader

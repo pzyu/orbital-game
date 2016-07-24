@@ -2,6 +2,7 @@
 BasicGame.HeroWalkerMP = function (id, game, x, y, team, nick, initLvl) {
 	BasicGame.HeroBase.call(this, id, game, x, y, 'player_walker', team, nick);
 
+	this.anchor.setTo(0.45, 0.5);
 	// Collider size
 	this.body.setSize(160, 200, 44, 24);
 

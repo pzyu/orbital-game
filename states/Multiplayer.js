@@ -332,6 +332,9 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.playerLevel.fixedToCamera = true;
 	this.playerLevel.anchor.setTo(0, 0.5);
 
+	this.UITimer = 0;
+	this.UICooldown = 100;
+
 	// Customized skill and portrait
 	var char = BasicGame.selectedChar.substring(7);
 	// Team gui
@@ -430,7 +433,7 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.addPlayerName(BasicGame.myID);
 
 	// Mobile controls
-	if (this.game.device.android || this.game.device.iOS || this.game.device.desktop) {
+	if (this.game.device.android || this.game.device.iOS) { //|| this.game.device.desktop) {
 		this.leftButton = this.game.add.image(1000, 600, 'arrowLeft');
 		this.leftButton.fixedToCamera = true;
 		this.leftButton.inputEnabled = true;
@@ -540,7 +543,10 @@ BasicGame.Multiplayer.prototype.update = function() {
 	this.physics.arcade.overlap(this.teamA, BasicGame.playerCG, this.baseCallback.bind(this));	
 	this.physics.arcade.overlap(this.teamB, BasicGame.playerCG, this.baseCallback.bind(this));	
 
-	this.handleHUD();
+	if (this.game.time.now > this.UITimer) {
+		this.UITimer = this.game.time.now + this.UICooldown;
+		this.handleHUD();	
+	}
 	//this.showPlayerList();
 	//this.updatePlayerList();
 	//this.game.debug.body(this.teamA);
@@ -576,30 +582,6 @@ BasicGame.Multiplayer.prototype.handleHUD = function() {
 	this.skillCHotkey.fill = this.skillC.alpha == 1 ? "white" : "grey";
 	this.skillDHotkey.fill = this.skillD.alpha == 1 ? "white" : "grey";
 	this.skillEHotkey.fill = this.skillE.alpha == 1 ? "white" : "grey";
-
-	// var skillATime = this.game.math.roundTo((-this.player.skillBCooldown * this.player.getSkillB()) / 1000, -1);
-	// if (skillATime == 0) {
-	// 	skillATime = '';
-	// }
-	// this.skillA.getChildAt(0).setText(skillATime);
-
-	// var skillBTime = this.game.math.roundTo((-this.player.skillCCooldown * this.player.getSkillC()) / 1000, -1);
-	// if (skillBTime == 0) {
-	// 	skillBTime = '';
-	// }
-	// this.skillB.getChildAt(0).setText(skillBTime);
-
-	// var skillCTime = this.game.math.roundTo((-this.player.skillDCooldown * this.player.getSkillD()) / 1000, -1);
-	// if (skillCTime == 0) {
-	// 	skillCTime = '';
-	// }
-	// this.skillC.getChildAt(0).setText(skillCTime);
-
-	// var skillDTime = this.game.math.roundTo((-this.player.skillECooldown * this.player.getSkillE()) / 1000, -1);
-	// if (skillDTime == 0) {
-	// 	skillDTime = '';
-	// }
-	// this.skillD.getChildAt(0).setText(skillDTime);
 
 	// Update every 500ms so won't be that taxing
 	if (this.winState == false && this.game.time.now > this.textTimer) {

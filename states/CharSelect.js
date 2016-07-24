@@ -13,9 +13,10 @@ BasicGame.CharSelect = function (game) {
 };
 
 BasicGame.CharSelect.prototype = {
-	init: function(multiplayer) {
+	init: function(multiplayer, tutorial) {
 		// On init, check if player has chose multiplayer
 		this.multiplayer = multiplayer;
+		this.tutorial = tutorial;
 		this.charCount = 0;
 
 		this.background = this.add.sprite(0, 0, 'menu_background');
@@ -205,9 +206,12 @@ BasicGame.CharSelect.prototype = {
 
 		// Start game button clicked
 		this.startGame.events.onInputUp.add(function() {
-			if (BasicGame.selectedChar != null && !ref.multiplayer) {
+			if (BasicGame.selectedChar != null && !ref.multiplayer && !ref.tutorial) {
 				// If not multiplayer, then start main game
 				this.game.state.start("MainGame");
+			} else if (BasicGame.selectedChar != null && ref.tutorial) {
+				// Go into multiplayer
+				this.game.state.start("Tutorial");
 			} else if (BasicGame.selectedChar != null && ref.multiplayer) {
 				// Go into multiplayer
 				this.game.state.start("Multiplayer");

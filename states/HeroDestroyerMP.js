@@ -2,6 +2,7 @@
 BasicGame.HeroDestroyerMP = function (id, game, x, y, team, nick, initLvl) {
 	BasicGame.HeroBase.call(this, id, game, x, y, 'player_destroyer', team, nick);
 
+	this.anchor.setTo(0.41, 0.5);
 	// Collider size
 	this.body.setSize(110, 220, 110, 20);
 
