@@ -2,6 +2,7 @@
 BasicGame.HeroTrooperMP = function (id, game, x, y, team, nick, initLvl) {
 	BasicGame.HeroBase.call(this, id, game, x, y, 'player_trooper', team, nick);
 
+	this.anchor.setTo(0.42, 0.5);
 	// Collider size
 	this.body.setSize(70, 140, 40, 10);
 
@@ -115,7 +116,7 @@ BasicGame.HeroTrooperMP.prototype.update = function() {
 		this.handleSkillE();
 	}
 	//this.game.debug.body(this.attackCollider);
-	// this.game.debug.bodyInfo(this, 32, 200);
+	this.game.debug.bodyInfo(this, 32, 200);
 
 	// Collide with map
 	this.refMP.physics.arcade.collide(this.snipe.bullets, this.refMP.mapLayer, this.collideCallback.bind(this));

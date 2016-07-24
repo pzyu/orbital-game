@@ -19,7 +19,7 @@ BasicGame.Tutorial = function (game) {
 	this.spawnPoints = [				// Array of spawn points, set in each hero class
 		{x: 1000,  y: 250},
 		{x: 250,  y: 800},				// Team 1 spawn
-		{x: 2800, y: 500},				// Team 2 spawn
+		{x: 1910, y: 750},				// Team 2 spawn
 		{x: 2500,  y: 500}
 	];
 
@@ -121,6 +121,7 @@ BasicGame.Tutorial.prototype.preloadGame = function() {
 	layer = map.createLayer('level');				// 'Level 1' must be the same in the json file
 	layer.resizeWorld();
 	layer.wrap = true;
+	//layer.debug = true;
 
 	this.mapLayer = layer;
 
@@ -754,7 +755,7 @@ BasicGame.Tutorial.prototype.createGame = function() {
 	this.message.anchor.setTo(0.5, 0.5);
 
 	// Magic circle
-	this.magicCircle = this.game.add.sprite(500, 500, 'magicCircle');
+	this.magicCircle = this.game.add.sprite(1820, 420, 'magicCircle');
 	this.magicCircle.anchor.setTo(0.5, 0.5);
 	this.game.physics.arcade.enableBody(this.magicCircle);
 	this.magicCircle.body.setSize(400, 100, 0, -50);
@@ -848,9 +849,9 @@ BasicGame.Tutorial.prototype.broadcast = function(msg, duration) {
 };
 
 BasicGame.Tutorial.prototype.update = function() {
-	//this.scriptAIDestroyer(this.playerList["retard_Bot2"][0], this.playerList["retard_Bot1"][0]); // AI Script activated (Destroyer)
+	this.scriptAIDestroyer(this.playerList["TutorialPlayer"][0], this.playerList["tutorial_Bot1"][0]); // AI Script activated (Destroyer)
 	//this.scriptAIAce(this.playerList["retard_Bot1"][0], this.playerList["retard_Bot2"][0]); // AI Script activated (Ace)
-	this.scriptAIWalker(this.playerList["TutorialPlayer"][0], this.playerList["tutorial_Bot1"][0]); // AI Script activated (Ace)
+	//this.scriptAIWalker(this.playerList["TutorialPlayer"][0], this.playerList["tutorial_Bot1"][0]); // AI Script activated (Ace)
 	// Enable collision between player and layer and shield
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
 	this.physics.arcade.overlap(BasicGame.playerCG, BasicGame.shieldCG, this.shieldCallback.bind(this));

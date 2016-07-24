@@ -192,6 +192,7 @@ BasicGame.HeroBase.prototype.spawn = function() {
 };
 
 BasicGame.HeroBase.prototype.handleControls = function() {
+	//this.game.debug.body(this);
 	// Sending input to server
 	this.myInput.left = this.cursors.left.isDown;
 	this.myInput.right = this.cursors.right.isDown;
