@@ -125,6 +125,8 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	// Multiplayer stuff
 	if (id == "SoloKid" || id.substring(0, 10) == "retard_Bot") {
 		this.refMP = this.game.state.states['MainGame'];
+	} else if (id == "TutorialPlayer" || id.substring(0, 12) == "tutorial_Bot") {
+		this.refMP = this.game.state.states['Tutorial'];
 	} else {
 		this.refMP = this.game.state.states['Multiplayer'];
 	}
@@ -215,7 +217,10 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 			this.myInput.y = this.y;
 			if (this.ID == "SoloKid") {
 				// Single Player
-				BasicGame.MainGame.prototype.updateState("SoloKid", this.myInput);
+				BasicGame.MainGame.prototype.updateState(this.ID, this.myInput);
+			} else if (this.ID == "TutorialPlayer") {
+				// Tutorial
+				BasicGame.Tutorial.prototype.updateState(this.ID, this.myInput);
 			} else {
 				// Multiplayer
 				BasicGame.eurecaServer.handleKeys(this.myInput, BasicGame.roomID);
@@ -236,7 +241,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 			this.myInput.exp = this.heroExp;
 			this.myInput.inCircle = this.inCircle;
 
-			if (this.ID != "SoloKid") {
+			if (this.ID != "SoloKid" && this.ID != "TutorialPlayer") {
 				BasicGame.eurecaServer.compensate(this.myInput, BasicGame.roomID);
 			}
 		}
@@ -404,6 +409,7 @@ BasicGame.HeroBase.prototype.miteCallback = function(obj1, obj2, team) {
 };
 
 BasicGame.HeroBase.prototype.magicCircleCallback = function() {
+	console.log('in circle');
 	this.inCircle = true;
 };
 

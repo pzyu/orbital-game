@@ -247,7 +247,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillD = function() {
 	}
 	if (this.targetPos != null) {
 		//console.log("moving to: ", this.targetPos.x, this.targetPos.y);
-		this.game.physics.arcade.moveToXY(this, this.targetPos.x, this.targetPos.y, 2000, 250);
+		this.game.physics.arcade.moveToXY(this, this.targetPos.x, this.targetPos.y - 20, 1000, 250);
 	}
 
 	if (this.cursor.skillD && this.game.time.now > this.skillDTimer && this.skillsEnabled && this.positionQueue.length > 1) {

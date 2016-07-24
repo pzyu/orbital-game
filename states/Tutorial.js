@@ -1,4 +1,4 @@
-BasicGame.MainGame = function (game) {
+BasicGame.Tutorial = function (game) {
 	this.playerList;					// Player list
 	this.playerListHUD;
 	this.logo;
@@ -18,7 +18,7 @@ BasicGame.MainGame = function (game) {
 
 	this.spawnPoints = [				// Array of spawn points, set in each hero class
 		{x: 1000,  y: 250},
-		{x: 360,  y: 500},				// Team 1 spawn
+		{x: 250,  y: 800},				// Team 1 spawn
 		{x: 2800, y: 500},				// Team 2 spawn
 		{x: 2500,  y: 500}
 	];
@@ -41,18 +41,19 @@ BasicGame.MainGame = function (game) {
 	this.playerHUD;
 };
 
-BasicGame.MainGame.prototype.init = function() {
+BasicGame.Tutorial.prototype.init = function() {
 	// Initialize BasicGame core info
-	BasicGame.myID = "SoloKid";
+	BasicGame.myID = "TutorialPlayer";
 	BasicGame.myNick = "Trainee";
   	BasicGame.myTeam = 1;
 };
 
-BasicGame.MainGame.prototype.preload = function() {
+BasicGame.Tutorial.prototype.preload = function() {
+	console.log('preload');
 	// variables setting
 	var ref = this;	
 
-	BasicGame.MainGame.prototype.updateState = function(id, state) {
+	BasicGame.Tutorial.prototype.updateState = function(id, state) {
 		// Update state sends local remote input to every client 
 		var curPlayer = ref.playerList[id][0];
 		if (curPlayer) {
@@ -62,7 +63,7 @@ BasicGame.MainGame.prototype.preload = function() {
 		}
 	};
 
-	BasicGame.MainGame.prototype.compensate = function(id, state) {
+	BasicGame.Tutorial.prototype.compensate = function(id, state) {
 		// Compensate corrects server side position, does not touch local client
 		var curPlayer = ref.playerList[id][0];
 		if (curPlayer && BasicGame.myID != id) {
@@ -85,7 +86,7 @@ BasicGame.MainGame.prototype.preload = function() {
 		ref.updatePlayerList();
 	};	
 
-	BasicGame.MainGame.prototype.setIndex = function(index) {
+	BasicGame.Tutorial.prototype.setIndex = function(index) {
 		// Return player's selected character
 		// if (ref.magicCircle != null) {
 		// 	ref.magicCircle.position = ref.magicSpawnPoints[index];
@@ -98,7 +99,7 @@ BasicGame.MainGame.prototype.preload = function() {
 };
 
 
-BasicGame.MainGame.prototype.preloadGame = function() {
+BasicGame.Tutorial.prototype.preloadGame = function() {
 	this.physics.startSystem(Phaser.Physics.ARCADE);
 	this.physics.arcade.gravity.y = this.gravity;
 
@@ -106,7 +107,7 @@ BasicGame.MainGame.prototype.preloadGame = function() {
 	this.stage.backgroundColor = '#787878';
 
 	// Add tilemap
-	map = this.add.tilemap('single_player');					// 'map' must be same as the one in Boot.js
+	map = this.add.tilemap('tutorial');					// 'map' must be same as the one in Boot.js
 	map.addTilesetImage('lab_tilesheet', 'lab_tiles');			// 'sheet' must be the same also
 
 	// map = this.add.tilemap('graveyard');					// 'map' must be same as the one in Boot.js
@@ -149,13 +150,13 @@ BasicGame.MainGame.prototype.preloadGame = function() {
 
 	this.createGame(); // preload complete, start to create game
 	//this.spawnAI("retard_Bot", 500, 1000, "player_trooper", "retard Ace", 2);
-	//this.spawnAI("retard_Bot1", 500, 1000, "player_destroyer", "retard Destroyer", 2);
+	this.spawnAI("tutorial_Bot1", 500, 1000, "player_destroyer", "Enemy Destroyer", 2);
 	//this.spawnAI("retard_Bot2", 500, 1000, "player_trooper", "retard Ace", 1);
-	this.spawnAI("retard_Bot3", 500, 1000, "player_walker", "retard Walker", 2);
+	//this.spawnAI("tutorial_Bot1", 500, 1000, "player_walker", "retard Walker", 2);
 
 };
 
-BasicGame.MainGame.prototype.scriptAIAce = function(target, me) {
+BasicGame.Tutorial.prototype.scriptAIAce = function(target, me) {
 	// function script which react base on target's behaviour
 	if (me.curHealth / me.maxHealth < 0.1 || target.isDead) {
 		// low hp, go heal
@@ -260,7 +261,7 @@ BasicGame.MainGame.prototype.scriptAIAce = function(target, me) {
 
 };
 
-BasicGame.MainGame.prototype.scriptAIWalker = function(target, me) {
+BasicGame.Tutorial.prototype.scriptAIWalker = function(target, me) {
 	// function script which react base on target's behaviour
 	if (me.curHealth / me.maxHealth < 0.1 || target.isDead) {
 		// low hp, go heal
@@ -402,7 +403,7 @@ BasicGame.MainGame.prototype.scriptAIWalker = function(target, me) {
 	}
 };
 
-BasicGame.MainGame.prototype.scriptAIDestroyer = function(target, me) {
+BasicGame.Tutorial.prototype.scriptAIDestroyer = function(target, me) {
 	// function script which react base on target's behaviour
 	if (me.curHealth / me.maxHealth < 0.1 || target.isDead) {
 		// low hp, go heal
@@ -542,7 +543,7 @@ BasicGame.MainGame.prototype.scriptAIDestroyer = function(target, me) {
 };
 
 
-BasicGame.MainGame.prototype.createGame = function() {
+BasicGame.Tutorial.prototype.createGame = function() {
 	var ref = this;
 	var optionStyle = {font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
 
@@ -575,7 +576,7 @@ BasicGame.MainGame.prototype.createGame = function() {
 	this.player = player;
 
 	// Add collider for spawns
-	this.teamA = this.game.add.sprite(140, 700, 'fence');
+	this.teamA = this.game.add.sprite(35, 980, 'fence');
 	this.game.physics.arcade.enableBody(this.teamA);
 	this.teamA.body.setSize(350, 100, 0, -40);
 	this.teamA.body.allowGravity = false;
@@ -753,7 +754,7 @@ BasicGame.MainGame.prototype.createGame = function() {
 	this.message.anchor.setTo(0.5, 0.5);
 
 	// Magic circle
-	this.magicCircle = this.game.add.sprite(-500, -500, 'magicCircle');
+	this.magicCircle = this.game.add.sprite(500, 500, 'magicCircle');
 	this.magicCircle.anchor.setTo(0.5, 0.5);
 	this.game.physics.arcade.enableBody(this.magicCircle);
 	this.magicCircle.body.setSize(400, 100, 0, -50);
@@ -769,7 +770,7 @@ BasicGame.MainGame.prototype.createGame = function() {
 	];
 };
 
-BasicGame.MainGame.prototype.spawnAI = function(i, x, y, char, nick, team) {
+BasicGame.Tutorial.prototype.spawnAI = function(i, x, y, char, nick, team) {
 	// Spawn enemy at location
 	var curX = x;
 	var curY = y;
@@ -806,7 +807,7 @@ BasicGame.MainGame.prototype.spawnAI = function(i, x, y, char, nick, team) {
 	BasicGame.playerCG.sort('z', Phaser.Group.SORT_DESCENDING);
 }
 
-BasicGame.MainGame.prototype.addPlayerName = function(id) {
+BasicGame.Tutorial.prototype.addPlayerName = function(id) {
 	// Factory function
 	this.playerListHUD[id] = this.game.add.sprite(25, 15 + (this.playerCount * 35), 'playerName');
 	var text = this.game.add.text(15, 15, this.playerList[id][1] + " - " + this.playerList[id][0].curHealth + " (" + this.playerList[id][0].heroLevel + ")", { font: '10pt myfont', align: 'left', fill: "white", align: 'left'});
@@ -815,12 +816,12 @@ BasicGame.MainGame.prototype.addPlayerName = function(id) {
  	this.playerCount++;
 };
 
-BasicGame.MainGame.prototype.removePlayerName = function(id) {
+BasicGame.Tutorial.prototype.removePlayerName = function(id) {
 	this.playerCount--;
 	this.playerListHUD[id].destroy();
 };
 
-BasicGame.MainGame.prototype.updatePlayerList = function() {
+BasicGame.Tutorial.prototype.updatePlayerList = function() {
 	for (id in this.playerListHUD) {
 		//console.log(this.playerListHUD[id].children.length);
 		if(this.playerListHUD[id].children.length > 0) {
@@ -829,7 +830,7 @@ BasicGame.MainGame.prototype.updatePlayerList = function() {
 	}
 };
 
-BasicGame.MainGame.prototype.broadcast = function(msg, duration) {
+BasicGame.Tutorial.prototype.broadcast = function(msg, duration) {
 	var ref = this;
 	console.log(msg, duration);
 	var tween = this.game.add.tween(this).to({0: 0}, duration * 1000, Phaser.Easing.Linear.None, true, 0);
@@ -846,17 +847,20 @@ BasicGame.MainGame.prototype.broadcast = function(msg, duration) {
 
 };
 
-BasicGame.MainGame.prototype.update = function() {
+BasicGame.Tutorial.prototype.update = function() {
 	//this.scriptAIDestroyer(this.playerList["retard_Bot2"][0], this.playerList["retard_Bot1"][0]); // AI Script activated (Destroyer)
 	//this.scriptAIAce(this.playerList["retard_Bot1"][0], this.playerList["retard_Bot2"][0]); // AI Script activated (Ace)
-	this.scriptAIWalker(this.playerList["SoloKid"][0], this.playerList["retard_Bot3"][0]); // AI Script activated (Ace)
+	this.scriptAIWalker(this.playerList["TutorialPlayer"][0], this.playerList["tutorial_Bot1"][0]); // AI Script activated (Ace)
 	// Enable collision between player and layer and shield
 	this.physics.arcade.collide(BasicGame.playerCG, layer);
 	this.physics.arcade.overlap(BasicGame.playerCG, BasicGame.shieldCG, this.shieldCallback.bind(this));
 	// Team colliders
 	this.physics.arcade.overlap(this.teamA, BasicGame.playerCG, this.baseCallback.bind(this));	
 	this.physics.arcade.overlap(this.teamB, BasicGame.playerCG, this.baseCallback.bind(this));	
-
+	if (this.player.inCircle && this.player.heroLevel < 25) {
+		creditExp(this.player, 20);
+		this.player.curHealth--;
+	}
 	this.handleHUD();
 	this.updatePlayerList();
 	//this.showPlayerList();
@@ -868,12 +872,12 @@ BasicGame.MainGame.prototype.update = function() {
 	//this.game.debug.body(this.magicCircle, 0, 200);
 };
 
-BasicGame.MainGame.prototype.handleHUD = function() {
+BasicGame.Tutorial.prototype.handleHUD = function() {
 	// Level
 	this.playerLevel.setText("[" + this.player.heroLevel + "]");
 
 	// Health
-	this.healthBarPercentage.setText(this.game.math.floorTo(this.player.getHP() * 100) + "%");
+	this.healthBarPercentage.setText(this.game.math.ceilTo(this.player.getHP() * 100) + "%");
 	this.healthRect.width = 269 * this.player.getHP();
 	this.healthBar.crop(this.healthRect);
 
@@ -903,7 +907,7 @@ BasicGame.MainGame.prototype.handleHUD = function() {
 	}
 };
 
-BasicGame.MainGame.prototype.chat = function() {
+BasicGame.Tutorial.prototype.chat = function() {
 	if (this.enter.isDown && this.game.time.now > this.textTimer) {
 		this.textTimer = this.game.time.now + 1000;
 		
@@ -923,7 +927,7 @@ BasicGame.MainGame.prototype.chat = function() {
 	}
 }
 
-BasicGame.MainGame.prototype.baseCallback= function(obj1, obj2) {
+BasicGame.Tutorial.prototype.baseCallback= function(obj1, obj2) {
 	if ((obj1 == this.teamA && obj2.myTeam == 1) || (obj1 == this.teamB && obj2.myTeam == 2)) {
 		if (obj2.curHealth < obj2.maxHealth && !obj2.isDead) {
 			obj2.curHealth++;
@@ -931,7 +935,7 @@ BasicGame.MainGame.prototype.baseCallback= function(obj1, obj2) {
 	}
 };
 
-BasicGame.MainGame.prototype.shieldCallback= function(obj1, obj2) {
+BasicGame.Tutorial.prototype.shieldCallback= function(obj1, obj2) {
 	// If not same team, push back
 	if (obj1.myTeam != obj2.myTeam) {
 		obj1.inShield = true;
