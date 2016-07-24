@@ -54,6 +54,7 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	this.isBuffed = false;
 	this.inCircle = false;
 	this.inShield = false;
+	this.dmgMultiplier = 1; // receives 100% damage
 	
 	// Hero Levels
 	this.heroLevel = 1;
@@ -320,7 +321,7 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 
 		this.body.velocity.x += knockbackX;
 		this.body.velocity.y -= knockbackY;
-		this.curHealth -= Math.round(damage);
+		this.curHealth -= Math.round(damage * this.dmgMultiplier);
 
 		// If dead, respawn
 		if (this.curHealth <= 0) {
@@ -370,18 +371,19 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 						this.refMP.broadcast("The enemy has brought out their Ace, good luck surviving.", 2);
 					}
 				}
+				// Calculate exp to credit to the killer based on killer's hero level and level difference.
+				var levelDiff = this.heroLevel - killerInfo.heroLevel;
+				var expToGive = (levelDiff >= 10) ? 100 : (100 * this.heroLevel);
+				creditExp(killerInfo, Math.round(expToGive)); // give exp to killer
 			} else {
 				this.refMP.broadcast(this.nick + " has been killed by " + killerInfo.nick, 2);
+				// Calculate exp to credit to the killer based on killer's hero level and level difference.
+				var levelDiff = this.heroLevel - killerInfo.heroLevel;
+				var expToGive = (levelDiff >= 10) ? 100 : (50 * this.heroLevel);
+				creditExp(killerInfo, Math.round(expToGive)); // give exp to killer
 			}
 
-			// Calculate exp to credit to the killer based on killer's hero level and level difference.
-			var levelDiff = this.heroLevel - killerInfo.heroLevel;
-			//var expToGive = (levelDiff >= 10) ? 100 : (50 * killerInfo.heroLevel * (1 + (levelDiff / 10)));
-			var expToGive = (levelDiff >= 10) ? 100 : (50 * this.heroLevel);
-
-			creditExp(killerInfo, Math.round(expToGive)); // give exp to killer
-
-			console.log("Dead");
+			// hero is dead, respawn it
 			this.spawn();
 		}
 	}
@@ -477,6 +479,18 @@ BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, de
 		fury.onComplete.add(function() {
 			this.isBuffed = false;
 			this.skillACooldown = this.defaultAS;
+		}, this);
+	}
+
+	if (buffName == "BUFF_DAMAGE_RECEIVE_MODIFIER") {
+		var dmgDown = this.game.add.tween(this).to({0: 0}, duration, Phaser.Easing.Linear.None, true, delay);
+		dmgDown.onStart.add(function() {
+			this.isBuffed = true;
+			this.dmgMultiplier = this.dmgMultiplier - amount;
+		}, this);
+		dmgDown.onComplete.add(function() {
+			this.isBuffed = false;
+			this.dmgMultiplier = 1; // default 100% damage
 		}, this);
 	}
 

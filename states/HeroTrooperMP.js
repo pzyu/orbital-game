@@ -220,6 +220,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillC = function() {
     	}, this);
 
 		this.applyBuff("BUFF_INVIS", 0, 5000 + (this.heroLevel * 200), 500, BasicGame.myTeam);
+		this.applyBuff("BUFF_DAMAGE_RECEIVE_MODIFIER", 0.4, 5000 + (this.heroLevel * 200), 500, BasicGame.myTeam); // reduce dmg by 40%
 
     	// Play the animation
     	this.animations.play('anim_stealth');
