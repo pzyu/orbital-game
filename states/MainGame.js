@@ -1040,7 +1040,9 @@ BasicGame.MainGame.prototype.broadcast = function(msg, duration) {
 
 BasicGame.MainGame.prototype.update = function() {
 	// run AI scripts
-	this.scriptAIWalker(this.playerList["SoloKid"][0], this.playerList["retard_Bot1"][0]); // AI Script activated (Walker - Default)
+	if (this.playerList["retard_Bot1"] != null) {
+		this.scriptAIWalker(this.playerList["SoloKid"][0], this.playerList["retard_Bot1"][0]); // AI Script activated (Walker - Default)
+	}
 	if (this.playerList["retard_Bot2"] != null) {
 		this.scriptAIDisruptor(this.playerList["SoloKid"][0], this.playerList["retard_Bot2"][0]); // AI Script activated (Disruptor - 2nd)
 	}
