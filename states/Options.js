@@ -63,11 +63,11 @@ BasicGame.Options.prototype = {
 
 	// Factory function that lets you add options easily
 	addMenuOption: function(xPosition, yPosition, text, callback) {
-		// Set default text
+		// Set default text=
 		var txt = this.add.text(xPosition, yPosition, text, optionStyle);
 		
 		// Default style
-		txt.stroke = "rgba(0,0,0,0)";
+		txt.stroke = "rgba(0,0,0,255)";
 		txt.strokeThickness = 4;
 		txt.inputEnabled = true;
 		txt.events.onInputUp.add(callback);

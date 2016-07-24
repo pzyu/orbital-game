@@ -20,7 +20,7 @@ BasicGame.Tutorial = function (game) {
 		{x: 1000,  y: 250},
 		{x: 250,  y: 800},				// Team 1 spawn
 		{x: 1910, y: 750},				// Team 2 spawn
-		{x: 2500,  y: 500}
+		{x: 1910,  y: 100}
 	];
 
 	this.teamScores = [
@@ -143,7 +143,6 @@ BasicGame.Tutorial.prototype.preloadGame = function() {
 	this.cursors = this.game.input.keyboard.createCursorKeys();
 	this.enter = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
 
-
 	// Chat
 	var test =  { font: '16pt myfont', align: 'center', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white", wordWrap: true, wordWrapWidth: 400};
 	this.playerText = this.game.add.text(-100, -100, "Default", test);
@@ -151,9 +150,12 @@ BasicGame.Tutorial.prototype.preloadGame = function() {
 
 	this.createGame(); // preload complete, start to create game
 	//this.spawnAI("retard_Bot", 500, 1000, "player_trooper", "retard Ace", 2);
-	this.spawnAI("tutorial_Bot1", 500, 1000, "player_destroyer", "Enemy Destroyer", 2);
+	this.spawnAI("tutorial_Bot1", 500, 1000, "player_destroyer", "Simulation Destroyer", 2);
+	//this.playerList["tutorial_Bot1"][0]
+	creditExp(this.playerList["tutorial_Bot1"][0], 4000);
 	//this.spawnAI("retard_Bot2", 500, 1000, "player_trooper", "retard Ace", 1);
 	//this.spawnAI("tutorial_Bot1", 500, 1000, "player_walker", "retard Walker", 2);
+
 
 };
 
@@ -406,9 +408,9 @@ BasicGame.Tutorial.prototype.scriptAIWalker = function(target, me) {
 
 BasicGame.Tutorial.prototype.scriptAIDestroyer = function(target, me) {
 	// function script which react base on target's behaviour
-	if (me.curHealth / me.maxHealth < 0.1 || target.isDead) {
+	if (me.curHealth / me.maxHealth < 0.1 ) { //|| target.isDead) {
 		// low hp, go heal
-		me.hpTrigger = true;
+		//me.hpTrigger = true;
 	} else if (me.curHealth / me.maxHealth > 0.85) {
 		me.hpTrigger = false;
 	}
@@ -437,6 +439,7 @@ BasicGame.Tutorial.prototype.scriptAIDestroyer = function(target, me) {
 			} else if (me.myTeam == 2) {
 				me.cursor.right = true;
 				me.cursor.left = false;
+				//console.log("asdasd");
 			}
 			me.cursor.up = true;
 		}
@@ -547,6 +550,8 @@ BasicGame.Tutorial.prototype.scriptAIDestroyer = function(target, me) {
 BasicGame.Tutorial.prototype.createGame = function() {
 	var ref = this;
 	var optionStyle = {font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
+
+	this.initTutorial();
 
 	// Assign global groups
 	BasicGame.playerCG = this.add.group();
@@ -780,7 +785,7 @@ BasicGame.Tutorial.prototype.spawnAI = function(i, x, y, char, nick, team) {
 		curY = this.spawnY;
 	}
 
-	this.broadcast(nick + " wants to fight!", 2);
+	//this.broadcast(nick + " wants to fight!", 2);
 	console.log('Spawning', i, curX, curY, char, nick, team);
 
 	// If doesn't already exist
@@ -832,24 +837,104 @@ BasicGame.Tutorial.prototype.updatePlayerList = function() {
 };
 
 BasicGame.Tutorial.prototype.broadcast = function(msg, duration) {
-	var ref = this;
-	console.log(msg, duration);
-	var tween = this.game.add.tween(this).to({0: 0}, duration * 1000, Phaser.Easing.Linear.None, true, 0);
-	tween.onStart.add(function() {
-		ref.message.x = ref.game.width/2;
-		ref.message.y = ref.game.height/4;
-		ref.message.setText(msg);
-		ref.message.fixedToCamera = true;
-	});
-	tween.onComplete.add(function(){
-		ref.message.fixedToCamera = false;
-		ref.message.position.x = ref.message.position.y = -50;
-	});
+	// var ref = this;
+	// console.log(msg, duration);
+	// var tween = this.game.add.tween(this).to({0: 0}, duration * 1000, Phaser.Easing.Linear.None, true, 0);
+	// tween.onStart.add(function() {
+	// 	ref.message.x = ref.game.width/2;
+	// 	ref.message.y = ref.game.height/4;
+	// 	ref.message.setText(msg);
+	// 	ref.message.fixedToCamera = true;
+	// });
+	// tween.onComplete.add(function(){
+	// 	ref.message.fixedToCamera = false;
+	// 	ref.message.position.x = ref.message.position.y = -50;
+	// });
 
 };
 
+BasicGame.Tutorial.prototype.initTutorial = function() {
+	var style = { font: '20pt myfont', fill: 'white', stroke: 'black', strokeThickness: 2, align: 'center'};
+	this.game.add.text(100, 700, "Press arrow keys to move\nand jump", style);
+	this.game.add.text(450, 150, "When you're ready, jump down \nand defeat the AI simulation", style);
+	this.circleText = this.game.add.text(1550, 100, "This is a magic circle which \ngrants heros experience when \nthey're standing within", style)
+
+	this.playerReady = false;
+	this.readyCheck = this.game.add.sprite(750, 980, '');
+	this.game.physics.arcade.enableBody(this.readyCheck);
+	this.readyCheck.body.setSize(1200, 100, 0, -40);
+	this.readyCheck.body.allowGravity = false;
+
+	this.platformBlock = this.game.add.sprite(1500, 100, '');
+	this.game.physics.arcade.enableBody(this.platformBlock);
+	this.platformBlock.body.setSize(100, 400, 0, 0);
+	this.platformBlock.body.allowGravity = false;
+	this.platformBlock.body.immovable = true;
+
+	this.checkPoint = 0;
+};
+
+BasicGame.Tutorial.prototype.updateTutorial = function () {
+	//this.game.debug.body(this.readyCheck);
+	//this.game.debug.body(this.platformBlock);
+
+	this.physics.arcade.collide(this.player, this.platformBlock);
+
+	// Activate AI when player is ready
+	if (this.playerReady) {
+		this.scriptAIDestroyer(this.playerList["TutorialPlayer"][0], this.playerList["tutorial_Bot1"][0]); 
+	}
+
+	// Check for overlap when player is in combat area
+	this.physics.arcade.overlap(this.player, this.readyCheck, 
+		function(obj1, obj2) { 
+			if (!this.playerReady && !this.player.isDead) {
+				this.playerReady = true;
+				console.log("ready");
+			}
+	}, null, this);
+
+	// Credit exp
+	if (this.player.inCircle && this.player.heroLevel < 25) {
+		creditExp(this.player, 40);
+	}
+
+	// Don't move AI if dead
+	if (this.player.isDead) {
+		this.playerList["tutorial_Bot1"][0].cursor.right = false;
+		this.playerList["tutorial_Bot1"][0].cursor.left = false;
+		this.playerList["tutorial_Bot1"][0].cursor.up = false;
+	}
+
+	// If died once
+	if (this.checkPoint < 1 && this.player.isDead) {
+		// Change spawn location
+		this.checkPoint++;
+		this.player.myTeam = 3;
+		this.playerReady = false;
+	}
+
+	// Once leveled all the way
+	if (this.player.heroLevel == 25 && this.magicCircle.x != -500) {
+		this.magicCircle.x = this.magicCircle.y = -500;
+		this.checkPoint++;
+		this.platformBlock.x = -1000;
+		this.circleText.setText("      Now that you've leveled \n     enough, head down and \n     defeat the simulation!");
+	}
+
+	// When player defeats AI
+	if (this.checkPoint == 2 && this.playerList["tutorial_Bot1"][0].isDead) {
+		var tween = this.game.add.tween(this.playerList["tutorial_Bot1"][0]).to({alpha: 0}, 2000, Phaser.Easing.Linear.None, true, 0);
+		tween.onComplete.add(function () {
+			this.playerList["tutorial_Bot1"][0].kill();
+		}, this);
+		this.winGame();
+		this.checkPoint++;
+	}
+};
+
 BasicGame.Tutorial.prototype.update = function() {
-	this.scriptAIDestroyer(this.playerList["TutorialPlayer"][0], this.playerList["tutorial_Bot1"][0]); // AI Script activated (Destroyer)
+	this.updateTutorial();
 	//this.scriptAIAce(this.playerList["retard_Bot1"][0], this.playerList["retard_Bot2"][0]); // AI Script activated (Ace)
 	//this.scriptAIWalker(this.playerList["TutorialPlayer"][0], this.playerList["tutorial_Bot1"][0]); // AI Script activated (Ace)
 	// Enable collision between player and layer and shield
@@ -858,10 +943,7 @@ BasicGame.Tutorial.prototype.update = function() {
 	// Team colliders
 	this.physics.arcade.overlap(this.teamA, BasicGame.playerCG, this.baseCallback.bind(this));	
 	this.physics.arcade.overlap(this.teamB, BasicGame.playerCG, this.baseCallback.bind(this));	
-	if (this.player.inCircle && this.player.heroLevel < 25) {
-		creditExp(this.player, 20);
-		this.player.curHealth--;
-	}
+
 	this.handleHUD();
 	this.updatePlayerList();
 	//this.showPlayerList();
@@ -907,6 +989,38 @@ BasicGame.Tutorial.prototype.handleHUD = function() {
 		this.teamBHUD.setText(this.teamScores[2]);
 	}
 };
+
+BasicGame.Tutorial.prototype.winGame = function() {
+	// Apply forced disconnection to lobby to "freeze" game state
+	this.winState = true;
+	this.winTime = this.game.time.now;
+	var winText = "Training Complete"
+
+	// Show win/lose message
+	var winLoseMsg = game.add.text(this.game.width / 2, this.game.height / 4, winText, 
+		{font: '64pt myfont', stroke: 'rgba(0,0,0,255)', strokeThickness: 4, fill: "white", boundsAlignH: "center", boundsAlignV: "middle"}); 
+	winLoseMsg.fixedToCamera = true;
+	winLoseMsg.anchor.setTo(0.5, 0.5);
+	winLoseMsg.alpha = 0.1;
+	game.add.tween(winLoseMsg).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true);
+
+	// Add return to menu button
+	var returnMenu = game.add.text(this.game.width / 2, this.game.height / 4 + 235,  "Back to Main Menu", 
+		{font: '25pt myfont', stroke: 'rgba(0,0,0,255)', strokeThickness: 4, fill: "white", boundsAlignH: "center", boundsAlignV: "middle"}); 
+	returnMenu.inputEnabled = true;
+	returnMenu.fixedToCamera = true;
+	returnMenu.anchor.setTo(0.5, 0.5);
+	returnMenu.events.onInputOver.add(BasicGame.onOver);
+	returnMenu.events.onInputOut.add(BasicGame.onOut);
+
+	// Back button clicked
+	returnMenu.events.onInputUp.add(function() {
+		returnMenu.destroy();
+		BasicGame.disconnectClient();
+		this.game.state.start("MainMenu", true);
+	});
+};
+
 
 BasicGame.Tutorial.prototype.chat = function() {
 	if (this.enter.isDown && this.game.time.now > this.textTimer) {
