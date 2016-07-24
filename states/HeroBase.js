@@ -334,10 +334,13 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 				if (BasicGame.myID == "SoloKid" || BasicGame.myID == "TutorialPlayer") {
 					// Single Player kill handling
 					this.refMP.teamScores[killerInfo.myTeam]++; // add to teamscore
-					if (killerInfo.myTeam == 2 && this.refMP.teamScores[2] <= 5) {
+					if (killerInfo.myTeam == 2 && this.refMP.teamScores[2] < 5) {
 						this.refMP.broadcast("You have " + (5 - this.refMP.teamScores[2]) + " lives left. Your allies have improved your abilities", 2);
-						for (var i=0; i<this.refMP.teamScores[2]; i++) {
-							onLevelUp(this.refMP.playerList["SoloKid"][0]); // give 1 level per life lost
+						for (var i=0; i<(this.refMP.teamScores[2] * 2); i++) {
+							// calculate previous % exp
+							var prevExp = this.refMP.playerList["SoloKid"][0].heroExp / this.refMP.playerList["SoloKid"][0].heroToNextLevel;
+							onLevelUp(this.refMP.playerList["SoloKid"][0]); // give 2 level per life lost
+							this.refMP.playerList["SoloKid"][0].heroExp = Math.round(this.refMP.playerList["SoloKid"][0].heroToNextLevel * prevExp);
 						}
 					}
 				} else {
@@ -359,11 +362,11 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 						this.refMP.broadcast("Enemy support has arrived!", 2);
 					} else if (this.refMP.teamScores[1] == 10 && this.refMP.playerList["retard_Bot3"] == null) {
 						// spawn new enemy (Disruptor)
-						this.refMP.spawnAI("retard_Bot3", 500, 1000, "player_destroyer", "Enemy Destroyer(AI)", 2, 7);
+						this.refMP.spawnAI("retard_Bot3", 500, 1000, "player_destroyer", "Enemy Destroyer(AI)", 2, 5);
 						this.refMP.broadcast("Destroyer, incoming!", 2);
 					} else if (this.refMP.teamScores[1] == 15 && this.refMP.playerList["retard_Bot4"] == null) {
 						// spawn new enemy (Disruptor)
-						this.refMP.spawnAI("retard_Bot4", 500, 1000, "player_ace", "Enemy Ace(AI)", 2, 12);
+						this.refMP.spawnAI("retard_Bot4", 500, 1000, "player_trooper", "Enemy Ace(AI)", 2, 7);
 						this.refMP.broadcast("The enemy has brought out their Ace, good luck surviving.", 2);
 					}
 				}
