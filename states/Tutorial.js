@@ -551,7 +551,28 @@ BasicGame.Tutorial.prototype.createGame = function() {
 	var ref = this;
 	var optionStyle = {font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
 
+	var exitButton = this.add.image(1240, 20,  'exit_button');
+	exitButton.fixedToCamera = true;
+	exitButton.inputEnabled = true;
+	exitButton.events.onInputOver.add(function(target) {
+		exitButton.scale.setTo(1.1);
+	});
+	exitButton.events.onInputOut.add(function(target) {
+		exitButton.scale.setTo(1.0);
+	});
+	exitButton.events.onInputUp.add(function() {
+		ref.game.state.start("MainMenu", true);
+	});
+
 	this.initTutorial();
+
+	// Magic circle
+	this.magicCircle = this.game.add.sprite(1820, 420, 'magicCircle');
+	this.magicCircle.anchor.setTo(0.5, 0.5);
+	this.game.physics.arcade.enableBody(this.magicCircle);
+	this.magicCircle.body.setSize(400, 100, 0, -50);
+	this.magicCircle.body.allowGravity = false;
+	this.game.add.existing(this.magicCircle);
 
 	// Assign global groups
 	BasicGame.playerCG = this.add.group();
@@ -576,10 +597,9 @@ BasicGame.Tutorial.prototype.createGame = function() {
 		var player = new BasicGame.HeroGunnerMP(BasicGame.myID, this.game, 100, 1000, BasicGame.myTeam, BasicGame.myNick, 1);
 	}
 
-	this.playerList[BasicGame.myID] = [player, BasicGame.myNick, BasicGame.myTeam];
-	this.camera.follow(player);
-
 	this.player = player;
+	this.camera.follow(player);
+	this.playerList[BasicGame.myID] = [player, BasicGame.myNick, BasicGame.myTeam];
 
 	// Add collider for spawns
 	this.teamA = this.game.add.sprite(35, 980, 'fence');
@@ -758,14 +778,6 @@ BasicGame.Tutorial.prototype.createGame = function() {
 	this.message = this.game.add.text(-500, 0, 'Default message', style), 
 	this.message.fixedToCamera = true;
 	this.message.anchor.setTo(0.5, 0.5);
-
-	// Magic circle
-	this.magicCircle = this.game.add.sprite(1820, 420, 'magicCircle');
-	this.magicCircle.anchor.setTo(0.5, 0.5);
-	this.game.physics.arcade.enableBody(this.magicCircle);
-	this.magicCircle.body.setSize(400, 100, 0, -50);
-	this.magicCircle.body.allowGravity = false;
-	this.game.add.existing(this.magicCircle);
 
 	// Initialize and reset team variables
 	this.winState = false;

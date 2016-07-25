@@ -885,6 +885,19 @@ BasicGame.MainGame.prototype.createGame = function() {
 	var ref = this;
 	var optionStyle = {font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
 
+	var exitButton = this.add.image(1240, 20,  'exit_button');
+	exitButton.fixedToCamera = true;
+	exitButton.inputEnabled = true;
+	exitButton.events.onInputOver.add(function(target) {
+		exitButton.scale.setTo(1.1);
+	});
+	exitButton.events.onInputOut.add(function(target) {
+		exitButton.scale.setTo(1.0);
+	});
+	exitButton.events.onInputUp.add(function() {
+		ref.game.state.start("MainMenu", true);
+	});
+
 	// Assign global groups
 	BasicGame.playerCG = this.add.group();
 	BasicGame.colliderCG = this.add.group();
@@ -910,6 +923,14 @@ BasicGame.MainGame.prototype.createGame = function() {
 
 	this.playerList[BasicGame.myID] = [player, BasicGame.myNick, BasicGame.myTeam];
 	this.camera.follow(player);
+
+	// Magic circle
+	this.magicCircle = this.game.add.sprite(-500, -500, 'magicCircle');
+	this.magicCircle.anchor.setTo(0.5, 0.5);
+	this.game.physics.arcade.enableBody(this.magicCircle);
+	this.magicCircle.body.setSize(400, 100, 0, -50);
+	this.magicCircle.body.allowGravity = false;
+	this.game.add.existing(this.magicCircle);
 
 	this.player = player;
 
@@ -1090,14 +1111,6 @@ BasicGame.MainGame.prototype.createGame = function() {
 	this.message = this.game.add.text(-500, 0, 'Default message', style), 
 	this.message.fixedToCamera = true;
 	this.message.anchor.setTo(0.5, 0.5);
-
-	// Magic circle
-	this.magicCircle = this.game.add.sprite(-500, -500, 'magicCircle');
-	this.magicCircle.anchor.setTo(0.5, 0.5);
-	this.game.physics.arcade.enableBody(this.magicCircle);
-	this.magicCircle.body.setSize(400, 100, 0, -50);
-	this.magicCircle.body.allowGravity = false;
-	this.game.add.existing(this.magicCircle);
 
 	// Initialize and reset team variables
 	this.winState = false;
@@ -1363,7 +1376,7 @@ BasicGame.MainGame.prototype.chat = function() {
 BasicGame.MainGame.prototype.baseCallback= function(obj1, obj2) {
 	if ((obj1 == this.teamA && obj2.myTeam == 1) || (obj1 == this.teamB && obj2.myTeam == 2)) {
 		if (obj2.curHealth < obj2.maxHealth && !obj2.isDead) {
-			obj2.curHealth += 5;
+			obj2.curHealth ++;
 		}
 	}
 };
