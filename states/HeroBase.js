@@ -364,17 +364,17 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 					}
 					if (this.refMP.teamScores[1] == 5 && enemyCount == 1) {
 						// spawn new enemy (2nd)
-						this.refMP.spawnRandomAIFromList(3);
+						this.refMP.spawnRandomAIFromList(3, 2);
 						//this.refMP.spawnAI("AI_Bot2", 500, 1000, "player_gunner", "Enemy Disruptor(AI)", 2, 3);
 						//this.refMP.broadcast("Enemy support has arrived!", 2);
 					} else if (this.refMP.teamScores[1] == 10 && enemyCount == 2) {
 						// spawn new enemy (3rd)
-						this.refMP.spawnRandomAIFromList(5);
+						this.refMP.spawnRandomAIFromList(5, 2);
 						//this.refMP.spawnAI("AI_Bot3", 500, 1000, "player_destroyer", "Enemy Destroyer(AI)", 2, 5);
 						//this.refMP.broadcast("Destroyer, incoming!", 2);
 					} else if (this.refMP.teamScores[1] == 15 && enemyCount == 3) {
 						// spawn new enemy (4th)
-						this.refMP.spawnRandomAIFromList(7);
+						this.refMP.spawnRandomAIFromList(7, 2);
 						//this.refMP.spawnAI("AI_Bot4", 500, 1000, "player_trooper", "Enemy Ace(AI)", 2, 7);
 						//this.refMP.broadcast("The enemy has brought out their Ace, good luck surviving.", 2);
 					}

@@ -157,19 +157,19 @@ BasicGame.MainGame.prototype.preloadGame = function() {
 	this.createGame(); // preload complete, start to create game
 	//this.spawnAI("AI_Bot_walker_1_1", 500, 1000, "player_walker", "Ally Walker(AI)", 1, 5); // ALLY WALKER COMMAND
 	this.shuffleArray(this.AIList);
-	this.spawnRandomAIFromList(1);
+	this.spawnRandomAIFromList(1, 2);
 };
 
-BasicGame.MainGame.prototype.spawnRandomAIFromList = function(initLvl) {
-	var enemyCount = 0;
+BasicGame.MainGame.prototype.spawnRandomAIFromList = function(initLvl, team) {
+	var teamUnitcount = 0;
 	for (var idx in this.playerList) {
-		if (this.playerList[idx][2] == 2) {
-			enemyCount++;
+		if (this.playerList[idx][2] == team) {
+			teamUnitcount++;
 		}
 	}
 	if (this.AIList[enemyCount] != null) { // spawn if the enemy limit has not been reached
 		// AI have not been spawned
-		var AIPropertySplit = this.AIList[enemyCount].split("_"); // Decode list info
+		var AIPropertySplit = this.AIList[teamUnitcount].split("_"); // Decode list info
 		console.log(AIPropertySplit);
 		if (AIPropertySplit[2] == "trooper") {
 			var AIname = "Ace";
@@ -185,7 +185,7 @@ BasicGame.MainGame.prototype.spawnRandomAIFromList = function(initLvl) {
 			var AIMessage = "Enemy support has arrived!";
 		}
 
-		this.spawnAI(this.AIList[enemyCount], 500, 1000, "player_" + AIPropertySplit[2], "Enemy " + AIname + "(AI)", AIPropertySplit[4], initLvl);
+		this.spawnAI(this.AIList[teamUnitcount], 500, 1000, "player_" + AIPropertySplit[2], "Enemy " + AIname + "(AI)", AIPropertySplit[4], initLvl);
 		this.broadcast(AIMessage, 2);
 	}
 }
