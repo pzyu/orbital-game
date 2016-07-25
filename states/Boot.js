@@ -52,7 +52,7 @@ BasicGame.Boot.prototype = {
         this.load.image('menu_background', 'images/background.jpg');
 
         // Tilemap spritesheet json and png
-        this.load.tilemap('map', 'images/tiles_spritesheet.json', null, Phaser.Tilemap.TILED_JSON);
+        this.load.tilemap('map', 'images/map.json', null, Phaser.Tilemap.TILED_JSON);
         this.load.image('tiles', 'images/sheet.png');
         this.load.image('background_tiles', 'images/building_sheet.png');
         this.load.image('tiles_spritesheet', 'images/tiles_spritesheet.png');
@@ -88,6 +88,7 @@ BasicGame.Boot.prototype = {
         this.load.image('score', 'images/score.png');
         this.load.image('playerName', 'images/playerName.png');
         this.load.image('magicCircle', 'images/magiccircle.png');
+        this.load.image('exit_button', 'images/exit_button.png');
         
         // Player skills
         this.load.image('destroyer_hud_skillA', 'images/sprites/heroes/skills/destroyer_skillA.png');

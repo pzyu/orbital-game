@@ -17,8 +17,8 @@ BasicGame.Multiplayer = function (game) {
 
 	this.spawnPoints = [				// Array of spawn points, set in each hero class
 		{x: 1000,  y: 250},
-		{x: 250,  y: 1000},				// Team 1 spawn
-		{x: 3200, y: 1000},				// Team 2 spawn
+		{x: 350,  y: 800},				// Team 1 spawn
+		{x: 3150, y: 800},				// Team 2 spawn
 		{x: 2500,  y: 500}
 	];
 
@@ -30,10 +30,10 @@ BasicGame.Multiplayer = function (game) {
 	];
 
 	this.magicSpawnPoints = [			// Array of magic circle spawn points
-		{x: 490,  y: 635},
-		{x: 1750,  y: 700},
+		{x: 555,  y: 635},
+		{x: 1750,  y: 555},
 		{x: 1750, y: 1260},
-		{x: 3010,  y: 640}
+		{x: 2945,  y: 635}
 	];
 
 	this.teamAHUD;
@@ -210,11 +210,11 @@ BasicGame.Multiplayer.prototype.preloadGame = function() {
 	// Set background color
 	this.stage.backgroundColor = '#787878';
 
-	// Add tilemap
+	// // Add tilemap
 	map = this.add.tilemap('map');					// 'map' must be same as the one in Boot.js
 	map.addTilesetImage('sheet', 'tiles');			// 'sheet' must be the same also
-	map.addTilesetImage('building_sheet', 'background_tiles');
 	map.addTilesetImage('tiles_spritesheet', 'tiles_spritesheet');
+	map.addTilesetImage('lab_tilesheet', 'lab_tiles');	
 
 	var background = map.createLayer('Background');	// 'Background' must be the same in the json file
 	background.resizeWorld();
@@ -226,9 +226,9 @@ BasicGame.Multiplayer.prototype.preloadGame = function() {
 
 	this.mapLayer = layer;
 
-	map.setCollisionBetween(0, 60, true, layer);	// Set collision layers between json tile representation
-	map.setCollisionBetween(63, 80, true, layer);	
-	map.setCollisionBetween(329, 341, true, layer);	
+	map.setCollisionBetween(0, 123, true, layer);	// Set collision layers between json tile representation
+	map.setCollisionBetween(125, 300, true, layer);	
+	//map.setCollisionBetween(329, 341, true, layer);	
 
 	this.physics.arcade.TILE_BIAS = 60;				// The higher the tile bias, the more unlikely it is the player will fall through
 
@@ -257,13 +257,28 @@ BasicGame.Multiplayer.prototype.preloadGame = function() {
 
 BasicGame.Multiplayer.prototype.createGame = function() {
 	var ref = this;
-	var optionStyle = {font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
-	var txt = this.add.text(this.world.width - this.world.width/2, this.world.height - 100,  "Back to main menu", optionStyle);
-	txt.inputEnabled = true;
-	txt.events.onInputUp.add(function() {
+	// Exit button
+	var exitButton = this.add.image(1240, 20,  'exit_button');
+	exitButton.fixedToCamera = true;
+	exitButton.inputEnabled = true;
+	exitButton.events.onInputOver.add(function(target) {
+		exitButton.scale.setTo(1.1);
+	});
+	exitButton.events.onInputOut.add(function(target) {
+		exitButton.scale.setTo(1.0);
+	});
+	exitButton.events.onInputUp.add(function() {
 		BasicGame.eurecaClient.exports.kickToMenu();
 	});
 
+	// Magic circle init before player so won't overlap
+	this.magicCircle = this.game.add.sprite(-500, -500, 'magicCircle');
+	this.magicCircle.anchor.setTo(0.5, 0.5);
+	this.game.physics.arcade.enableBody(this.magicCircle);
+	this.magicCircle.body.setSize(400, 100, 0, -50);
+	this.magicCircle.body.allowGravity = false;
+	this.game.add.existing(this.magicCircle);
+	
 	// Assign global groups
 	BasicGame.playerCG = this.add.group();
 	BasicGame.colliderCG = this.add.group();
@@ -290,19 +305,18 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 
 	this.playerList[BasicGame.myID] = [player, BasicGame.myNick, BasicGame.myTeam];
 	this.camera.follow(player);
-
 	this.player = player;
 
 	// Add collider for spawns
-	this.teamA = this.game.add.sprite(80, 950, '');
+	this.teamA = this.game.add.sprite(160, 990, 'fence');
 	this.game.physics.arcade.enableBody(this.teamA);
-	this.teamA.body.setSize(500, 300, 0, 0);
+	this.teamA.body.setSize(400, 100, 0, -40);
 	this.teamA.body.allowGravity = false;
 	this.game.add.existing(this.teamA);
 
-	this.teamB = this.game.add.sprite(2900, 950, '');
+	this.teamB = this.game.add.sprite(2940, 990, 'fence');
 	this.game.physics.arcade.enableBody(this.teamB);
-	this.teamB.body.setSize(500, 300, 0, 0);
+	this.teamB.body.setSize(400, 100, 0, -40);
 	this.teamB.body.allowGravity = false;
 	this.game.add.existing(this.teamB);
 
@@ -474,14 +488,6 @@ BasicGame.Multiplayer.prototype.createGame = function() {
 	this.message.fixedToCamera = true;
 	this.message.anchor.setTo(0.5, 0.5);
 
-	// Magic circle
-	this.magicCircle = this.game.add.sprite(-500, -500, 'magicCircle');
-	this.magicCircle.anchor.setTo(0.5, 0.5);
-	this.game.physics.arcade.enableBody(this.magicCircle);
-	this.magicCircle.body.setSize(400, 100, 0, -50);
-	this.magicCircle.body.allowGravity = false;
-	this.game.add.existing(this.magicCircle);
-
 	// create all other clients
 	BasicGame.eurecaServer.handshake(BasicGame.roomID);
 
@@ -618,8 +624,17 @@ BasicGame.Multiplayer.prototype.chat = function() {
 
 BasicGame.Multiplayer.prototype.baseCallback= function(obj1, obj2) {
 	if ((obj1 == this.teamA && obj2.myTeam == 1) || (obj1 == this.teamB && obj2.myTeam == 2)) {
+		//console.log("own base");
 		if (obj2.curHealth < obj2.maxHealth && !obj2.isDead) {
 			obj2.curHealth++;
+		}
+	}
+	if ((obj1 == this.teamA && obj2.myTeam != 1) || (obj1 == this.teamB && obj2.myTeam != 2)) {
+		//console.log("base attack");
+		if (obj1 == this.teamA) {
+			obj2.getHit(1, 500, 500, obj2);
+		} else {
+			obj2.getHit(1, -500, 500, obj2);
 		}
 	}
 };
