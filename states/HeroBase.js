@@ -368,17 +368,17 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 					}
 					if (this.refMP.teamScores[1] == 5 && enemyCount == 1) {
 						// spawn new enemy (2nd)
-						this.refMP.spawnRandomAIFromList(3);
+						this.refMP.spawnRandomAIFromList(3, 2);
 						//this.refMP.spawnAI("AI_Bot2", 500, 1000, "player_gunner", "Enemy Disruptor(AI)", 2, 3);
 						//this.refMP.broadcast("Enemy support has arrived!", 2);
 					} else if (this.refMP.teamScores[1] == 10 && enemyCount == 2) {
 						// spawn new enemy (3rd)
-						this.refMP.spawnRandomAIFromList(5);
+						this.refMP.spawnRandomAIFromList(5, 2);
 						//this.refMP.spawnAI("AI_Bot3", 500, 1000, "player_destroyer", "Enemy Destroyer(AI)", 2, 5);
 						//this.refMP.broadcast("Destroyer, incoming!", 2);
 					} else if (this.refMP.teamScores[1] == 15 && enemyCount == 3) {
 						// spawn new enemy (4th)
-						this.refMP.spawnRandomAIFromList(7);
+						this.refMP.spawnRandomAIFromList(7, 2);
 						//this.refMP.spawnAI("AI_Bot4", 500, 1000, "player_trooper", "Enemy Ace(AI)", 2, 7);
 						//this.refMP.broadcast("The enemy has brought out their Ace, good luck surviving.", 2);
 					}
@@ -528,7 +528,7 @@ BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, de
 
 // function to handle exp
 function creditExp(targetPlayer, exp) {
-	if (targetPlayer.heroLevel != 25) {
+	if (targetPlayer.heroLevel != 25) { // not yet max level
 		console.log("adding exp to " + targetPlayer.ID)
 		targetPlayer.heroExp += exp;
 		while (targetPlayer.heroExp >= targetPlayer.heroToNextLevel && targetPlayer.heroLevel != 25) {
@@ -543,6 +543,7 @@ function onLevelUp(targetPlayer) {
 		var originalHPPercent = targetPlayer.curHealth / targetPlayer.maxHealth;
 
 		targetPlayer.heroLevel ++;
+
 		// Hero attributes
 		targetPlayer.moveSpeed += targetPlayer.movSpeed; // update movement speed
 		targetPlayer.defaultMoveSpeed += targetPlayer.movSpeed;
@@ -561,6 +562,10 @@ function onLevelUp(targetPlayer) {
 		// post levelup calculation
 		targetPlayer.heroExp -= targetPlayer.heroToNextLevel; // update remaining exp
 		targetPlayer.heroToNextLevel = targetPlayer.heroLevel * 80 // calculate next levelup requirement
+
+		if (targetPlayer.heroLevel == 25) {
+			targetPlayer.heroExp = targetPlayer.heroToNextLevel; // set to max Exp when hit level limit
+		}
 	}
 };
 
