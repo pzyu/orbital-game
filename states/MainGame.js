@@ -156,15 +156,20 @@ BasicGame.MainGame.prototype.preloadGame = function() {
 
 	this.createGame(); // preload complete, start to create game
 	//this.spawnAI("AI_Bot_walker_1_1", 500, 1000, "player_walker", "Ally Walker(AI)", 1, 5); // ALLY WALKER COMMAND
+	this.shuffleArray(this.AIList);
 	this.spawnRandomAIFromList(1);
 };
 
 BasicGame.MainGame.prototype.spawnRandomAIFromList = function(initLvl) {
-	var randomIdx = Math.floor(Math.random() * 4); // roll random AI from list
-
-	if (this.playerList[this.AIList[randomIdx]] == null) {
+	var enemyCount = 0;
+	for (var idx in this.playerList) {
+		if (this.playerList[idx][2] == 2) {
+			enemyCount++;
+		}
+	}
+	if (this.AIList[enemyCount] != null) { // spawn if the enemy limit has not been reached
 		// AI have not been spawned
-		var AIPropertySplit = this.AIList[randomIdx].split("_"); // Decode list info
+		var AIPropertySplit = this.AIList[enemyCount].split("_"); // Decode list info
 		console.log(AIPropertySplit);
 		if (AIPropertySplit[2] == "trooper") {
 			var AIname = "Ace";
@@ -180,11 +185,8 @@ BasicGame.MainGame.prototype.spawnRandomAIFromList = function(initLvl) {
 			var AIMessage = "Enemy support has arrived!";
 		}
 
-		this.spawnAI(this.AIList[randomIdx], 500, 1000, "player_" + AIPropertySplit[2], "Enemy " + AIname + "(AI)", AIPropertySplit[4], initLvl);
+		this.spawnAI(this.AIList[enemyCount], 500, 1000, "player_" + AIPropertySplit[2], "Enemy " + AIname + "(AI)", AIPropertySplit[4], initLvl);
 		this.broadcast(AIMessage, 2);
-	} else {
-		// this AI exist, reroll
-		this.spawnRandomAIFromList(initLvl);
 	}
 }
 
@@ -1361,4 +1363,22 @@ BasicGame.MainGame.prototype.shieldCallback= function(obj1, obj2) {
 		obj1.inShield = true;
 		obj1.body.velocity.x = obj2.facingRight * 500;
 	}
+};
+
+BasicGame.MainGame.prototype.shuffleArray= function(array) {
+	var currentIndex = array.length, temporaryValue, randomIndex;
+
+	// While there remain elements to shuffle...
+	while (0 !== currentIndex) {
+		// Pick a remaining element...
+		randomIndex = Math.floor(Math.random() * currentIndex);
+		currentIndex -= 1;
+
+		// And swap it with the current element.
+		temporaryValue = array[currentIndex];
+		array[currentIndex] = array[randomIndex];
+		array[randomIndex] = temporaryValue;
+	}
+
+	return array;
 };

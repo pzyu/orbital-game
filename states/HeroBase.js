@@ -524,10 +524,12 @@ BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, de
 
 // function to handle exp
 function creditExp(targetPlayer, exp) {
-	console.log("adding exp to " + targetPlayer.ID)
-	targetPlayer.heroExp += exp;
-	while (targetPlayer.heroExp >= targetPlayer.heroToNextLevel) {
-		onLevelUp(targetPlayer); // perform levelup on target player
+	if (targetPlayer.heroLevel != 25) { // not yet max level
+		console.log("adding exp to " + targetPlayer.ID)
+		targetPlayer.heroExp += exp;
+		while (targetPlayer.heroExp >= targetPlayer.heroToNextLevel && targetPlayer.heroLevel != 25) {
+			onLevelUp(targetPlayer); // perform levelup on target player
+		}
 	}
 };
 
@@ -537,6 +539,7 @@ function onLevelUp(targetPlayer) {
 		var originalHPPercent = targetPlayer.curHealth / targetPlayer.maxHealth;
 
 		targetPlayer.heroLevel ++;
+
 		// Hero attributes
 		targetPlayer.moveSpeed += targetPlayer.movSpeed; // update movement speed
 		targetPlayer.defaultMoveSpeed += targetPlayer.movSpeed;
@@ -555,6 +558,10 @@ function onLevelUp(targetPlayer) {
 		// post levelup calculation
 		targetPlayer.heroExp -= targetPlayer.heroToNextLevel; // update remaining exp
 		targetPlayer.heroToNextLevel = targetPlayer.heroLevel * 80 // calculate next levelup requirement
+
+		if (targetPlayer.heroLevel == 25) {
+			targetPlayer.heroExp = targetPlayer.heroToNextLevel; // set to max Exp when hit level limit
+		}
 	}
 };
 
