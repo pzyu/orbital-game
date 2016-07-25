@@ -1188,6 +1188,18 @@ BasicGame.MainGame.prototype.broadcast = function(msg, duration) {
 
 BasicGame.MainGame.prototype.update = function() {
 	// run AI scripts
+	if (this.playerList["retard_Bot1"] != null) {
+		this.scriptAIWalker(this.playerList["SoloKid"][0], this.playerList["retard_Bot1"][0]); // AI Script activated (Walker - Default)
+	}
+	if (this.playerList["retard_Bot2"] != null) {
+		this.scriptAIDisruptor(this.playerList["SoloKid"][0], this.playerList["retard_Bot2"][0]); // AI Script activated (Disruptor - 2nd)
+	}
+	if (this.playerList["retard_Bot3"] != null) {
+		this.scriptAIDestroyer(this.playerList["SoloKid"][0], this.playerList["retard_Bot3"][0]); // AI Script activated (Disruptor - 2nd)
+	}
+	if (this.playerList["retard_Bot4"] != null) {
+		this.scriptAIAce(this.playerList["SoloKid"][0], this.playerList["retard_Bot4"][0]); // AI Script activated (Disruptor - 2nd)
+	}
 	this.AIScripthandler();
 
 	// Enable collision between player and layer and shield
