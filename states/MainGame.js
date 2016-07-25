@@ -1364,7 +1364,7 @@ BasicGame.MainGame.prototype.chat = function() {
 BasicGame.MainGame.prototype.baseCallback= function(obj1, obj2) {
 	if ((obj1 == this.teamA && obj2.myTeam == 1) || (obj1 == this.teamB && obj2.myTeam == 2)) {
 		if (obj2.curHealth < obj2.maxHealth && !obj2.isDead) {
-			obj2.curHealth++;
+			obj2.curHealth += 5;
 		}
 	}
 };

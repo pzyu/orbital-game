@@ -183,9 +183,12 @@ BasicGame.CharSelect.prototype = {
 		this.stats.animations.frameName = "stats";
 		this.stats.scale.setTo(0.8, 0.8);
 
-		this.teamPanel = this.game.add.image(900, 350, 'team_panel');
-		this.teamPanel.scale.setTo(0.8, 0.8);
-		this.add.text(1020, 345, "Team", optionStyle);
+		if (this.multiplayer) {
+			console.log("team");
+			this.teamPanel = this.game.add.image(900, 350, 'team_panel');
+			this.teamPanel.scale.setTo(0.8, 0.8);
+			this.add.text(1020, 345, "Team", optionStyle);
+		}
 
 		this.skills = this.game.add.image(100, 350, 'skills');
 		this.skills.animations.frameName = 'base';
@@ -233,10 +236,11 @@ BasicGame.CharSelect.prototype = {
 				for (var i=0; i<teamArr.length; i++) {
 					if (teamArr[i][2] != BasicGame.myID) {
 						plCounter++;
-						var selChar = (teamArr[i][1] == null) ? "None" : (teamArr[i][1] == "destroyer_portrait") ? "Destroyer"
-																		: (teamArr[i][1] == "trooper_portrait") ? "Ace"
-																		: (teamArr[i][1] == "walker_portrait") ? "Walker"
-																		: (teamArr[i][1] == "gunner_portrait") ? "Disruptor"
+						console.log(teamArr[i][1]);
+						var selChar = (teamArr[i][1] == null) ? "None" : (teamArr[i][1] == "player_destroyer") ? "Destroyer"
+																		: (teamArr[i][1] == "player_trooper") ? "Ace"
+																		: (teamArr[i][1] == "player_walker") ? "Walker"
+																		: (teamArr[i][1] == "player_gunner") ? "Disruptor"
 																		: "None";
 						ref.textContainer[i + " 1"] = ref.add.text(930, ref.game.height / 2 + 15 + (plCounter * 25),  teamArr[i][0] + ": \n[" + selChar + "]", textColorDefault);
 					}
