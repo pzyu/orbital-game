@@ -29,10 +29,9 @@ BasicGame.MainMenu.prototype = {
 		this.title.setShadow(3, 3, 'rgba(0,0,0,0.5)', 5);
 		this.title.anchor.set(0, 0.5);
 
-		this.add.text(50, 200, "There will be bugs because every commit is updated here" + 
-								"\nStart Game won't work for now",  
-					 { font: '20pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"});
-
+		// this.add.text(50, 200, "There will be bugs because every commit is updated here" + 
+		// 						"\nStart Game won't work for now",  
+		// 			 { font: '20pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"});
 
 		// Set default option count for factory function
 		this.optionCount = 1;
@@ -41,13 +40,13 @@ BasicGame.MainMenu.prototype = {
 
 	create: function () {
 		var ref = this;
-		this.addMenuOption('Start Game', function (target) {
-			// Move to character select screen, last parameter is to determine if it's multiplayer or not
-			this.game.state.start('CharSelect', true, false, false, false);
-		});
 		this.addMenuOption('Tutorial', function (target) {
 			// Move to character select screen, last parameter is to determine if it's multiplayer or not
 			this.game.state.start('CharSelect', true, false, false, true);
+		});
+		this.addMenuOption('Survival', function (target) {
+			// Move to character select screen, last parameter is to determine if it's multiplayer or not
+			this.game.state.start('CharSelect', true, false, false, false);
 		});
 		this.addMenuOption('Multiplayer', function (target) {
 			if (nicknameInput.value == '') {
@@ -64,9 +63,9 @@ BasicGame.MainMenu.prototype = {
 		this.addMenuOption('Credits', function (target) {
 			this.game.state.start('Credits', true);
 		});
-		this.addMenuOption('Dev Test', function (target) {
-			this.game.state.start('LobbyMulti', true, false, 'moon tester', true);
-		});
+		// this.addMenuOption('Dev Test', function (target) {
+		// 	this.game.state.start('LobbyMulti', true, false, 'moon tester', true);
+		// });
 		/*
 		this.addMenuOption('Lobby Test', function (target) {
 			if (nicknameInput.value == '') {
@@ -80,18 +79,18 @@ BasicGame.MainMenu.prototype = {
 		*/
 
 		// for full API, go to : https://github.com/orange-games/phaser-input
-		var nicknameInput = game.add.inputField(this.world.width/3, this.world.height/2, {
-			font: '24px Arial',
+		var nicknameInput = game.add.inputField(this.world.width/1.34, this.world.height - 300, {
+			font: '20px myfont',
 			fill: '#212121',
 			fontWeight: 'bold',
-			width: 427,
-			height: 30,
+			width: 300,
+			height: 24,
 			padding: 8,
 			borderWidth: 1,
 			borderColor: '#000',
 			borderRadius: 6,
 			max: 18,
-			placeHolder: 'Enter your nickname',
+			placeHolder: 'Enter your codename',
 		});
 
 		nicknameInput.value = (nicknameInput.value == '') ? 'moon moon wow!' : nicknameInput.value; // DELETE WHEN NOT IN DEVELOPMENT!

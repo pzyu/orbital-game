@@ -333,11 +333,14 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 			if (BasicGame.myID == killerInfo.ID || BasicGame.myID == "SoloKid") {
 				// credit kill to killerID
 				if (BasicGame.myID == "SoloKid" || BasicGame.myID == "TutorialPlayer") {
+					console.log("killed by ai");
 					// Single Player kill handling
 					this.refMP.teamScores[killerInfo.myTeam]++; // add to teamscore
 					if (killerInfo.myTeam == 2 && this.refMP.teamScores[2] < 5) {
+						console.log("improving abilities");
 						this.refMP.broadcast("You have " + (5 - this.refMP.teamScores[2]) + " lives left. Your allies have improved your abilities", 2);
 						for (var i=0; i<(this.refMP.teamScores[2] * 2); i++) {
+							console.log("adding exp");
 							// calculate previous % exp
 							var prevExp = this.refMP.playerList["SoloKid"][0].heroExp / this.refMP.playerList["SoloKid"][0].heroToNextLevel;
 							onLevelUp(this.refMP.playerList["SoloKid"][0]); // give 2 level per life lost
@@ -345,6 +348,7 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 						}
 					}
 				} else {
+					console.log("crediting ai");
 					BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
 				}
 			}
@@ -524,10 +528,12 @@ BasicGame.HeroBase.prototype.applyBuff = function(buffName, amount, duration, de
 
 // function to handle exp
 function creditExp(targetPlayer, exp) {
-	console.log("adding exp to " + targetPlayer.ID)
-	targetPlayer.heroExp += exp;
-	while (targetPlayer.heroExp >= targetPlayer.heroToNextLevel) {
-		onLevelUp(targetPlayer); // perform levelup on target player
+	if (targetPlayer.heroLevel != 25) {
+		console.log("adding exp to " + targetPlayer.ID)
+		targetPlayer.heroExp += exp;
+		while (targetPlayer.heroExp >= targetPlayer.heroToNextLevel && targetPlayer.heroLevel != 25) {
+			onLevelUp(targetPlayer); // perform levelup on target player
+		}
 	}
 };
 
