@@ -167,10 +167,9 @@ BasicGame.MainGame.prototype.spawnRandomAIFromList = function(initLvl, team) {
 			teamUnitcount++;
 		}
 	}
-	if (this.AIList[enemyCount] != null) { // spawn if the enemy limit has not been reached
+	if (this.AIList[teamUnitcount] != null) { // spawn if the enemy limit has not been reached
 		// AI have not been spawned
 		var AIPropertySplit = this.AIList[teamUnitcount].split("_"); // Decode list info
-		console.log(AIPropertySplit);
 		if (AIPropertySplit[2] == "trooper") {
 			var AIname = "Ace";
 			var AIMessage = "The enemy has brought out their Ace, good luck surviving.";
