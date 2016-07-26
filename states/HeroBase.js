@@ -67,6 +67,12 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	this.atkSpeed = 0;
 	this.movSpeed = 0;
 
+	this.smoothing = false;
+	// this.targetX = 0;
+	// this.targetY = 0;
+	// this.stepValueX = 0;
+	// this.stepValueY = 0;
+
 
 	// Skills
 	this.skillACooldown = 1000;
@@ -308,7 +314,51 @@ BasicGame.HeroBase.prototype.handleControls = function() {
     if (this.y >= 2000) {
     	this.getHit(1000, 0, 0, this);
     }
+
+    if (this.smoothing && this.targetX != null) {
+    	this.step(10);
+    }
 };
+
+BasicGame.HeroBase.prototype.interpolateTo = function (dataX, dataY, duration) {
+	// Calculates amount to step based on duration, then sets target to step to
+	this.stepValueX = this.game.math.difference(dataX, this.x) / duration;
+	this.targetX = dataX;
+
+	this.stepValueY = this.game.math.difference(dataY, this.y) / duration;
+	this.targetY = dataY;
+};
+
+BasicGame.HeroBase.prototype.step = function(delta) {
+	// If same spot then don't step
+	if (this.targetX == this.x || this.targetY == this.y) {
+		return;
+	}
+	
+	var diffX = this.game.math.difference(this.x, this.targetX);
+	var diffY = this.game.math.difference(this.y, this.targetY);
+	// If difference too big, force posotion
+	if (diffX > 500) {
+		this.x = this.targetX;
+	} 
+	if (this.jumpCount == 0 && diffY > 500) {
+		this.y = this.targetY;
+	}
+
+	// Steps to target with respect to delta
+	if (this.x < this.targetX) {
+		this.x += delta * this.stepValueX;
+	} else if (this.x > this.targetX) {
+		this.x -= delta * this.stepValueX;
+	}
+
+	if (this.y < this.targetY) {
+		this.y += delta * this.stepValueY;
+	} else if (this.y > this.targetY) {
+		this.y -= delta * this.stepValueY;
+	}
+};
+
 
 BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, killerInfo) {
 	this.effect.play(this.hitAnim, this, 0, 0);
@@ -407,7 +457,6 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 		}
 	}
 };
-
 BasicGame.HeroBase.prototype.getSkillA = function() {
 	return this.game.math.clamp((this.game.time.now - this.skillATimer) / this.skillACooldown, -1, 0);
 };

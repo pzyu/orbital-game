@@ -166,13 +166,17 @@ BasicGame.Multiplayer.prototype.preload = function() {
 		var curPlayer = ref.playerList[id][0];
 		if (curPlayer && BasicGame.myID != id) {
 			//console.log('compensating');
-			curPlayer.x = state.x;
-			curPlayer.y = state.y;
+			// If use smoothing
+			if (curPlayer.smoothing) {
+				curPlayer.interpolateTo(state.x, state.y, 1000);
+			} else {
+				curPlayer.x = state.x;
+				curPlayer.y = state.y;
+			}
 			curPlayer.curHealth = state.hp;
 			curPlayer.heroLevel = state.lvl;
 			curPlayer.heroToNextLevel = state.expNext;
 			curPlayer.heroExp = state.exp;
-			//curPlayer.interpolateTo(state.x, state.y, 1000);
 		}
 		//console.log(BasicGame.myID, id);
 		if (curPlayer && BasicGame.myID == id) {

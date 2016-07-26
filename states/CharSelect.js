@@ -236,6 +236,7 @@ BasicGame.CharSelect.prototype = {
 			} else if (BasicGame.selectedChar != null && ref.multiplayer) {
 				// Go into multiplayer
 				this.game.state.start("Multiplayer");
+				this.textContainer = null;
 			}
 		});
 

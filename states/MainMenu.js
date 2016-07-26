@@ -63,9 +63,9 @@ BasicGame.MainMenu.prototype = {
 		this.addMenuOption('Credits', function (target) {
 			this.game.state.start('Credits', true);
 		});
-		//this.addMenuOption('Dev Test', function (target) {
-		// 	this.game.state.start('LobbyMulti', true, false, 'moon tester', true);
-		//});
+		this.addMenuOption('Dev Test', function (target) {
+		 	this.game.state.start('LobbyMulti', true, false, 'moon tester', true);
+		});
 		/*
 		this.addMenuOption('Lobby Test', function (target) {
 			if (nicknameInput.value == '') {
