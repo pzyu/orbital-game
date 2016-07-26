@@ -160,7 +160,7 @@ BasicGame.HeroTrooperMP.prototype.bulletCallback = function(obj1, obj2) {
 	// If not colliding with yourself and not on the same team
 	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam && !obj2.isDead) {
 		// Kill the projectile
-		obj1.kill();
+		//obj1.kill();
 		// Call get hit of other person
 		obj2.getHit(50 + this.attack * this.heroLevel * 2.5, 50 * this.facingRight, 30, this);	
 	}
@@ -242,7 +242,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillD = function() {
 		this.positionQueue.push(pos);
 
 		// Shift if exceeds 2 
-		if (this.positionQueue.length > 2) {
+		if (this.positionQueue.length > 3) {
 			var i = this.positionQueue.shift();
 		}
 
@@ -252,7 +252,7 @@ BasicGame.HeroTrooperMP.prototype.handleSkillD = function() {
 		this.game.physics.arcade.moveToXY(this, this.targetPos.x, this.targetPos.y - 20, 1000, 250);
 	}
 
-	if (this.cursor.skillD && this.game.time.now > this.skillDTimer && this.skillsEnabled && this.positionQueue.length > 1) {
+	if (this.cursor.skillD && this.game.time.now > this.skillDTimer && this.skillsEnabled && this.positionQueue.length > 2) {
 		//this.isAttacking = true;
 		this.skillDTimer = this.game.time.now + this.skillDCooldown; 
 		this.skillDSFX.play();

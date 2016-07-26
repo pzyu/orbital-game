@@ -333,6 +333,7 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 		if (this.curHealth <= 0) {
 			this.curHealth = 0;
 			this.isDead = true; // kill confirmed
+			this.attackCollider.deactivate();
 
 			// If local client is the killer then send to server,
 			// otherwise every client will be incrementing score 

@@ -22,6 +22,13 @@ BasicGame.CharSelect.prototype = {
 		this.background = this.add.sprite(0, 0, 'menu_background');
 		this.background.height = this.game.height;
 		this.background.width = this.game.width;
+
+		this.stories = {
+			'destroyer': 'Being the predecessor of all war machines, the Destroyer was created with the sole purpose of taking out any resistance the enemy puts out. Equipped with armoury designed to break through any scenario, the Destroyer earned its name through its swift and powerful judgement it delivers to all foes.',
+			'trooper': 'Possessing speed, power, techniques and concentration, the Ace embodies this concept thoroughly with strikes so quick, and movement so swift. When all hopes are lost and defeat eminent, one could only hope for a miracle to turn the tide of war. The only war machine that is capable enough to perform this task is truly deserving of the title “Ace”.',
+			'walker': 'In the midst of the unstoppable onslaught of Destroyers, scientists responded by developing a new line of defence. The research facility came under attack and the Walker was activated before schedule in order to defend the attack. The Walker was the only victor, leaving behind no survivors which meant no further development could be made.',
+			'gunner': 'As the landscape of war changes, new ways to deliver assistance to frontlines were crucial. Using components from fallen war machines, the Disruptor was created with the ability to restructure reclaimed materials into tools that can be used in war. As zero+ influence starts to become more prominent, having a Disruptor in the team meant life or death.'
+		};
 	},
 
 	resetFilter: function() {
@@ -64,6 +71,10 @@ BasicGame.CharSelect.prototype = {
 												  : (char == "walker") ? "Walker"
 												  : (char == "gunner") ? "Disruptor"
 												  : "");
+		// Only in single player
+		if (!this.multiplayer) {
+			this.story.setText(this.stories[char]);
+		}
 		this.stats.animations.frameName = char;
 		this.skills.animations.frameName = char;
 
@@ -71,7 +82,9 @@ BasicGame.CharSelect.prototype = {
 		this.highlight.position.setTo(250, 140);
 		BasicGame.buttonClick.play();
 		//console.log(this.highlight);
-		BasicGame.eurecaServer.getTeamSelection(BasicGame.roomID, BasicGame.myTeam, selected, BasicGame.myID);
+		if (this.multiplayer) {
+			BasicGame.eurecaServer.getTeamSelection(BasicGame.roomID, BasicGame.myTeam, selected, BasicGame.myID);
+		}
 	},
 
 	addCharacter: function(spriteName) {
@@ -124,28 +137,28 @@ BasicGame.CharSelect.prototype = {
 		this.addCharacter('player_gunner');
 		this.addCharacter('player_trooper');
 
-		this.destroyer = this.game.add.image(915, 110, 'destroyer_portrait');
+		this.destroyer = this.game.add.image(955, 110, 'destroyer_portrait');
 		this.destroyer.anchor.setTo(0.5, 0.5);
 		this.destroyer.inputEnabled = true;
 		this.destroyer.events.onInputUp.add(this.onClick, this);
 		this.destroyer.events.onInputOver.add(this.onOver, this);
 		this.destroyer.events.onInputOut.add(this.onOut, this);
 
-		this.walker = this.game.add.image(1065, 110, 'walker_portrait');
+		this.walker = this.game.add.image(1105, 110, 'walker_portrait');
 		this.walker.anchor.setTo(0.5, 0.5);
 		this.walker.inputEnabled = true;
 		this.walker.events.onInputUp.add(this.onClick, this);
 		this.walker.events.onInputOver.add(this.onOver, this);
 		this.walker.events.onInputOut.add(this.onOut, this);
 
-		this.gunner = this.game.add.image(840, 240, 'gunner_portrait');
+		this.gunner = this.game.add.image(880, 240, 'gunner_portrait');
 		this.gunner.anchor.setTo(0.5, 0.5);
 		this.gunner.inputEnabled = true;
 		this.gunner.events.onInputUp.add(this.onClick, this);
 		this.gunner.events.onInputOver.add(this.onOver, this);
 		this.gunner.events.onInputOut.add(this.onOut, this);
 
-		this.trooper = this.game.add.image(990, 240, 'trooper_portrait');
+		this.trooper = this.game.add.image(1030, 240, 'trooper_portrait');
 		this.trooper.anchor.setTo(0.5, 0.5);
 		this.trooper.inputEnabled = true;
 		this.trooper.events.onInputUp.add(this.onClick, this);
@@ -188,6 +201,11 @@ BasicGame.CharSelect.prototype = {
 			this.teamPanel = this.game.add.image(900, 350, 'team_panel');
 			this.teamPanel.scale.setTo(0.8, 0.8);
 			this.add.text(1020, 345, "Team", optionStyle);
+		} else {
+			this.heroStory = this.game.add.image(710, 350, 'lobby_big_panel');
+			this.heroStory.scale.setTo(0.45, 0.45);
+			var storyStyle = {font: '12pt myfont', align: 'center', fill: 'white', wordWrap: true, wordWrapWidth: 550};
+			this.story = this.add.text(720, 360, '', storyStyle);
 		}
 
 		this.skills = this.game.add.image(100, 350, 'skills');

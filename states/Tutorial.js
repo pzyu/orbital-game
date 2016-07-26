@@ -869,7 +869,9 @@ BasicGame.Tutorial.prototype.initTutorial = function() {
 	var style = { font: '20pt myfont', fill: 'white', stroke: 'black', strokeThickness: 2, align: 'center'};
 	this.game.add.text(100, 700, "Press arrow keys to move\nand jump", style);
 	this.game.add.text(450, 150, "When you're ready, jump down \nand defeat the AI simulation", style);
-	this.circleText = this.game.add.text(1550, 100, "This is a magic circle which \ngrants heros experience when \nthey're standing within", style)
+	this.circleText = this.game.add.text(1550, 100, "This is a magic circle which \ngrants heros experience when \nthey're standing within", style);
+	this.deadText = this.game.add.text(1000, 750, "It's okay, everyone has to die some day", style);
+	this.deadText.alpha = 0;
 
 	this.playerReady = false;
 	this.readyCheck = this.game.add.sprite(750, 980, '');
@@ -924,6 +926,7 @@ BasicGame.Tutorial.prototype.updateTutorial = function () {
 		this.checkPoint++;
 		this.player.myTeam = 3;
 		this.playerReady = false;
+		var tween = this.game.add.tween(this.deadText).to({alpha: 1}, 1000, Phaser.Easing.Linear.None, true, 0);
 	}
 
 	// Once leveled all the way
@@ -932,6 +935,7 @@ BasicGame.Tutorial.prototype.updateTutorial = function () {
 		this.checkPoint++;
 		this.platformBlock.x = -1000;
 		this.circleText.setText("      Now that you've leveled \n     enough, head down and \n     defeat the simulation!");
+		this.deadText.x = -1000;
 	}
 
 	// When player defeats AI

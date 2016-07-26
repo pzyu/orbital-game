@@ -144,6 +144,7 @@ BasicGame.Boot.prototype = {
         this.load.atlas('stats', 'images/sprites/stats.png', 'images/sprites/stats.json');
         this.load.atlas('skills', 'images/sprites/skills.png', 'images/sprites/skills.json');
         this.load.image('hero_name', 'images/sprites/hero_name.png');
+        this.load.image('hero_story', 'images/sprites/hero_story.png');
         this.load.image('team_panel', 'images/sprites/team.png');
         this.load.image('lobby_panel', 'images/sprites/lobby_panel.png');
         this.load.image('lobby_big_panel', 'images/sprites/lobby_big_panel.png');

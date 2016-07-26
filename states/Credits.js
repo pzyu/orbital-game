@@ -5,7 +5,7 @@ BasicGame.Credits = function (game) {
 	this.gameTitle = "Credits";
 };
 
-var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,0)', strokeThickness: 2, fill: "white"};
+var optionStyle = { font: '25pt myfont', align: 'left', stroke: 'rgba(0,0,0,255)', strokeThickness: 4, fill: "white"};
 
 BasicGame.Credits.prototype = {
 	init: function() {
