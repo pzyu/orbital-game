@@ -141,7 +141,7 @@ BasicGame.HeroTrooperMP.prototype.update = function() {
 
 BasicGame.HeroTrooperMP.prototype.attCallback = function(obj1, obj2) {
 	// If not colliding with yourself and not on the same team
-	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
+	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam && !obj2.isDead) {
 		// Kill collider
 		this.attackCollider.deactivate();
 		//this.isAttacking = false;
@@ -158,7 +158,7 @@ BasicGame.HeroTrooperMP.prototype.attCallback = function(obj1, obj2) {
 
 BasicGame.HeroTrooperMP.prototype.bulletCallback = function(obj1, obj2) {
 	// If not colliding with yourself and not on the same team
-	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
+	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam && !obj2.isDead) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person

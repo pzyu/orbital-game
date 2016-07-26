@@ -171,7 +171,7 @@ BasicGame.HeroDestroyerMP.prototype.update = function() {
 
 BasicGame.HeroDestroyerMP.prototype.attCallback = function(obj1, obj2) {
 	// If not colliding with yourself
-	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
+	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam && !obj2.isDead) {
 		// Kill collider
 		this.isAttacking = false;
 		this.attackCollider.x = this.attackCollider.y = -200;
@@ -183,7 +183,7 @@ BasicGame.HeroDestroyerMP.prototype.attCallback = function(obj1, obj2) {
 
 BasicGame.HeroDestroyerMP.prototype.bulletCallback = function(obj1, obj2) {
 	// If not colliding with yourself
-	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
+	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam && !obj2.isDead) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
@@ -193,7 +193,7 @@ BasicGame.HeroDestroyerMP.prototype.bulletCallback = function(obj1, obj2) {
 
 BasicGame.HeroDestroyerMP.prototype.grenadeCallback = function(obj1, obj2) {
 	// If not colliding with yourself
-	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
+	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam && !obj2.isDead) {
  		//this.explosionGroup.getFirstExists(false).playUntracked('anim_2', obj1.x, obj1.y);
 		// Kill the projectile
 		obj1.kill();

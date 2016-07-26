@@ -302,6 +302,12 @@ BasicGame.HeroBase.prototype.handleControls = function() {
     	this.jumpCount = 0;
     }
     this.inShield = false;
+
+    //console.log(this.y);
+    // If out of map kill
+    if (this.y >= 2000) {
+    	this.getHit(1000, 0, 0, this);
+    }
 };
 
 BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, killerInfo) {

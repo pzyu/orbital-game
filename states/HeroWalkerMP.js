@@ -189,7 +189,7 @@ BasicGame.HeroWalkerMP.prototype.update = function() {
 
 BasicGame.HeroWalkerMP.prototype.attCallback = function(obj1, obj2) {
 	// If not colliding with yourself
-	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
+	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam && !obj2.isDead) {
 		//console.log(this.myTeam, obj2.myTeam);
 		// Kill collider
 		this.isAttacking = false;
@@ -201,7 +201,7 @@ BasicGame.HeroWalkerMP.prototype.attCallback = function(obj1, obj2) {
 
 BasicGame.HeroWalkerMP.prototype.bulletCallback = function(obj1, obj2) {
 	// If not colliding with yourself
-	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam) {
+	if (obj2.ID != this.ID && this.myTeam != obj2.myTeam && !obj2.isDead) {
 		// Kill the projectile
 		obj1.kill();
 		// Call get hit of other person
@@ -270,7 +270,7 @@ BasicGame.HeroWalkerMP.prototype.handleSkillB = function(){
 		this.skillTimer = this.game.time.now + this.skillCooldown;
 	}
 	// Allow players to deactivate shield after 500ms
-	else if (this.shieldActive && this.cursor.skillB && (this.skillBTimer - this.game.time.now) < this.shieldDuration - 500){
+	else if (this.shieldActive && this.cursor.skillB && (this.skillBTimer - this.game.time.now) < this.shieldDuration - 500 || this.isDead){
 		this.shieldActive = false;
 		this.isAttacking = false;
 	}
