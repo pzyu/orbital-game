@@ -163,6 +163,8 @@ BasicGame.Boot.prototype = {
         this.load.audio('buttonClick', ['audio/buttonClick.ogg']);
 
         // Hero SFX
+        this.load.audio('level_up', 'audio/heroes/levelup.ogg');
+
         this.load.audio('destroyer_skillA', 'audio/heroes/destroyer/default.ogg');
         this.load.audio('destroyer_skillB', 'audio/heroes/destroyer/thrust.ogg');
         this.load.audio('destroyer_skillC', 'audio/heroes/destroyer/shotgun.ogg');

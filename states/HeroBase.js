@@ -67,7 +67,7 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	this.atkSpeed = 0;
 	this.movSpeed = 0;
 
-	this.smoothing = false;
+	this.smoothing = true;
 	// this.targetX = 0;
 	// this.targetY = 0;
 	// this.stepValueX = 0;
@@ -112,6 +112,10 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	// Buff effect
 	this.hasteEffect = new BasicGame.Effect(this.game, 'bolt', 50, 0.5, true);
 	this.slowEffect = new BasicGame.Effect(this.game, 'summon', 50, 0.5, true);
+	this.levelEffect = new BasicGame.Effect(this.game, 'ice', 50, 0.6, true);
+	this.levelEffect.alpha = 0.75;
+	var volume = 0.05;
+	this.levelUpSFX = this.game.add.audio('level_up', volume);
 	//this.game.add.existing(this.buffEffect);
 
 	// Keep track of jump anim
@@ -331,7 +335,7 @@ BasicGame.HeroBase.prototype.interpolateTo = function (dataX, dataY, duration) {
 
 BasicGame.HeroBase.prototype.step = function(delta) {
 	// If same spot then don't step
-	if (this.targetX == this.x || this.targetY == this.y) {
+	if (this.targetX == this.x && this.targetY == this.y) {
 		return;
 	}
 	
@@ -341,7 +345,8 @@ BasicGame.HeroBase.prototype.step = function(delta) {
 	if (diffX > 500) {
 		this.x = this.targetX;
 	} 
-	if (this.jumpCount == 0 && diffY > 500) {
+	//console.log(this.body.velocity.y);
+	if (this.body.velocity.y < 1000 && diffY > 350) {
 		this.y = this.targetY;
 	}
 
@@ -597,7 +602,8 @@ function creditExp(targetPlayer, exp) {
 function onLevelUp(targetPlayer) {
 	if (targetPlayer.heroLevel < 25) { //Level Limit
 		var originalHPPercent = targetPlayer.curHealth / targetPlayer.maxHealth;
-
+		targetPlayer.levelUpSFX.play();
+		targetPlayer.levelEffect.play('anim_2', targetPlayer, 0, -50);
 		targetPlayer.heroLevel ++;
 
 		// Hero attributes

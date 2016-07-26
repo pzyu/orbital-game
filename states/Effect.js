@@ -109,6 +109,7 @@ BasicGame.Effect.prototype.update = function() {
 	 	this.y = this.target.y + this.offY;
 	 	this.scale.x = this.scaleX * this.target.facingRight;
 	} else if (this.isTracking) {
+		console.log('tracking');
 	 	this.x = this.target.x + this.offX * this.target.facingRight;
 	 	this.y = this.target.y + this.offY;
 	 	this.scale.x = this.scaleX * this.target.facingRight;
@@ -143,6 +144,7 @@ BasicGame.Effect.prototype.play = function(anim, target, offX, offY) {
 
 	//this.scale.x = this.scaleX * this.target.facingRight;
 	this.animations.play(anim);
+	this.animations.currentAnim.frame = 0;
 
 	// On complete, callback and set position offscreen
 	this.animations.currentAnim.onComplete.add(this.animationComplete, this);
