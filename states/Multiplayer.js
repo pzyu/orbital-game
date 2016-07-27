@@ -177,6 +177,7 @@ BasicGame.Multiplayer.prototype.preload = function() {
 			curPlayer.heroLevel = state.lvl;
 			curPlayer.heroToNextLevel = state.expNext;
 			curPlayer.heroExp = state.exp;
+			curPlayer.isDead = state.isDead;
 		}
 		//console.log(BasicGame.myID, id);
 		if (curPlayer && BasicGame.myID == id) {
@@ -186,6 +187,8 @@ BasicGame.Multiplayer.prototype.preload = function() {
 				creditExp(curPlayer, 20);
 			}
 		}
+		// Check dead only after health is corrected
+		curPlayer.checkDead();
 		ref.updatePlayerList();
 	};	
 

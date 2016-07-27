@@ -6,6 +6,7 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	this.nick = nick;
 	this.myTeam = team;
 	this.lastHitBy = "";
+	this.givenExp = false;
 	
 	this.cursor = {
 		left: false,
@@ -67,7 +68,7 @@ BasicGame.HeroBase = function (id, game, x, y, sprite, team, nick) {
 	this.atkSpeed = 0;
 	this.movSpeed = 0;
 
-	this.smoothing = true;
+	this.smoothing = false;
 	// this.targetX = 0;
 	// this.targetY = 0;
 	// this.stepValueX = 0;
@@ -159,6 +160,7 @@ BasicGame.HeroBase.prototype.constructor = BasicGame.HeroBase;
 
 BasicGame.HeroBase.prototype.spawn = function() {
 	if (this.isDead) {
+		this.givenExp = false;
 		this.body.velocity.x = this.body.velocity.y = 0;
 		this.isAttacking = false;
 		if (BasicGame.myID == "SoloKid" && this.refMP.teamScores[2] >= 5) {
@@ -258,6 +260,7 @@ BasicGame.HeroBase.prototype.handleControls = function() {
 			this.myInput.expNext = this.heroToNextLevel;
 			this.myInput.exp = this.heroExp;
 			this.myInput.inCircle = this.inCircle;
+			this.myInput.isDead = this.isDead;
 
 			if (this.ID != "SoloKid" && this.ID != "TutorialPlayer") {
 				BasicGame.eurecaServer.compensate(this.myInput, BasicGame.roomID);
@@ -364,9 +367,34 @@ BasicGame.HeroBase.prototype.step = function(delta) {
 	}
 };
 
+BasicGame.HeroBase.prototype.checkDead = function() {
+	// If health lower than 0, and haven't given exp to killer yet
+	if (this.curHealth <= 0 && !this.givenExp) {
+		this.curHealth = 0;
+		this.isDead = true;
+		this.attackCollider.deactivate();
+		this.refMP.broadcast(this.nick + " has been killed by " + this.lastHitBy.nick, 2);
+		// Calculate exp to credit to the killer based on killer's hero level and level difference.
+		var levelDiff = this.heroLevel - this.lastHitBy.heroLevel;
+		var expToGive = (levelDiff >= 10) ? 100 : (50 * this.heroLevel);
+		// If not yourself then credit exp
+		if (this.lastHitBy != this) {
+			creditExp(this.lastHitBy, Math.round(expToGive)); // give exp to killer
+
+			// Only if local client is killer
+			if (BasicGame.myID == this.lastHitBy.ID) {
+				BasicGame.eurecaServer.playerKillTDM(this.lastHitBy.myTeam, BasicGame.roomID); // Credit score to killer's team on server
+			}
+		}
+		this.givenExp = true;
+		this.spawn();
+	}
+}
+
 
 BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, killerInfo) {
 	this.effect.play(this.hitAnim, this, 0, 0);
+	this.lastHitBy = killerInfo;
 
 	// Can only get hit if not dead
 	if (!this.isDead) {
@@ -383,12 +411,12 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 		this.body.velocity.x += knockbackX;
 		this.body.velocity.y -= knockbackY;
 		this.curHealth -= Math.round(damage * this.dmgMultiplier);
-
+		//console.log(this.id, BasicGame.myID);
 		// If dead, respawn
 		if (this.curHealth <= 0) {
-			this.curHealth = 0;
-			this.isDead = true; // kill confirmed
-			this.attackCollider.deactivate();
+			//this.curHealth = 0;
+			//this.isDead = true; // kill confirmed
+			//this.attackCollider.deactivate();
 
 			// If local client is the killer then send to server,
 			// otherwise every client will be incrementing score 
@@ -410,8 +438,8 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 						}
 					}
 				} else {
-					console.log("crediting ai");
-					BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
+					//console.log("crediting ai");
+					//BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
 				}
 			}
 
@@ -450,15 +478,15 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 				var expToGive = (levelDiff >= 10) ? 100 : (100 * this.heroLevel);
 				creditExp(killerInfo, Math.round(expToGive)); // give exp to killer
 			} else {
-				this.refMP.broadcast(this.nick + " has been killed by " + killerInfo.nick, 2);
-				// Calculate exp to credit to the killer based on killer's hero level and level difference.
-				var levelDiff = this.heroLevel - killerInfo.heroLevel;
-				var expToGive = (levelDiff >= 10) ? 100 : (50 * this.heroLevel);
-				creditExp(killerInfo, Math.round(expToGive)); // give exp to killer
+				// this.refMP.broadcast(this.nick + " has been killed by " + killerInfo.nick, 2);
+				// // Calculate exp to credit to the killer based on killer's hero level and level difference.
+				// var levelDiff = this.heroLevel - killerInfo.heroLevel;
+				// var expToGive = (levelDiff >= 10) ? 100 : (50 * this.heroLevel);
+				// creditExp(killerInfo, Math.round(expToGive)); // give exp to killer
 			}
 
 			// hero is dead, respawn it
-			this.spawn();
+			//this.spawn();
 		}
 	}
 };
