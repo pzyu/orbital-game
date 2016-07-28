@@ -418,6 +418,12 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 			//this.isDead = true; // kill confirmed
 			//this.attackCollider.deactivate();
 
+			if (BasicGame.myID == "TutorialPlayer") {
+				this.curHealth = 0;
+				this.isDead = true;
+				this.attackCollider.deactivate();
+				this.spawn();
+			}
 			// If local client is the killer then send to server,
 			// otherwise every client will be incrementing score 
 			if (BasicGame.myID == killerInfo.ID || BasicGame.myID == "SoloKid") {
@@ -437,8 +443,13 @@ BasicGame.HeroBase.prototype.getHit = function(damage, knockbackX, knockbackY, k
 							this.refMP.playerList["SoloKid"][0].heroExp = Math.round(this.refMP.playerList["SoloKid"][0].heroToNextLevel * prevExp);
 						}
 					}
+					
+					this.curHealth = 0;
+					this.isDead = true;
+					this.attackCollider.deactivate();
+					this.spawn();
 				} else {
-					//console.log("crediting ai");
+					console.log("crediting ai");
 					//BasicGame.eurecaServer.playerKillTDM(killerInfo.myTeam, BasicGame.roomID); // Credit score to killer's team on server
 				}
 			}
